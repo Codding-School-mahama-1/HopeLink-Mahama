@@ -76,7 +76,6 @@
         }
         
         .hero-bg {
-            background: linear-gradient(135deg, rgba(42, 109, 255, 0.85) 0%, rgba(0, 168, 107, 0.75) 100%);
             position: relative;
             overflow: hidden;
         }
@@ -171,6 +170,20 @@
             background: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
+        .form-step {
+            display: none;
+        }
+        
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
@@ -186,39 +199,60 @@
                     <span class="text-xl font-bold">GlobalAid</span>
                 </div>
                 
-                <!-- Desktop Navigation Links -->
-                <div class="hidden lg:flex space-x-8">
+                <!-- Desktop Navigation Links - HORIZONTAL LAYOUT -->
+                <div class="hidden lg:flex items-center space-x-6">
                     <a href="#" class="nav-link font-medium">Home</a>
                     <a href="#how-it-works" class="nav-link font-medium">How It Works</a>
                     <a href="#" class="nav-link font-medium">Campaigns</a>
                     <a href="#" class="nav-link font-medium">Transparency</a>
                     <a href="#" class="nav-link font-medium">Impact Stories</a>
-                    <a href="#" class="nav-link font-medium">About Us</a>
+                    <a href="index.html" class="nav-link font-medium">About Us</a>
                     <a href="#" class="nav-link font-medium">Get Involved</a>
                     <a href="#" class="nav-link font-medium">Contact</a>
-                </div>
-                
-                <!-- Right Side Items -->
-                <div class="flex items-center space-x-4">
+                    
                     <!-- Language Switcher -->
-                    <div class="hidden md:block relative group">
+                    <div class="relative group ml-2">
                         <button class="flex items-center space-x-1 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors nav-link">
                             <i class="fas fa-globe"></i>
                             <span id="current-language">EN</span>
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 max-h-80 overflow-y-auto">
                             <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="en">
                                 <span class="mr-2">🇺🇸</span> English
                             </a>
                             <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="fr">
                                 <span class="mr-2">🇫🇷</span> French
                             </a>
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="es">
+                                <span class="mr-2">🇪🇸</span> Spanish
+                            </a>
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="de">
+                                <span class="mr-2">🇩🇪</span> German
+                            </a>
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="it">
+                                <span class="mr-2">🇮🇹</span> Italian
+                            </a>
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="pt">
+                                <span class="mr-2">🇵🇹</span> Portuguese
+                            </a>
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ru">
+                                <span class="mr-2">🇷🇺</span> Russian
+                            </a>
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="zh">
+                                <span class="mr-2">🇨🇳</span> Chinese
+                            </a>
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ja">
+                                <span class="mr-2">🇯🇵</span> Japanese
+                            </a>
                             <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ar">
                                 <span class="mr-2">🇦🇪</span> Arabic
                             </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="es">
-                                <span class="mr-2">🇪🇸</span> Spanish
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="hi">
+                                <span class="mr-2">🇮🇳</span> Hindi
+                            </a>
+                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="tr">
+                                <span class="mr-2">🇹🇷</span> Turkish
                             </a>
                         </div>
                     </div>
@@ -230,7 +264,7 @@
                     </button>
                     
                     <!-- Login/Sign Up -->
-                    <button id="auth-button" class="hidden md:block px-4 py-2 rounded-md border border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                    <button id="auth-button" class="px-4 py-2 rounded-md border border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
                         <span class="login-text">Login / Sign Up</span>
                     </button>
                     
@@ -238,12 +272,12 @@
                     <button id="donate-button" class="px-6 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full font-medium pulse-donate hover:shadow-lg transition-all">
                         <span class="donate-text">Donate Now</span>
                     </button>
-                    
-                    <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-bars"></i>
-                    </button>
                 </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </div>
         
@@ -265,11 +299,51 @@
                     </button>
                     
                     <div class="flex justify-between items-center">
-                        <button class="flex items-center space-x-1 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors nav-link">
-                            <i class="fas fa-globe"></i>
-                            <span id="mobile-current-language">EN</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </button>
+                        <div class="relative">
+                            <button class="flex items-center space-x-1 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors nav-link">
+                                <i class="fas fa-globe"></i>
+                                <span id="mobile-current-language">EN</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            <div class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 hidden z-50 max-h-80 overflow-y-auto" id="mobile-language-dropdown">
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="en">
+                                    <span class="mr-2">🇺🇸</span> English
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="fr">
+                                    <span class="mr-2">🇫🇷</span> French
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="es">
+                                    <span class="mr-2">🇪🇸</span> Spanish
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="de">
+                                    <span class="mr-2">🇩🇪</span> German
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="it">
+                                    <span class="mr-2">🇮🇹</span> Italian
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="pt">
+                                    <span class="mr-2">🇵🇹</span> Portuguese
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ru">
+                                    <span class="mr-2">🇷🇺</span> Russian
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="zh">
+                                    <span class="mr-2">🇨🇳</span> Chinese
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ja">
+                                    <span class="mr-2">🇯🇵</span> Japanese
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ar">
+                                    <span class="mr-2">🇦🇪</span> Arabic
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="hi">
+                                    <span class="mr-2">🇮🇳</span> Hindi
+                                </a>
+                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="tr">
+                                    <span class="mr-2">🇹🇷</span> Turkish
+                                </a>
+                            </div>
+                        </div>
                         
                         <button id="mobile-theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                             <i class="fas fa-moon dark:hidden"></i>
@@ -285,7 +359,7 @@
     <section class="hero-bg min-h-screen flex items-center justify-center relative pt-20">
         <!-- Video Background -->
         <video autoplay muted loop class="video-background">
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-group-of-african-children-playing-in-dust-44514-large.mp4" type="video/mp4">
+            <source src="-" type="video/mp4">
             Your browser does not support the video tag.
         </video>
         
@@ -501,44 +575,133 @@
         </div>
     </div>
 
-    <!-- Login Modal -->
+    <!-- Login/Signup Modal -->
     <div id="login-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold login-title">Login / Sign Up</h3>
+                <h3 class="text-2xl font-bold login-title">Create Account</h3>
                 <button id="close-modal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
-            <p class="text-gray-600 dark:text-gray-300 mb-6 login-subtitle">Select your role to continue</p>
-            
-            <div class="space-y-4 mb-6">
-                <button class="w-full p-4 border-2 border-blue-500 rounded-xl text-blue-500 font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors login-donor-btn">
-                    <i class="fas fa-user mr-2"></i> I am a Donor
-                </button>
-                <button class="w-full p-4 border-2 border-green-500 rounded-xl text-green-500 font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors login-ngo-btn">
-                    <i class="fas fa-building mr-2"></i> I am an NGO / Organization
-                </button>
+            <!-- Step 1: Role Selection -->
+            <div class="form-step active" id="step-role">
+                <p class="text-gray-600 dark:text-gray-300 mb-6 login-subtitle">Select your role to continue</p>
+                
+                <div class="space-y-4 mb-6">
+                    <button class="w-full p-4 border-2 border-blue-500 rounded-xl text-blue-500 font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors next-step" data-step="step-account-type">
+                        <i class="fas fa-user mr-2"></i> I am a Donor
+                    </button>
+                    <button class="w-full p-4 border-2 border-green-500 rounded-xl text-green-500 font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors next-step" data-step="step-account-type">
+                        <i class="fas fa-building mr-2"></i> I am an NGO / Organization
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <p class="text-gray-500 dark:text-gray-400">
+                        Already have an account? 
+                        <button class="text-blue-500 hover:underline switch-to-login">Sign In</button>
+                    </p>
+                </div>
             </div>
             
-            <div class="text-center mb-6">
-                <p class="text-gray-500 dark:text-gray-400 text-sm login-social-text">Or continue with</p>
+            <!-- Step 2: Account Type -->
+            <div class="form-step" id="step-account-type">
+                <p class="text-gray-600 dark:text-gray-300 mb-6">How would you like to create your account?</p>
+                
+                <div class="space-y-4 mb-6">
+                    <button class="w-full p-4 border-2 border-blue-500 rounded-xl text-blue-500 font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors next-step" data-step="step-email">
+                        <i class="fas fa-envelope mr-2"></i> Use Email Address
+                    </button>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors social-login" data-provider="google">
+                            <i class="fab fa-google text-red-500 mr-2"></i> Continue with Google
+                        </button>
+                        <button class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors social-login" data-provider="github">
+                            <i class="fab fa-github text-gray-800 dark:text-white mr-2"></i> Continue with GitHub
+                        </button>
+                        <button class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors social-login" data-provider="facebook">
+                            <i class="fab fa-facebook text-blue-600 mr-2"></i> Continue with Facebook
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button class="text-blue-500 hover:underline prev-step" data-step="step-role">
+                        <i class="fas fa-arrow-left mr-1"></i> Back
+                    </button>
+                </div>
             </div>
             
-            <div class="flex justify-center space-x-4 mb-6">
-                <button class="social-login p-3 border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-provider="google">
-                    <i class="fab fa-google text-red-500"></i>
-                </button>
-                <button class="social-login p-3 border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-provider="github">
-                    <i class="fab fa-github text-gray-800 dark:text-white"></i>
-                </button>
-                <button class="social-login p-3 border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-provider="facebook">
-                    <i class="fab fa-facebook text-blue-600"></i>
-                </button>
+            <!-- Step 3: Email Registration -->
+            <div class="form-step" id="step-email">
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Create your account with email</p>
+                
+                <form id="email-registration">
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Enter your full name" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                            <input type="email" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Enter your email" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <input type="password" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Create a password" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg font-bold hover:shadow-lg transition-all mb-4">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div class="text-center">
+                    <button class="text-blue-500 hover:underline prev-step" data-step="step-account-type">
+                        <i class="fas fa-arrow-left mr-1"></i> Back
+                    </button>
+                </div>
             </div>
             
-            <div class="text-center">
+            <!-- Login Form -->
+            <div class="form-step" id="step-login">
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Sign in to your account</p>
+                
+                <form id="login-form">
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                            <input type="email" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Enter your email" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <input type="password" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg font-bold hover:shadow-lg transition-all mb-4">
+                        Sign In
+                    </button>
+                </form>
+                
+                <div class="text-center mb-4">
+                    <button class="text-blue-500 hover:underline switch-to-signup">
+                        Don't have an account? Sign up
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <button class="text-blue-500 hover:underline prev-step" data-step="step-role">
+                        <i class="fas fa-arrow-left mr-1"></i> Back to role selection
+                    </button>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
                 <p class="text-gray-500 dark:text-gray-400 text-sm login-security-text">
                     <i class="fas fa-shield-alt mr-1"></i> Secure by SSL / Verified Platform
                 </p>
@@ -578,9 +741,15 @@
         // Mobile Menu Toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLanguageDropdown = document.getElementById('mobile-language-dropdown');
         
         mobileMenuButton.addEventListener('click', function() {
             mobileMenu.classList.toggle('hidden');
+        });
+
+        // Mobile Language Dropdown
+        document.querySelector('#mobile-current-language').parentElement.addEventListener('click', function() {
+            mobileLanguageDropdown.classList.toggle('hidden');
         });
 
         // Navbar Scroll Effect
@@ -635,21 +804,92 @@
                 return;
             }
             
-            alert(`Thank you for your donation of $${selectedAmount} via ${paymentMethod}!`);
+            // In a real application, this would connect to a payment processor
+            // For demonstration, we'll simulate a successful donation
+            alert(`Thank you for your donation of $${selectedAmount} via ${paymentMethod}! Your contribution has been sent directly to our humanitarian fund.`);
             donationModal.classList.add('hidden');
+            
+            // Reset form
+            donationAmounts.forEach(btn => btn.classList.remove('bg-blue-500', 'text-white', 'border-blue-500'));
+            customAmount.value = '';
         });
 
-        // Login Modal
+        // Login/Signup Modal
         const authButton = document.getElementById('auth-button');
         const loginModal = document.getElementById('login-modal');
         const closeModal = document.getElementById('close-modal');
         const socialLoginButtons = document.querySelectorAll('.social-login');
+        const nextStepButtons = document.querySelectorAll('.next-step');
+        const prevStepButtons = document.querySelectorAll('.prev-step');
+        const switchToLogin = document.querySelector('.switch-to-login');
+        const switchToSignup = document.querySelector('.switch-to-signup');
+        const emailRegistrationForm = document.getElementById('email-registration');
+        const loginForm = document.getElementById('login-form');
         
         authButton.addEventListener('click', function() {
             loginModal.classList.remove('hidden');
+            showStep('step-role');
         });
         
         closeModal.addEventListener('click', function() {
+            loginModal.classList.add('hidden');
+        });
+        
+        // Form step navigation
+        nextStepButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const nextStep = this.dataset.step;
+                showStep(nextStep);
+            });
+        });
+        
+        prevStepButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const prevStep = this.dataset.step;
+                showStep(prevStep);
+            });
+        });
+        
+        switchToLogin.addEventListener('click', function() {
+            showStep('step-login');
+        });
+        
+        switchToSignup.addEventListener('click', function() {
+            showStep('step-role');
+        });
+        
+        function showStep(stepId) {
+            // Hide all steps
+            document.querySelectorAll('.form-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show the selected step
+            document.getElementById(stepId).classList.add('active');
+        }
+        
+        // Social login buttons
+        socialLoginButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const provider = this.dataset.provider;
+                // In a real application, this would redirect to OAuth flow
+                alert(`Redirecting to ${provider} authentication...\n\nIn a real application, this would connect to ${provider} OAuth service.`);
+            });
+        });
+        
+        // Email registration form
+        emailRegistrationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // In a real application, this would send data to a backend
+            alert('Account created successfully! Welcome to GlobalAid.');
+            loginModal.classList.add('hidden');
+        });
+        
+        // Login form
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // In a real application, this would authenticate with a backend
+            alert('Successfully signed in! Welcome back.');
             loginModal.classList.add('hidden');
         });
         
@@ -665,21 +905,13 @@
                 loginModal.classList.add('hidden');
             }
         });
-        
-        socialLoginButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const provider = this.dataset.provider;
-                alert(`Redirecting to ${provider} authentication...`);
-                // In a real application, you would redirect to the OAuth flow here
-            });
-        });
 
         // Language Switching System
         const languageOptions = document.querySelectorAll('.language-option');
         const currentLanguageElement = document.getElementById('current-language');
         const mobileCurrentLanguageElement = document.getElementById('mobile-current-language');
         
-        // Translation dictionary
+        // Translation dictionary with 12 languages
         const translations = {
             en: {
                 // Navbar
@@ -715,18 +947,13 @@
                 'donationMethod': 'Payment Method',
                 'donationConfirm': 'Donate Now',
                 // Login Modal
-                'loginTitle': 'Login / Sign Up',
+                'loginTitle': 'Create Account',
                 'loginSubtitle': 'Select your role to continue',
-                'loginDonor': 'I am a Donor',
-                'loginNGO': 'I am an NGO / Organization',
-                'loginSocial': 'Or continue with',
                 'loginSecurity': 'Secure by SSL / Verified Platform'
             },
             fr: {
-                // Navbar
                 'login': 'Connexion / Inscription',
                 'donate': 'Faire un Don',
-                // Hero Section
                 'heroTitle': 'Autonomiser l\'Humanité par un Don Transparent',
                 'heroSubtitle': 'Suivez chaque don. Témoignez de chaque impact. Rejoignez une nouvelle ère de l\'action humanitaire.',
                 'explore': 'Explorer les Causes',
@@ -735,7 +962,6 @@
                 'stats3': 'Campagnes Actives',
                 'stats4': 'Score de Transparence',
                 'trust': 'De confiance par les organisations leaders mondiales',
-                // How It Works
                 'howItWorksTitle': 'Comment ça Marche',
                 'howItWorksSubtitle': 'Notre processus transparent garantit que votre don a le maximum d\'impact',
                 'step1Title': 'Explorez des Causes Vérifiées',
@@ -750,65 +976,17 @@
                 'step4Title': 'Recevez un Certificat et des Mises à Jour',
                 'step4Desc': 'Obtenez un certificat personnalisé, partagez votre impact et recevez de vraies histoires montrant les vies que vous avez changées.',
                 'step4Badge': 'Certificat d\'Impact',
-                // Donation Modal
                 'donationTitle': 'Faire un Don',
                 'donationAmount': 'Montant du Don',
                 'donationMethod': 'Méthode de Paiement',
                 'donationConfirm': 'Faire un Don',
-                // Login Modal
-                'loginTitle': 'Connexion / Inscription',
+                'loginTitle': 'Créer un Compte',
                 'loginSubtitle': 'Sélectionnez votre rôle pour continuer',
-                'loginDonor': 'Je suis un Donateur',
-                'loginNGO': 'Je suis une ONG / Organisation',
-                'loginSocial': 'Ou continuer avec',
                 'loginSecurity': 'Sécurisé par SSL / Plateforme Vérifiée'
             },
-            ar: {
-                // Navbar
-                'login': 'تسجيل الدخول / الاشتراك',
-                'donate': 'تبرع الآن',
-                // Hero Section
-                'heroTitle': 'تمكين الإنسانية من خلال العطاء الشفاف',
-                'heroSubtitle': 'تتبع كل تبرع. شاهد كل تأثير. انضم إلى عصر جديد من العمل الإنساني.',
-                'explore': 'استكشاف القضايا',
-                'stats1': 'الأرواح المتأثرة',
-                'stats2': 'إجمالي المتبرعين',
-                'stats3': 'الحملات النشطة',
-                'stats4': 'درجة الشفافية',
-                'trust': 'موثوق به من قبل المنظمات الرائدة عالمياً',
-                // How It Works
-                'howItWorksTitle': 'كيف يعمل',
-                'howItWorksSubtitle': 'ضمان عمليةنا الشفافة أقصى تأثير لتبرعك',
-                'step1Title': 'استكشف القضايا الموثوقة',
-                'step1Desc': 'اختر من بين الحملات الم verified 100٪ في الصحة والجوع والتعليم والإغاثة في حالات الكوارث وغير ذلك.',
-                'step1Badge': 'تم التحقق منه من قبل الشبكة العالمية للمنظمات غير الحكومية',
-                'step2Title': 'قم بتبرع آمن',
-                'step2Desc': 'تبرع باستخدام فيزا، PayPal، Mobile Money، Apple Pay، أو Crypto مع تشفير من طرف إلى طرف.',
-                'step2Badge': 'آمن 100٪ • 0٪ مخاطر الاحتيال',
-                'step3Title': 'تتبع تأثيرك مباشرة',
-                'step3Desc': 'اتبع تبرعك من لحظة إرساله حتى يصل إلى المستفيد في الوقت الفعلي.',
-                'step3Badge': 'التتبع في الوقت الحقيقي',
-                'step4Title': 'احصل على شهادة وتحديثات',
-                'step4Desc': 'احصل على شهادة شخصية ، وشارك تأثيرك ، واستقبل قصص حقيقية تظهر الأرواح التي غيرتها.',
-                'step4Badge': 'شهادة التأثير',
-                // Donation Modal
-                'donationTitle': 'تقديم تبرع',
-                'donationAmount': 'مبلغ التبرع',
-                'donationMethod': 'طريقة الدفع',
-                'donationConfirm': 'تبرع الآن',
-                // Login Modal
-                'loginTitle': 'تسجيل الدخول / الاشتراك',
-                'loginSubtitle': 'حدد دورك للمتابعة',
-                'loginDonor': 'أنا متبرع',
-                'loginNGO': 'أنا منظمة غير حكومية / منظمة',
-                'loginSocial': 'أو المتابعة باستخدام',
-                'loginSecurity': 'مؤمن بواسطة SSL / منصة verified'
-            },
             es: {
-                // Navbar
                 'login': 'Iniciar Sesión / Registrarse',
                 'donate': 'Donar Ahora',
-                // Hero Section
                 'heroTitle': 'Empoderando a la Humanidad a través de Donaciones Transparentes',
                 'heroSubtitle': 'Rastrea cada donación. Atestigua cada impacto. Únete a una nueva era de acción humanitaria.',
                 'explore': 'Explorar Causas',
@@ -817,7 +995,6 @@
                 'stats3': 'Campañas Activas',
                 'stats4': 'Puntuación de Transparencia',
                 'trust': 'Con la confianza de las principales organizaciones mundiales',
-                // How It Works
                 'howItWorksTitle': 'Cómo Funciona',
                 'howItWorksSubtitle': 'Nuestro proceso transparente asegura que tu donación tenga el máximo impacto',
                 'step1Title': 'Explora Causas Verificadas',
@@ -832,18 +1009,310 @@
                 'step4Title': 'Recibe Certificado y Actualizaciones',
                 'step4Desc': 'Obtén un certificado personalizado, comparte tu impacto y recibe historias reales que muestran las vidas que has cambiado.',
                 'step4Badge': 'Certificado de Impacto',
-                // Donation Modal
                 'donationTitle': 'Hacer una Donación',
                 'donationAmount': 'Monto de Donación',
                 'donationMethod': 'Método de Pago',
                 'donationConfirm': 'Donar Ahora',
-                // Login Modal
-                'loginTitle': 'Iniciar Sesión / Registrarse',
+                'loginTitle': 'Crear Cuenta',
                 'loginSubtitle': 'Selecciona tu rol para continuar',
-                'loginDonor': 'Soy un Donante',
-                'loginNGO': 'Soy una ONG / Organización',
-                'loginSocial': 'O continuar con',
                 'loginSecurity': 'Seguro por SSL / Plataforma Verificada'
+            },
+            de: {
+                'login': 'Anmelden / Registrieren',
+                'donate': 'Jetzt Spenden',
+                'heroTitle': 'Menschen durch transparentes Geben stärken',
+                'heroSubtitle': 'Verfolgen Sie jede Spende. Sehen Sie jede Wirkung. Werden Sie Teil einer neuen Ära der humanitären Hilfe.',
+                'explore': 'Ursachen erkunden',
+                'stats1': 'Betroffene Leben',
+                'stats2': 'Gesamtspender',
+                'stats3': 'Aktive Kampagnen',
+                'stats4': 'Transparenz-Score',
+                'trust': 'Vertraut von führenden Organisationen weltweit',
+                'howItWorksTitle': 'So funktioniert es',
+                'howItWorksSubtitle': 'Unser transparenter Prozess stellt sicher, dass Ihre Spende maximale Wirkung erzielt',
+                'step1Title': 'Geprüfte Ursachen erkunden',
+                'step1Desc': 'Wählen Sie aus 100% geprüften Kampagnen in den Bereichen Gesundheit, Hunger, Bildung, Katastrophenhilfe und mehr.',
+                'step1Badge': 'Geprüft vom Globalen NGO-Netzwerk',
+                'step2Title': 'Sichere Spende tätigen',
+                'step2Desc': 'Spenden Sie mit Visa, PayPal, Mobile Money, Apple Pay oder Krypto mit End-to-End-Verschlüsselung.',
+                'step2Badge': '100% Sicher • 0% Betrugsrisiko',
+                'step3Title': 'Ihre Wirkung live verfolgen',
+                'step3Desc': 'Verfolgen Sie Ihre Spende vom Moment des Versands bis sie den Begünstigten in Echtzeit erreicht.',
+                'step3Badge': 'Echtzeit-Verfolgung',
+                'step4Title': 'Zertifikat & Updates erhalten',
+                'step4Desc': 'Erhalten Sie ein personalisiertes Zertifikat, teilen Sie Ihre Wirkung und erhalten Sie echte Geschichten, die zeigen, welche Leben Sie verändert haben.',
+                'step4Badge': 'Wirkungszertifikat',
+                'donationTitle': 'Spenden tätigen',
+                'donationAmount': 'Spendenbetrag',
+                'donationMethod': 'Zahlungsmethode',
+                'donationConfirm': 'Jetzt spenden',
+                'loginTitle': 'Konto erstellen',
+                'loginSubtitle': 'Wählen Sie Ihre Rolle, um fortzufahren',
+                'loginSecurity': 'Sicher durch SSL / Verifizierte Plattform'
+            },
+            it: {
+                'login': 'Accedi / Registrati',
+                'donate': 'Dona Ora',
+                'heroTitle': 'Migliorare l\'Umanità Attraverso Donazioni Trasparenti',
+                'heroSubtitle': 'Traccia ogni donazione. Testimonia ogni impatto. Unisciti a una nuova era di azione umanitaria.',
+                'explore': 'Esplora le Cause',
+                'stats1': 'Vite Influenzate',
+                'stats2': 'Donatori Totali',
+                'stats3': 'Campagne Attive',
+                'stats4': 'Punteggio di Trasparenza',
+                'trust': 'Fidati delle principali organizzazioni mondiali',
+                'howItWorksTitle': 'Come Funziona',
+                'howItWorksSubtitle': 'Il nostro processo trasparente garantisce che la tua donazione abbia il massimo impatto',
+                'step1Title': 'Esplora Cause Verificate',
+                'step1Desc': 'Scegli tra campagne verificate al 100% in salute, fame, educazione, soccorso in caso di calamità e altro ancora.',
+                'step1Badge': 'Verificato dalla Rete Globale delle ONG',
+                'step2Title': 'Fai una Donazione Sicura',
+                'step2Desc': 'Dona utilizzando Visa, PayPal, Mobile Money, Apple Pay o Crypto con crittografia end-to-end.',
+                'step2Badge': '100% Sicuro • 0% Rischio di Frode',
+                'step3Title': 'Traccia il Tuo Impatto in Diretta',
+                'step3Desc': 'Segui la tua donazione dal momento in cui viene inviata fino a quando raggiunge il beneficiario in tempo reale.',
+                'step3Badge': 'Tracciamento in Tempo Reale',
+                'step4Title': 'Ricevi Certificato e Aggiornamenti',
+                'step4Desc': 'Ottieni un certificato personalizzato, condividi il tuo impatto e ricevi storie reali che mostrano le vite che hai cambiato.',
+                'step4Badge': 'Certificato di Impatto',
+                'donationTitle': 'Fai una Donazione',
+                'donationAmount': 'Importo della Donazione',
+                'donationMethod': 'Metodo di Pagamento',
+                'donationConfirm': 'Dona Ora',
+                'loginTitle': 'Crea Account',
+                'loginSubtitle': 'Seleziona il tuo ruolo per continuare',
+                'loginSecurity': 'Sicuro tramite SSL / Piattaforma Verificata'
+            },
+            pt: {
+                'login': 'Entrar / Cadastrar',
+                'donate': 'Doe Agora',
+                'heroTitle': 'Capacitando a Humanidade Através de Doações Transparentes',
+                'heroSubtitle': 'Acompanhe cada doação. Testemunhe cada impacto. Junte-se a uma nova era de ação humanitária.',
+                'explore': 'Explorar Causas',
+                'stats1': 'Vidas Impactadas',
+                'stats2': 'Doadores Totais',
+                'stats3': 'Campanhas Ativas',
+                'stats4': 'Pontuação de Transparência',
+                'trust': 'Confiado pelas principais organizações mundiais',
+                'howItWorksTitle': 'Como Funciona',
+                'howItWorksSubtitle': 'Nosso processo transparente garante que sua doação tenha o máximo impacto',
+                'step1Title': 'Explore Causas Verificadas',
+                'step1Desc': 'Escolha entre campanhas 100% verificadas em saúde, fome, educação, ajuda em desastres e muito mais.',
+                'step1Badge': 'Verificado pela Rede Global de ONGs',
+                'step2Title': 'Faça uma Doação Segura',
+                'step2Desc': 'Doe usando Visa, PayPal, Mobile Money, Apple Pay ou Cripto com criptografia de ponta a ponta.',
+                'step2Badge': '100% Seguro • 0% Risco de Fraude',
+                'step3Title': 'Acompanhe Seu Impacto Ao Vivo',
+                'step3Desc': 'Acompanhe sua doação desde o momento em que é enviada até chegar ao beneficiário em tempo real.',
+                'step3Badge': 'Acompanhamento em Tempo Real',
+                'step4Title': 'Receba Certificado e Atualizações',
+                'step4Desc': 'Obtenha um certificado personalizado, compartilhe seu impacto e receba histórias reais mostrando as vidas que você mudou.',
+                'step4Badge': 'Certificado de Impacto',
+                'donationTitle': 'Fazer uma Doação',
+                'donationAmount': 'Valor da Doação',
+                'donationMethod': 'Método de Pagamento',
+                'donationConfirm': 'Doe Agora',
+                'loginTitle': 'Criar Conta',
+                'loginSubtitle': 'Selecione sua função para continuar',
+                'loginSecurity': 'Seguro por SSL / Plataforma Verificada'
+            },
+            ru: {
+                'login': 'Войти / Зарегистрироваться',
+                'donate': 'Пожертвовать',
+                'heroTitle': 'Расширение возможностей человечества через прозрачные пожертвования',
+                'heroSubtitle': 'Отслеживайте каждое пожертвование. Станьте свидетелем каждого воздействия. Присоединяйтесь к новой эре гуманитарной деятельности.',
+                'explore': 'Исследовать причины',
+                'stats1': 'Затронутые жизни',
+                'stats2': 'Всего доноров',
+                'stats3': 'Активные кампании',
+                'stats4': 'Оценка прозрачности',
+                'trust': 'Доверяют ведущие мировые организации',
+                'howItWorksTitle': 'Как это работает',
+                'howItWorksSubtitle': 'Наш прозрачный процесс гарантирует, что ваше пожертвование окажет максимальное воздействие',
+                'step1Title': 'Изучите проверенные причины',
+                'step1Desc': 'Выбирайте из 100% проверенных кампаний в области здравоохранения, голода, образования, помощи при стихийных бедствиях и многого другого.',
+                'step1Badge': 'Проверено Глобальной сетью НПО',
+                'step2Title': 'Сделайте безопасное пожертвование',
+                'step2Desc': 'Пожертвуйте с помощью Visa, PayPal, Mobile Money, Apple Pay или Crypto со сквозным шифрованием.',
+                'step2Badge': '100% Безопасно • 0% Риска мошенничества',
+                'step3Title': 'Отслеживайте свое влияние в реальном времени',
+                'step3Desc': 'Следите за своим пожертвованием с момента отправки до получения бенефициаром в реальном времени.',
+                'step3Badge': 'Отслеживание в реальном времени',
+                'step4Title': 'Получите сертификат и обновления',
+                'step4Desc': 'Получите персонализированный сертификат, поделитесь своим влиянием и получайте реальные истории, показывающие жизни, которые вы изменили.',
+                'step4Badge': 'Сертификат о воздействии',
+                'donationTitle': 'Сделать пожертвование',
+                'donationAmount': 'Сумма пожертвования',
+                'donationMethod': 'Способ оплаты',
+                'donationConfirm': 'Пожертвовать сейчас',
+                'loginTitle': 'Создать аккаунт',
+                'loginSubtitle': 'Выберите свою роль, чтобы продолжить',
+                'loginSecurity': 'Защищено SSL / Проверенная платформа'
+            },
+            zh: {
+                'login': '登录 / 注册',
+                'donate': '立即捐款',
+                'heroTitle': '通过透明捐赠赋予人类力量',
+                'heroSubtitle': '追踪每笔捐款。见证每次影响。加入人道主义行动的新时代。',
+                'explore': '探索事业',
+                'stats1': '受影响的生命',
+                'stats2': '总捐赠者',
+                'stats3': '活跃活动',
+                'stats4': '透明度得分',
+                'trust': '受全球领先组织信任',
+                'howItWorksTitle': '运作方式',
+                'howItWorksSubtitle': '我们的透明流程确保您的捐赠产生最大影响',
+                'step1Title': '探索已验证的事业',
+                'step1Desc': '从健康、饥饿、教育、灾难救援等领域的100%验证活动中选择。',
+                'step1Badge': '经全球非政府组织网络验证',
+                'step2Title': '进行安全捐赠',
+                'step2Desc': '使用Visa、PayPal、移动货币、Apple Pay或加密货币进行捐赠，采用端到端加密。',
+                'step2Badge': '100% 安全 • 0% 欺诈风险',
+                'step3Title': '实时追踪您的影响',
+                'step3Desc': '从发送捐款到受益人收到捐款，实时跟踪您的捐款。',
+                'step3Badge': '实时追踪',
+                'step4Title': '接收证书和更新',
+                'step4Desc': '获取个性化证书，分享您的影响，并接收展示您改变的生命真实故事。',
+                'step4Badge': '影响证书',
+                'donationTitle': '进行捐赠',
+                'donationAmount': '捐赠金额',
+                'donationMethod': '支付方式',
+                'donationConfirm': '立即捐款',
+                'loginTitle': '创建账户',
+                'loginSubtitle': '选择您的角色继续',
+                'loginSecurity': '通过SSL保护 / 已验证平台'
+            },
+            ja: {
+                'login': 'ログイン / サインアップ',
+                'donate': '今すぐ寄付',
+                'heroTitle': '透明性のある寄付を通じて人類に力を与える',
+                'heroSubtitle': 'すべての寄付を追跡。すべての影響を目撃。人道支援の新時代に参加しましょう。',
+                'explore': '原因を探る',
+                'stats1': '影響を受けた命',
+                'stats2': '寄付者総数',
+                'stats3': '活動中のキャンペーン',
+                'stats4': '透明性スコア',
+                'trust': '世界の主要組織に信頼されています',
+                'howItWorksTitle': '仕組み',
+                'howItWorksSubtitle': '私たちの透明性のあるプロセスにより、あなたの寄付が最大の影響を与えることが保証されます',
+                'step1Title': '検証済みの原因を探る',
+                'step1Desc': '健康、飢餓、教育、災害救援などの100％検証済みキャンペーンから選択できます。',
+                'step1Badge': 'グローバルNGOネットワークによって検証済み',
+                'step2Title': '安全な寄付を行う',
+                'step2Desc': 'Visa、PayPal、モバイルマネー、Apple Pay、または暗号通貨を使用して、エンドツーエンドの暗号化で寄付します。',
+                'step2Badge': '100％安全 • 0％詐欺リスク',
+                'step3Title': 'あなたの影響をライブで追跡',
+                'step3Desc': '寄付が送信された瞬間から受益者に届くまでをリアルタイムで追跡します。',
+                'step3Badge': 'リアルタイム追跡',
+                'step4Title': '証明書と更新を受け取る',
+                'step4Desc': 'パーソナライズされた証明書を取得し、あなたの影響を共有し、あなたが変えた人生を示す実際の物語を受け取ります。',
+                'step4Badge': '影響証明書',
+                'donationTitle': '寄付を行う',
+                'donationAmount': '寄付金額',
+                'donationMethod': '支払い方法',
+                'donationConfirm': '今すぐ寄付',
+                'loginTitle': 'アカウントを作成',
+                'loginSubtitle': '続行するにはあなたの役割を選択してください',
+                'loginSecurity': 'SSLで保護 / 検証済みプラットフォーム'
+            },
+            ar: {
+                'login': 'تسجيل الدخول / الاشتراك',
+                'donate': 'تبرع الآن',
+                'heroTitle': 'تمكين الإنسانية من خلال العطاء الشفاف',
+                'heroSubtitle': 'تتبع كل تبرع. شاهد كل تأثير. انضم إلى عصر جديد من العمل الإنساني.',
+                'explore': 'استكشاف القضايا',
+                'stats1': 'الأرواح المتأثرة',
+                'stats2': 'إجمالي المتبرعين',
+                'stats3': 'الحملات النشطة',
+                'stats4': 'درجة الشفافية',
+                'trust': 'موثوق به من قبل المنظمات الرائدة عالمياً',
+                'howItWorksTitle': 'كيف يعمل',
+                'howItWorksSubtitle': 'ضمان عمليةنا الشفافة أقصى تأثير لتبرعك',
+                'step1Title': 'استكشف القضايا الموثوقة',
+                'step1Desc': 'اختر من بين الحملات الم verified 100٪ في الصحة والجوع والتعليم والإغاثة في حالات الكوارث وغير ذلك.',
+                'step1Badge': 'تم التحقق منه من قبل الشبكة العالمية للمنظمات غير الحكومية',
+                'step2Title': 'قم بتبرع آمن',
+                'step2Desc': 'تبرع باستخدام فيزا، PayPal، Mobile Money، Apple Pay، أو Crypto مع تشفير من طرف إلى طرف.',
+                'step2Badge': 'آمن 100٪ • 0٪ مخاطر الاحتيال',
+                'step3Title': 'تتبع تأثيرك مباشرة',
+                'step3Desc': 'اتبع تبرعك من لحظة إرساله حتى يصل إلى المستفيد في الوقت الفعلي.',
+                'step3Badge': 'التتبع في الوقت الحقيقي',
+                'step4Title': 'احصل على شهادة وتحديثات',
+                'step4Desc': 'احصل على شهادة شخصية ، وشارك تأثيرك ، واستقبل قصص حقيقية تظهر الأرواح التي غيرتها.',
+                'step4Badge': 'شهادة التأثير',
+                'donationTitle': 'تقديم تبرع',
+                'donationAmount': 'مبلغ التبرع',
+                'donationMethod': 'طريقة الدفع',
+                'donationConfirm': 'تبرع الآن',
+                'loginTitle': 'إنشاء حساب',
+                'loginSubtitle': 'حدد دورك للمتابعة',
+                'loginSecurity': 'مؤمن بواسطة SSL / منصة verified'
+            },
+            hi: {
+                'login': 'लॉग इन / साइन अप',
+                'donate': 'अभी दान करें',
+                'heroTitle': 'पारदर्शी दान के माध्यम से मानवता को सशक्त बनाना',
+                'heroSubtitle': 'हर दान को ट्रैक करें। हर प्रभाव को देखें। मानवीय कार्रवाई के एक नए युग में शामिल हों।',
+                'explore': 'कारणों का अन्वेषण करें',
+                'stats1': 'प्रभावित जीवन',
+                'stats2': 'कुल दाता',
+                'stats3': 'सक्रिय अभियान',
+                'stats4': 'पारदर्शिता स्कोर',
+                'trust': 'दुनिया भर की प्रमुख संस्थाओं द्वारा विश्वसनीय',
+                'howItWorksTitle': 'यह कैसे काम करता है',
+                'howItWorksSubtitle': 'हमारी पारदर्शी प्रक्रिया सुनिश्चित करती है कि आपका दान अधिकतम प्रभाव डाले',
+                'step1Title': 'सत्यापित कारणों का अन्वेषण करें',
+                'step1Desc': 'स्वास्थ्य, भूख, शिक्षा, आपदा राहत और अधिक में 100% सत्यापित अभियानों में से चुनें।',
+                'step1Badge': 'वैश्विक एनजीओ नेटवर्क द्वारा सत्यापित',
+                'step2Title': 'एक सुरक्षित दान करें',
+                'step2Desc': 'एंड-टू-एंड एन्क्रिप्शन के साथ वीज़ा, पेपैल, मोबाइल मनी, एप्पल पे या क्रिप्टो का उपयोग करके दान करें।',
+                'step2Badge': '100% सुरक्षित • 0% धोखाधड़ी जोखिम',
+                'step3Title': 'अपने प्रभाव को लाइव ट्रैक करें',
+                'step3Desc': 'अपने दान को उस समय से ट्रैक करें जब इसे भेजा जाता है जब तक कि यह वास्तविक समय में लाभार्थी तक पहुंचता है।',
+                'step3Badge': 'रीयल-टाइम ट्रैकिंग',
+                'step4Title': 'प्रमाणपत्र और अपडेट प्राप्त करें',
+                'step4Desc': 'एक व्यक्तिगत प्रमाणपत्र प्राप्त करें, अपने प्रभाव को साझा करें, और वास्तविक कहानियां प्राप्त करें जो उन जीवनों को दिखाती हैं जिन्हें आपने बदला है।',
+                'step4Badge': 'प्रभाव प्रमाणपत्र',
+                'donationTitle': 'दान करें',
+                'donationAmount': 'दान राशि',
+                'donationMethod': 'भुगतान विधि',
+                'donationConfirm': 'अभी दान करें',
+                'loginTitle': 'खाता बनाएं',
+                'loginSubtitle': 'जारी रखने के लिए अपनी भूमिका चुनें',
+                'loginSecurity': 'एसएसएल द्वारा सुरक्षित / सत्यापित प्लेटफ़ॉर्म'
+            },
+            tr: {
+                'login': 'Giriş Yap / Kayıt Ol',
+                'donate': 'Şimdi Bağış Yap',
+                'heroTitle': 'Şeffaf Bağışlarla İnsanlığı Güçlendirmek',
+                'heroSubtitle': 'Her bağışı takip edin. Her etkiyi görün. İnsani eylemin yeni bir çağına katılın.',
+                'explore': 'Nedenleri Keşfedin',
+                'stats1': 'Etkilenen Yaşamlar',
+                'stats2': 'Toplam Bağışçı',
+                'stats3': 'Aktif Kampanyalar',
+                'stats4': 'Şeffaflık Skoru',
+                'trust': 'Dünya çapındaki önde gelen kuruluşlar tarafından güvenilir',
+                'howItWorksTitle': 'Nasıl Çalışır',
+                'howItWorksSubtitle': 'Şeffaf sürecimiz, bağışınızın maksimum etkiye sahip olmasını sağlar',
+                'step1Title': 'Doğrulanmış Nedenleri Keşfedin',
+                'step1Desc': 'Sağlık, açlık, eğitim, afet yardımı ve daha fazlasında %100 doğrulanmış kampanyalar arasından seçim yapın.',
+                'step1Badge': 'Küresel STK Ağı Tarafından Doğrulandı',
+                'step2Title': 'Güvenli Bir Bağış Yapın',
+                'step2Desc': 'Uçtan uca şifreleme ile Visa, PayPal, Mobile Money, Apple Pay veya Crypto kullanarak bağış yapın.',
+                'step2Badge': '%100 Güvenli • %0 Dolandırıcılık Riski',
+                'step3Title': 'Etkinizi Canlı Olarak İzleyin',
+                'step3Desc': 'Bağışınızı gönderildiği andan itibaren gerçek zamanlı olarak faydalanıcıya ulaşana kadar takip edin.',
+                'step3Badge': 'Gerçek Zamanlı Takip',
+                'step4Title': 'Sertifika ve Güncellemeler Alın',
+                'step4Desc': 'Kişiselleştirilmiş bir sertifika alın, etkinizi paylaşın ve değiştirdiğiniz yaşamları gösteren gerçek hikayeler alın.',
+                'step4Badge': 'Etki Sertifikası',
+                'donationTitle': 'Bağış Yap',
+                'donationAmount': 'Bağış Miktarı',
+                'donationMethod': 'Ödeme Yöntemi',
+                'donationConfirm': 'Şimdi Bağış Yap',
+                'loginTitle': 'Hesap Oluştur',
+                'loginSubtitle': 'Devam etmek için rolünüzü seçin',
+                'loginSecurity': 'SSL ile Güvenli / Doğrulanmış Platform'
             }
         };
 
@@ -907,9 +1376,6 @@
             
             document.querySelector('.login-title').textContent = translation.loginTitle;
             document.querySelector('.login-subtitle').textContent = translation.loginSubtitle;
-            document.querySelector('.login-donor-btn').textContent = translation.loginDonor;
-            document.querySelector('.login-ngo-btn').textContent = translation.loginNGO;
-            document.querySelector('.login-social-text').textContent = translation.loginSocial;
             document.querySelector('.login-security-text').textContent = translation.loginSecurity;
             
             // Update current language display
@@ -938,6 +1404,9 @@
                         dropdown.classList.add('opacity-0', 'invisible');
                     }
                 });
+                
+                // Close mobile language dropdown
+                mobileLanguageDropdown.classList.add('hidden');
             });
         });
 
