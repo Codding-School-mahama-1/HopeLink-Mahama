@@ -3,1473 +3,1194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Aid Connect | Transparent Humanitarian Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>HopeLink Mahama - Connecting Refugees to Hope</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2A6DFF;
-            --secondary: #00A86B;
-            --accent: #FF6B35;
-            --dark: #1A1D29;
-            --light: #F8FAFC;
+        /* Reset and Base Styles */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
         }
         
-        body {
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+        body { 
+            font-family: 'Open Sans', sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: #f5f5f5;
+        }
+
+        /* Background Container */
+        #background-container { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1; 
+            overflow: hidden; 
         }
         
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Montserrat', sans-serif;
+        .background-image { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            filter: brightness(0.7);
         }
         
-        .navbar-scrolled {
-            background-color: rgba(255, 255, 255, 0.95);
+        .background-overlay { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)); 
+        }
+
+        /* Navigation */
+        .navbar { 
+            background: rgba(44, 62, 80, 0.9); 
+            padding: 15px 0; 
+            position: fixed; 
+            width: 100%; 
+            top: 0; 
+            z-index: 1000; 
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
         
-        .dark .navbar-scrolled {
-            background-color: rgba(26, 29, 41, 0.95);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        .nav-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 20px; 
         }
         
-        .pulse-donate {
-            animation: pulse 5s infinite;
+        .nav-logo a { 
+            color: white; 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            text-decoration: none; 
         }
         
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
-            }
+        .nav-menu { 
+            display: flex; 
+            gap: 20px; 
         }
         
-        .step-connector {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            z-index: 0;
+        .nav-link { 
+            color: white; 
+            text-decoration: none; 
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            transition: background 0.3s; 
+            font-weight: 500;
         }
         
-        .step-card {
-            transition: all 0.3s ease;
+        .nav-link:hover, .nav-link.active { 
+            background: rgba(255, 255, 255, 0.15); 
         }
         
-        .step-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        .dark .step-card:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .hero-bg {
+        .nav-dropdown {
             position: relative;
-            overflow: hidden;
         }
         
-        .video-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
-        
-        .dark .hero-bg::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: -1;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .dark .stat-number {
-            background: linear-gradient(90deg, #60A5FA, #34D399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .scroll-indicator {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-        }
-        
-        .nav-link {
-            position: relative;
-            padding: 0.5rem 0;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        .nav-link:hover {
-            color: var(--primary);
-        }
-        
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .dark .glass-effect {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .form-step {
+        .dropdown-content {
             display: none;
+            position: absolute;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            z-index: 1;
+            top: 100%;
+            left: 0;
         }
         
-        .form-step.active {
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
             display: block;
-            animation: fadeIn 0.5s ease;
+            transition: background 0.3s;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .dropdown-content a:hover {
+            background: #f5f5f5;
+        }
+        
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .nav-toggle { 
+            display: none; 
+            flex-direction: column; 
+            cursor: pointer; 
+        }
+        
+        .bar { 
+            width: 25px; 
+            height: 3px; 
+            background: white; 
+            margin: 3px 0; 
+            transition: 0.3s; 
+        }
+
+        /* Main Content */
+        .content-wrapper { 
+            position: relative; 
+            z-index: 1; 
+            background: rgba(255, 255, 255, 0.95); 
+            margin: 80px 20px 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); 
+            padding: 20px; 
+            flex: 1;
+        }
+
+        /* Hero Section */
+        .hero { 
+            padding: 60px 0; 
+            text-align: center; 
+        }
+        
+        .hero-content h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 1rem; 
+            color: #2c3e50; 
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #555;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-buttons { 
+            margin-top: 2rem; 
+        }
+        
+        .btn { 
+            display: inline-block; 
+            padding: 12px 30px; 
+            border-radius: 5px; 
+            text-decoration: none; 
+            font-weight: 600; 
+            transition: all 0.3s; 
+            margin: 0 10px; 
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary { 
+            background: #3498db; 
+            color: white; 
+        }
+        
+        .btn-primary:hover { 
+            background: #2980b9; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary { 
+            background: #e74c3c; 
+            color: white; 
+        }
+        
+        .btn-secondary:hover { 
+            background: #c0392b; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Stats Section */
+        .stats { 
+            padding: 60px 0; 
+            background: #f8f9fa; 
+            margin: 0 -20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+        
+        .stats h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+        
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 20px; 
+            margin-top: 40px; 
+        }
+        
+        .stat-item { 
+            text-align: center; 
+            padding: 30px 20px; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            transition: transform 0.3s;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number { 
+            font-size: 2.5rem; 
+            font-weight: 700; 
+            color: #2c3e50; 
+        }
+        
+        .stat-label { 
+            margin-top: 10px; 
+            color: #7f8c8d; 
+            font-weight: 500;
+        }
+
+        /* Services Section */
+        .services { 
+            padding: 80px 0; 
+        }
+        
+        .services h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+        
+        .services-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 30px; 
+            margin-top: 40px; 
+        }
+        
+        .service-card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            text-align: center; 
+            transition: transform 0.3s; 
+            border-top: 4px solid #3498db;
+        }
+        
+        .service-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .service-icon { 
+            font-size: 3rem; 
+            margin-bottom: 1rem; 
+        }
+        
+        .service-card h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .service-card p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+        
+        .btn-outline:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        /* Gallery Section */
+        .gallery { 
+            padding: 80px 0; 
+            background: #f8f9fa;
+            margin: 0 -20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        .gallery h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+        
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px; 
+            margin-top: 40px; 
+        }
+        
+        .gallery-item { 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 8px; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1); 
+            height: 300px;
+        }
+        
+        .gallery-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.5s; 
+        }
+        
+        .gallery-item:hover img { 
+            transform: scale(1.05); 
+        }
+        
+        .gallery-caption { 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: rgba(0,0,0,0.7); 
+            color: white; 
+            padding: 15px; 
+            transform: translateY(100%); 
+            transition: transform 0.3s; 
+        }
+        
+        .gallery-item:hover .gallery-caption { 
+            transform: translateY(0); 
+        }
+        
+        .gallery-caption h3 {
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        /* Emergency Alert */
+        .emergency-alert { 
+            background: #e74c3c; 
+            color: white; 
+            padding: 40px 0; 
+            text-align: center; 
+            margin: 0 -20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .alert-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .btn-emergency { 
+            background: white; 
+            color: #e74c3c; 
+            font-weight: 700; 
+            padding: 15px 30px; 
+            border-radius: 50px; 
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .btn-emergency:hover {
+            background: #f8f9fa;
+            transform: scale(1.05);
+        }
+
+        /* Donation Modal */
+        .donation-modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.7); 
+            z-index: 2000; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        
+        .donation-content { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            width: 90%; 
+            max-width: 500px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2); 
+            position: relative;
+        }
+        
+        .donation-close { 
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem; 
+            cursor: pointer; 
+            color: #7f8c8d;
+        }
+        
+        .donation-content h2 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .donation-content p {
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .donation-options { 
+            display: flex; 
+            gap: 10px; 
+            margin: 20px 0; 
+        }
+        
+        .donation-option { 
+            flex: 1; 
+            text-align: center; 
+            padding: 15px; 
+            border: 2px solid #3498db; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            font-weight: 600;
+        }
+        
+        .donation-option.selected { 
+            background: #3498db; 
+            color: white; 
+        }
+        
+        .donation-custom { 
+            width: 100%; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 1rem;
+        }
+        
+        .donation-frequency {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .donation-frequency label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .donation-submit { 
+            width: 100%; 
+            padding: 15px; 
+            background: #2ecc71; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 1.1rem; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .donation-submit:hover {
+            background: #27ae60;
+        }
+
+        /* Footer */
+        footer { 
+            background: #121315; 
+            color: #a7a7a7; 
+            margin-top: 40px;
+        }
+        
+        .footer-content { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr 1fr 2fr; 
+            padding: 2em 1em; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-section { 
+            padding: 0 2em; 
+        }
+        
+        footer h3, footer h4 { 
+            color: white; 
+            margin-bottom: 1rem; 
+        }
+        
+        footer h3 {
+            font-size: 1.4em;
+        }
+        
+        footer ul { 
+            list-style: none; 
+        }
+        
+        footer li { 
+            margin-bottom: 0.8em; 
+        }
+        
+        footer a { 
+            color: #a7a7a7; 
+            text-decoration: none; 
+            transition: color 0.3s;
+        }
+        
+        footer a:hover { 
+            color: #2a8ded; 
+        }
+        
+        .social { 
+            display: flex; 
+            gap: 15px;
+            font-size: 1.5em; 
+            margin-top: 0.5em; 
+        }
+        
+        .footer-bottom { 
+            padding: 1em; 
+            text-align: center; 
+            background: #25262e; 
+        }
+
+        /* Media Queries */
+        @media (max-width: 1024px) {
+            .stats-grid, .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(44, 62, 80, 0.95);
+                padding: 20px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-toggle {
+                display: flex;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid, .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: 80%;
+                max-width: 250px;
+            }
         }
     </style>
 </head>
-<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body>
+    <!-- Background Container -->
+    <div id="background-container">
+        <img class="background-image" src="https://images.unsplash.com/photo-1582213782119-d0417e20e861?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Mahama Camp Background">
+        <div class="background-overlay"></div>
+    </div>
+
     <!-- Navigation Bar -->
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <div class="flex items-center space-x-2">
-                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
-                        <i class="fas fa-hands-helping text-white"></i>
-                    </div>
-                    <span class="text-xl font-bold">GlobalAid</span>
-                </div>
-                
-                <!-- Desktop Navigation Links - HORIZONTAL LAYOUT -->
-                <div class="hidden lg:flex items-center space-x-6">
-                    <a href="#" class="nav-link font-medium">Home</a>
-                    <a href="#how-it-works" class="nav-link font-medium">How It Works</a>
-                    <a href="#" class="nav-link font-medium">Campaigns</a>
-                    <a href="#" class="nav-link font-medium">Transparency</a>
-                    <a href="#" class="nav-link font-medium">Impact Stories</a>
-                    <a href="index.html" class="nav-link font-medium">About Us</a>
-                    <a href="#" class="nav-link font-medium">Get Involved</a>
-                    <a href="#" class="nav-link font-medium">Contact</a>
-                    
-                    <!-- Language Switcher -->
-                    <div class="relative group ml-2">
-                        <button class="flex items-center space-x-1 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors nav-link">
-                            <i class="fas fa-globe"></i>
-                            <span id="current-language">EN</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 max-h-80 overflow-y-auto">
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="en">
-                                <span class="mr-2">🇺🇸</span> English
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="fr">
-                                <span class="mr-2">🇫🇷</span> French
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="es">
-                                <span class="mr-2">🇪🇸</span> Spanish
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="de">
-                                <span class="mr-2">🇩🇪</span> German
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="it">
-                                <span class="mr-2">🇮🇹</span> Italian
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="pt">
-                                <span class="mr-2">🇵🇹</span> Portuguese
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ru">
-                                <span class="mr-2">🇷🇺</span> Russian
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="zh">
-                                <span class="mr-2">🇨🇳</span> Chinese
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ja">
-                                <span class="mr-2">🇯🇵</span> Japanese
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ar">
-                                <span class="mr-2">🇦🇪</span> Arabic
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="hi">
-                                <span class="mr-2">🇮🇳</span> Hindi
-                            </a>
-                            <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="tr">
-                                <span class="mr-2">🇹🇷</span> Turkish
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Dark/Light Mode Toggle -->
-                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-moon dark:hidden"></i>
-                        <i class="fas fa-sun hidden dark:block"></i>
-                    </button>
-                    
-                    <!-- Login/Sign Up -->
-                    <button id="auth-button" class="px-4 py-2 rounded-md border border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                        <span class="login-text">Login / Sign Up</span>
-                    </button>
-                    
-                    <!-- Donate Now Button -->
-                    <button id="donate-button" class="px-6 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full font-medium pulse-donate hover:shadow-lg transition-all">
-                        <span class="donate-text">Donate Now</span>
-                    </button>
-                </div>
-                
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <i class="fas fa-bars"></i>
-                </button>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">HopeLink Mahama</a>
             </div>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="lg:hidden bg-white dark:bg-gray-800 shadow-lg py-4 px-6 hidden">
-            <div class="flex flex-col space-y-4">
-                <a href="#" class="nav-link font-medium">Home</a>
-                <a href="#how-it-works" class="nav-link font-medium">How It Works</a>
-                <a href="#" class="nav-link font-medium">Campaigns</a>
-                <a href="#" class="nav-link font-medium">Transparency</a>
-                <a href="#" class="nav-link font-medium">Impact Stories</a>
-                <a href="#" class="nav-link font-medium">About Us</a>
-                <a href="#" class="nav-link font-medium">Get Involved</a>
-                <a href="#" class="nav-link font-medium">Contact</a>
-                
-                <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button class="w-full px-4 py-2 rounded-md border border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors mb-2 login-text">
-                        Login / Sign Up
-                    </button>
-                    
-                    <div class="flex justify-between items-center">
-                        <div class="relative">
-                            <button class="flex items-center space-x-1 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors nav-link">
-                                <i class="fas fa-globe"></i>
-                                <span id="mobile-current-language">EN</span>
-                                <i class="fas fa-chevron-down text-xs"></i>
-                            </button>
-                            <div class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 hidden z-50 max-h-80 overflow-y-auto" id="mobile-language-dropdown">
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="en">
-                                    <span class="mr-2">🇺🇸</span> English
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="fr">
-                                    <span class="mr-2">🇫🇷</span> French
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="es">
-                                    <span class="mr-2">🇪🇸</span> Spanish
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="de">
-                                    <span class="mr-2">🇩🇪</span> German
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="it">
-                                    <span class="mr-2">🇮🇹</span> Italian
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="pt">
-                                    <span class="mr-2">🇵🇹</span> Portuguese
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ru">
-                                    <span class="mr-2">🇷🇺</span> Russian
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="zh">
-                                    <span class="mr-2">🇨🇳</span> Chinese
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ja">
-                                    <span class="mr-2">🇯🇵</span> Japanese
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="ar">
-                                    <span class="mr-2">🇦🇪</span> Arabic
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="hi">
-                                    <span class="mr-2">🇮🇳</span> Hindi
-                                </a>
-                                <a href="#" class="language-option block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-lang="tr">
-                                    <span class="mr-2">🇹🇷</span> Turkish
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <button id="mobile-theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <i class="fas fa-moon dark:hidden"></i>
-                            <i class="fas fa-sun hidden dark:block"></i>
-                        </button>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link active">Home</a>
+                <div class="nav-dropdown">
+                    <a href="hunger-help.html" class="nav-link">Hunger Help</a>
+                    <div class="dropdown-content">
+                        <a href="hunger-help.html#food-request">Request Food</a>
+                        <a href="hunger-help.html#nutrition">Nutrition Info</a>
+                        <a href="hunger-help.html#partners">Food Partners</a>
                     </div>
                 </div>
+                <a href="education-access.html" class="nav-link">Education Access</a>
+                <a href="women-safety.html" class="nav-link">Women Safety</a>
+                <a href="Youth Empowerment .html" class="nav-link">Youth Empowerment</a>
+                <a href="health-hygiene.html" class="nav-link">Health & Hygiene</a>
+                <a href="mental-wellness.html" class="nav-link">Mental Wellness</a>
+                <a href="about-us.html" class="nav-link">About Us</a>
+                <a href="get-involved.html" class="nav-link">Get Involved</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-bg min-h-screen flex items-center justify-center relative pt-20">
-        <!-- Video Background -->
-        <video autoplay muted loop class="video-background">
-            <source src="-" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        
-        <div class="container mx-auto px-4 py-16 text-center text-white relative z-10">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 max-w-4xl mx-auto">
-                <span class="hero-title">Empowering Humanity Through Transparent Giving</span>
-            </h1>
-            <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto">
-                <span class="hero-subtitle">Track every donation. Witness every impact. Join a new era of humanitarian action.</span>
-            </p>
-            
-            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6 mb-16">
-                <button class="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full font-bold text-lg pulse-donate hover:shadow-xl transition-all transform hover:scale-105 donate-text">
-                    Donate Now
-                </button>
-                <button class="px-8 py-4 glass-effect text-white rounded-full font-bold text-lg border-2 border-white hover:bg-white hover:text-blue-600 transition-all explore-text">
-                    Explore Causes
-                </button>
-            </div>
-            
-            <!-- Statistics -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-16">
-                <div class="glass-effect rounded-xl p-6">
-                    <div class="stat-number" id="lives-impacted">125,430+</div>
-                    <p class="text-white/80 stats-text-1">Lives Impacted</p>
-                </div>
-                <div class="glass-effect rounded-xl p-6">
-                    <div class="stat-number" id="total-donors">18,732+</div>
-                    <p class="text-white/80 stats-text-2">Total Donors</p>
-                </div>
-                <div class="glass-effect rounded-xl p-6">
-                    <div class="stat-number" id="ongoing-campaigns">54</div>
-                    <p class="text-white/80 stats-text-3">Active Campaigns</p>
-                </div>
-                <div class="glass-effect rounded-xl p-6">
-                    <div class="stat-number" id="transparency-score">98.7%</div>
-                    <p class="text-white/80 stats-text-4">Transparency Score</p>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Connecting Children, Women & Youth in Mahama Camp to Hope</h1>
+                <p>Access food, safety, education, and opportunities through technology. Join our mission to bring hope and resources to those in need.</p>
+                <div class="hero-buttons">
+                    <a href="hunger-help.html" class="btn btn-primary">Get Help Now</a>
+                    <button id="donate-btn" class="btn btn-secondary">Donate</button>
                 </div>
             </div>
-            
-            <!-- Trust Logos -->
-            <div class="max-w-4xl mx-auto">
-                <p class="text-white/70 mb-4 trust-text">Trusted by leading organizations worldwide</p>
-                <div class="flex flex-wrap justify-center items-center gap-8 opacity-80">
-                    <div class="bg-white rounded-lg p-3 w-24 h-16 flex items-center justify-center">
-                        <span class="font-bold text-gray-800">UN</span>
-                    </div>
-                    <div class="bg-white rounded-lg p-3 w-24 h-16 flex items-center justify-center">
-                        <span class="font-bold text-red-600">Red Cross</span>
-                    </div>
-                    <div class="bg-white rounded-lg p-3 w-24 h-16 flex items-center justify-center">
-                        <span class="font-bold text-blue-800">WHO</span>
-                    </div>
-                    <div class="bg-white rounded-lg p-3 w-24 h-16 flex items-center justify-center">
-                        <span class="font-bold text-green-700">UNICEF</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Scroll Indicator -->
-            <div class="scroll-indicator">
-                <a href="#how-it-works" class="text-white text-2xl">
-                    <i class="fas fa-chevron-down"></i>
-                </a>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="py-20 bg-gray-50 dark:bg-gray-800">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4 how-it-works-title">How It Works</h2>
-                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto how-it-works-subtitle">
-                    Our transparent process ensures your donation makes the maximum impact
-                </p>
-            </div>
-            
-            <!-- Steps -->
-            <div class="relative">
-                <!-- Connector Line (Desktop) -->
-                <div class="hidden lg:block step-connector"></div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <!-- Step 1 -->
-                    <div class="step-card bg-white dark:bg-gray-700 rounded-2xl p-8 shadow-md relative z-10">
-                        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-6 mx-auto">
-                            <i class="fas fa-search text-blue-600 dark:text-blue-400 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4 text-center step-title-1">Explore Verified Causes</h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-center step-desc-1">
-                            Choose from 100% verified campaigns across health, hunger, education, disaster relief, and more.
-                        </p>
-                        <div class="mt-6 text-center">
-                            <span class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-sm font-medium px-3 py-1 rounded-full step-badge-1">
-                                Verified by Global NGO Network
-                            </span>
-                        </div>
+        <!-- Quick Stats -->
+        <section class="stats">
+            <div class="container">
+                <h2>Our Impact in Mahama Camp</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="food-distributed">0</div>
+                        <div class="stat-label">Food Packages Distributed</div>
                     </div>
-                    
-                    <!-- Step 2 -->
-                    <div class="step-card bg-white dark:bg-gray-700 rounded-2xl p-8 shadow-md relative z-10">
-                        <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-6 mx-auto">
-                            <i class="fas fa-lock text-green-600 dark:text-green-400 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4 text-center step-title-2">Make a Secure Donation</h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-center step-desc-2">
-                            Donate using Visa, PayPal, Mobile Money, Apple Pay, or Crypto with end-to-end encryption.
-                        </p>
-                        <div class="mt-6 text-center">
-                            <span class="inline-block bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 text-sm font-medium px-3 py-1 rounded-full step-badge-2">
-                                100% Safe • 0% Fraud Risk
-                            </span>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="children-educated">0</div>
+                        <div class="stat-label">Children in Education Programs</div>
                     </div>
-                    
-                    <!-- Step 3 -->
-                    <div class="step-card bg-white dark:bg-gray-700 rounded-2xl p-8 shadow-md relative z-10">
-                        <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mb-6 mx-auto">
-                            <i class="fas fa-globe-americas text-purple-600 dark:text-purple-400 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4 text-center step-title-3">Track Your Impact Live</h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-center step-desc-3">
-                            Follow your donation from the moment it's sent until it reaches the beneficiary in real-time.
-                        </p>
-                        <div class="mt-6 text-center">
-                            <span class="inline-block bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-sm font-medium px-3 py-1 rounded-full step-badge-3">
-                                Real-Time Tracking
-                            </span>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="safety-reports">0</div>
+                        <div class="stat-label">Safety Reports Addressed</div>
                     </div>
-                    
-                    <!-- Step 4 -->
-                    <div class="step-card bg-white dark:bg-gray-700 rounded-2xl p-8 shadow-md relative z-10">
-                        <div class="w-16 h-16 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mb-6 mx-auto">
-                            <i class="fas fa-award text-yellow-600 dark:text-yellow-400 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4 text-center step-title-4">Receive Certificate & Updates</h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-center step-desc-4">
-                            Get a personalized certificate, share your impact, and receive real stories showing lives you've changed.
-                        </p>
-                        <div class="mt-6 text-center">
-                            <span class="inline-block bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400 text-sm font-medium px-3 py-1 rounded-full step-badge-4">
-                                Impact Certificate
-                            </span>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="youth-trained">0</div>
+                        <div class="stat-label">Youth Skills Training</div>
                     </div>
                 </div>
             </div>
-            
-            <!-- CTA -->
-            <div class="text-center mt-16">
-                <button class="px-10 py-4 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-full font-bold text-lg hover:shadow-xl transition-all transform hover:scale-105 donate-text">
-                    Start Your Journey - Donate Now
-                </button>
+        </section>
+
+        <!-- Services Overview -->
+        <section class="services">
+            <div class="container">
+                <h2>Our Services</h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">🍽️</div>
+                        <h3>Hunger Help</h3>
+                        <p>Food distribution, nutrition education, and emergency food support for families in need.</p>
+                        <a href="hunger-help.html" class="btn btn-outline">Learn More</a>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">📚</div>
+                        <h3>Education Access</h3>
+                        <p>E-learning resources, teacher support, and educational materials for children and youth.</p>
+                        <a href="education-access.html" class="btn btn-outline">Learn More</a>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">🛡️</div>
+                        <h3>Women Safety</h3>
+                        <p>Anonymous reporting, emergency contacts, and safe spaces for women's protection.</p>
+                        <a href="women-safety.html" class="btn btn-outline">Learn More</a>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">💼</div>
+                        <h3>Youth Empowerment</h3>
+                        <p>Skills training, job opportunities, and entrepreneurship support for young people.</p>
+                        <a href="youth-empowerment.html" class="btn btn-outline">Learn More</a>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">🏥</div>
+                        <h3>Health & Hygiene</h3>
+                        <p>Medical information, clinic locations, and hygiene resources for community wellness.</p>
+                        <a href="health-hygiene.html" class="btn btn-outline">Learn More</a>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">🧠</div>
+                        <h3>Mental Wellness</h3>
+                        <p>Counseling services, peer support, and mental health resources for emotional wellbeing.</p>
+                        <a href="mental-wellness.html" class="btn btn-outline">Learn More</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Image Gallery -->
+        <section class="gallery">
+            <div class="container">
+                <h2>Life in Mahama Camp</h2>
+                <div class="gallery-grid" id="gallery-container">
+                    <!-- Gallery items will be dynamically inserted by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Alert -->
+        <section class="emergency-alert">
+            <div class="container">
+                <div class="alert-content">
+                    <h3>Need Immediate Help?</h3>
+                    <p>If you're in immediate danger or need urgent assistance, contact our emergency hotline:</p>
+                    <div class="emergency-contact">
+                        <button id="emergency-btn" class="btn btn-emergency">Call Emergency: +250 788 123 456</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <!-- Donation Modal -->
-    <div id="donation-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold donation-title">Make a Donation</h3>
-                <button id="close-donation-modal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
+    <div id="donation-modal" class="donation-modal">
+        <div class="donation-content">
+            <span class="donation-close">&times;</span>
+            <h2>Support HopeLink Mahama</h2>
+            <p>Your donation helps provide food, education, and safety for refugees in Mahama Camp.</p>
+            
+            <div class="donation-options">
+                <div class="donation-option" data-amount="25">$25</div>
+                <div class="donation-option" data-amount="50">$50</div>
+                <div class="donation-option" data-amount="100">$100</div>
             </div>
             
-            <div class="mb-6">
-                <label class="block text-gray-700 dark:text-gray-300 mb-2 donation-amount-text">Donation Amount</label>
-                <div class="grid grid-cols-3 gap-2 mb-4">
-                    <button class="donation-amount py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" data-amount="25">$25</button>
-                    <button class="donation-amount py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" data-amount="50">$50</button>
-                    <button class="donation-amount py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" data-amount="100">$100</button>
-                </div>
-                <div class="relative">
-                    <span class="absolute left-3 top-3 text-gray-500">$</span>
-                    <input type="number" id="custom-amount" placeholder="Custom amount" class="w-full pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                </div>
+            <input type="number" class="donation-custom" placeholder="Or enter custom amount">
+            
+            <div class="donation-frequency">
+                <label><input type="radio" name="frequency" value="one-time" checked> One-time</label>
+                <label><input type="radio" name="frequency" value="monthly"> Monthly</label>
             </div>
             
-            <div class="mb-6">
-                <label class="block text-gray-700 dark:text-gray-300 mb-2 donation-method-text">Payment Method</label>
-                <div class="space-y-2">
-                    <div class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg">
-                        <input type="radio" id="credit-card" name="payment-method" value="credit-card" class="mr-3" checked>
-                        <label for="credit-card" class="flex items-center">
-                            <i class="fab fa-cc-visa text-blue-600 text-xl mr-2"></i>
-                            <span>Credit Card</span>
-                        </label>
-                    </div>
-                    <div class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg">
-                        <input type="radio" id="paypal" name="payment-method" value="paypal" class="mr-3">
-                        <label for="paypal" class="flex items-center">
-                            <i class="fab fa-paypal text-blue-500 text-xl mr-2"></i>
-                            <span>PayPal</span>
-                        </label>
-                    </div>
-                    <div class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg">
-                        <input type="radio" id="crypto" name="payment-method" value="crypto" class="mr-3">
-                        <label for="crypto" class="flex items-center">
-                            <i class="fab fa-bitcoin text-orange-500 text-xl mr-2"></i>
-                            <span>Cryptocurrency</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <button id="confirm-donation" class="w-full py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg font-bold hover:shadow-lg transition-all donation-confirm-text">
-                Donate Now
-            </button>
+            <button class="donation-submit">Donate Now</button>
         </div>
     </div>
 
-    <!-- Login/Signup Modal -->
-    <div id="login-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold login-title">Create Account</h3>
-                <button id="close-modal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <!-- Step 1: Role Selection -->
-            <div class="form-step active" id="step-role">
-                <p class="text-gray-600 dark:text-gray-300 mb-6 login-subtitle">Select your role to continue</p>
-                
-                <div class="space-y-4 mb-6">
-                    <button class="w-full p-4 border-2 border-blue-500 rounded-xl text-blue-500 font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors next-step" data-step="step-account-type">
-                        <i class="fas fa-user mr-2"></i> I am a Donor
-                    </button>
-                    <button class="w-full p-4 border-2 border-green-500 rounded-xl text-green-500 font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors next-step" data-step="step-account-type">
-                        <i class="fas fa-building mr-2"></i> I am an NGO / Organization
-                    </button>
-                </div>
-                
-                <div class="text-center">
-                    <p class="text-gray-500 dark:text-gray-400">
-                        Already have an account? 
-                        <button class="text-blue-500 hover:underline switch-to-login">Sign In</button>
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Step 2: Account Type -->
-            <div class="form-step" id="step-account-type">
-                <p class="text-gray-600 dark:text-gray-300 mb-6">How would you like to create your account?</p>
-                
-                <div class="space-y-4 mb-6">
-                    <button class="w-full p-4 border-2 border-blue-500 rounded-xl text-blue-500 font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors next-step" data-step="step-email">
-                        <i class="fas fa-envelope mr-2"></i> Use Email Address
-                    </button>
-                    
-                    <div class="space-y-3">
-                        <button class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors social-login" data-provider="google">
-                            <i class="fab fa-google text-red-500 mr-2"></i> Continue with Google
-                        </button>
-                        <button class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors social-login" data-provider="github">
-                            <i class="fab fa-github text-gray-800 dark:text-white mr-2"></i> Continue with GitHub
-                        </button>
-                        <button class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors social-login" data-provider="facebook">
-                            <i class="fab fa-facebook text-blue-600 mr-2"></i> Continue with Facebook
-                        </button>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>HopeLink Mahama</h3>
+                    <p>Connecting children, women, and youth in Mahama Camp to food, safety, education, and hope through technology.</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
-                
-                <div class="text-center">
-                    <button class="text-blue-500 hover:underline prev-step" data-step="step-role">
-                        <i class="fas fa-arrow-left mr-1"></i> Back
-                    </button>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="hunger-help.html">Hunger Help</a></li>
+                        <li><a href="education-access.html">Education Access</a></li>
+                        <li><a href="women-safety.html">Women Safety</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="youth-empowerment.html">Youth Empowerment</a></li>
+                        <li><a href="health-hygiene.html">Health & Hygiene</a></li>
+                        <li><a href="mental-wellness.html">Mental Wellness</a></li>
+                        <li><a href="about-us.html">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p>Mahama Refugee Camp, Rwanda</p>
+                    <p>Email: info@hopelinkmahama.org</p>
+                    <p>Phone: +250 788 123 456</p>
                 </div>
             </div>
-            
-            <!-- Step 3: Email Registration -->
-            <div class="form-step" id="step-email">
-                <p class="text-gray-600 dark:text-gray-300 mb-6">Create your account with email</p>
-                
-                <form id="email-registration">
-                    <div class="space-y-4 mb-6">
-                        <div>
-                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
-                            <input type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Enter your full name" required>
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-                            <input type="email" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Enter your email" required>
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
-                            <input type="password" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Create a password" required>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg font-bold hover:shadow-lg transition-all mb-4">
-                        Create Account
-                    </button>
-                </form>
-                
-                <div class="text-center">
-                    <button class="text-blue-500 hover:underline prev-step" data-step="step-account-type">
-                        <i class="fas fa-arrow-left mr-1"></i> Back
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Login Form -->
-            <div class="form-step" id="step-login">
-                <p class="text-gray-600 dark:text-gray-300 mb-6">Sign in to your account</p>
-                
-                <form id="login-form">
-                    <div class="space-y-4 mb-6">
-                        <div>
-                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-                            <input type="email" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Enter your email" required>
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
-                            <input type="password" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Enter your password" required>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg font-bold hover:shadow-lg transition-all mb-4">
-                        Sign In
-                    </button>
-                </form>
-                
-                <div class="text-center mb-4">
-                    <button class="text-blue-500 hover:underline switch-to-signup">
-                        Don't have an account? Sign up
-                    </button>
-                </div>
-                
-                <div class="text-center">
-                    <button class="text-blue-500 hover:underline prev-step" data-step="step-role">
-                        <i class="fas fa-arrow-left mr-1"></i> Back to role selection
-                    </button>
-                </div>
-            </div>
-            
-            <div class="text-center mt-4">
-                <p class="text-gray-500 dark:text-gray-400 text-sm login-security-text">
-                    <i class="fas fa-shield-alt mr-1"></i> Secure by SSL / Verified Platform
-                </p>
+            <div class="footer-bottom">
+                <p>&copy; 2023 HopeLink Mahama. All rights reserved.</p>
             </div>
         </div>
-    </div>
+    </footer>
 
     <script>
-        // Theme Toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        // =============================================
+        // MAIN JAVASCRIPT FUNCTIONALITY
+        // =============================================
         
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-        
-        themeToggle.addEventListener('click', function() {
-            document.documentElement.classList.toggle('dark');
-            if (document.documentElement.classList.contains('dark')) {
-                localStorage.setItem('color-theme', 'dark');
-            } else {
-                localStorage.setItem('color-theme', 'light');
-            }
-        });
-        
-        mobileThemeToggle.addEventListener('click', function() {
-            document.documentElement.classList.toggle('dark');
-            if (document.documentElement.classList.contains('dark')) {
-                localStorage.setItem('color-theme', 'dark');
-            } else {
-                localStorage.setItem('color-theme', 'light');
-            }
-        });
-
-        // Mobile Menu Toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLanguageDropdown = document.getElementById('mobile-language-dropdown');
-        
-        mobileMenuButton.addEventListener('click', function() {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Mobile Language Dropdown
-        document.querySelector('#mobile-current-language').parentElement.addEventListener('click', function() {
-            mobileLanguageDropdown.classList.toggle('hidden');
-        });
-
-        // Navbar Scroll Effect
-        const navbar = document.getElementById('navbar');
-        
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scrolled');
-            } else {
-                navbar.classList.remove('navbar-scrolled');
-            }
-        });
-
-        // Donation Modal
-        const donateButton = document.getElementById('donate-button');
-        const donationModal = document.getElementById('donation-modal');
-        const closeDonationModal = document.getElementById('close-donation-modal');
-        const confirmDonation = document.getElementById('confirm-donation');
-        const donationAmounts = document.querySelectorAll('.donation-amount');
-        const customAmount = document.getElementById('custom-amount');
-        
-        donateButton.addEventListener('click', function() {
-            donationModal.classList.remove('hidden');
-        });
-        
-        closeDonationModal.addEventListener('click', function() {
-            donationModal.classList.add('hidden');
-        });
-        
-        donationAmounts.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons
-                donationAmounts.forEach(btn => btn.classList.remove('bg-blue-500', 'text-white', 'border-blue-500'));
-                // Add active class to clicked button
-                this.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
-                // Clear custom amount
-                customAmount.value = '';
-            });
-        });
-        
-        customAmount.addEventListener('input', function() {
-            // Remove active class from amount buttons when custom amount is entered
-            donationAmounts.forEach(btn => btn.classList.remove('bg-blue-500', 'text-white', 'border-blue-500'));
-        });
-        
-        confirmDonation.addEventListener('click', function() {
-            const selectedAmount = document.querySelector('.donation-amount.bg-blue-500')?.dataset.amount || customAmount.value;
-            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
-            
-            if (!selectedAmount) {
-                alert('Please select or enter a donation amount');
-                return;
-            }
-            
-            // In a real application, this would connect to a payment processor
-            // For demonstration, we'll simulate a successful donation
-            alert(`Thank you for your donation of $${selectedAmount} via ${paymentMethod}! Your contribution has been sent directly to our humanitarian fund.`);
-            donationModal.classList.add('hidden');
-            
-            // Reset form
-            donationAmounts.forEach(btn => btn.classList.remove('bg-blue-500', 'text-white', 'border-blue-500'));
-            customAmount.value = '';
-        });
-
-        // Login/Signup Modal
-        const authButton = document.getElementById('auth-button');
-        const loginModal = document.getElementById('login-modal');
-        const closeModal = document.getElementById('close-modal');
-        const socialLoginButtons = document.querySelectorAll('.social-login');
-        const nextStepButtons = document.querySelectorAll('.next-step');
-        const prevStepButtons = document.querySelectorAll('.prev-step');
-        const switchToLogin = document.querySelector('.switch-to-login');
-        const switchToSignup = document.querySelector('.switch-to-signup');
-        const emailRegistrationForm = document.getElementById('email-registration');
-        const loginForm = document.getElementById('login-form');
-        
-        authButton.addEventListener('click', function() {
-            loginModal.classList.remove('hidden');
-            showStep('step-role');
-        });
-        
-        closeModal.addEventListener('click', function() {
-            loginModal.classList.add('hidden');
-        });
-        
-        // Form step navigation
-        nextStepButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const nextStep = this.dataset.step;
-                showStep(nextStep);
-            });
-        });
-        
-        prevStepButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const prevStep = this.dataset.step;
-                showStep(prevStep);
-            });
-        });
-        
-        switchToLogin.addEventListener('click', function() {
-            showStep('step-login');
-        });
-        
-        switchToSignup.addEventListener('click', function() {
-            showStep('step-role');
-        });
-        
-        function showStep(stepId) {
-            // Hide all steps
-            document.querySelectorAll('.form-step').forEach(step => {
-                step.classList.remove('active');
-            });
-            
-            // Show the selected step
-            document.getElementById(stepId).classList.add('active');
-        }
-        
-        // Social login buttons
-        socialLoginButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const provider = this.dataset.provider;
-                // In a real application, this would redirect to OAuth flow
-                alert(`Redirecting to ${provider} authentication...\n\nIn a real application, this would connect to ${provider} OAuth service.`);
-            });
-        });
-        
-        // Email registration form
-        emailRegistrationForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // In a real application, this would send data to a backend
-            alert('Account created successfully! Welcome to GlobalAid.');
-            loginModal.classList.add('hidden');
-        });
-        
-        // Login form
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // In a real application, this would authenticate with a backend
-            alert('Successfully signed in! Welcome back.');
-            loginModal.classList.add('hidden');
-        });
-        
-        // Close modals when clicking outside
-        donationModal.addEventListener('click', function(e) {
-            if (e.target === donationModal) {
-                donationModal.classList.add('hidden');
-            }
-        });
-        
-        loginModal.addEventListener('click', function(e) {
-            if (e.target === loginModal) {
-                loginModal.classList.add('hidden');
-            }
-        });
-
-        // Language Switching System
-        const languageOptions = document.querySelectorAll('.language-option');
-        const currentLanguageElement = document.getElementById('current-language');
-        const mobileCurrentLanguageElement = document.getElementById('mobile-current-language');
-        
-        // Translation dictionary with 12 languages
-        const translations = {
-            en: {
-                // Navbar
-                'login': 'Login / Sign Up',
-                'donate': 'Donate Now',
-                // Hero Section
-                'heroTitle': 'Empowering Humanity Through Transparent Giving',
-                'heroSubtitle': 'Track every donation. Witness every impact. Join a new era of humanitarian action.',
-                'explore': 'Explore Causes',
-                'stats1': 'Lives Impacted',
-                'stats2': 'Total Donors',
-                'stats3': 'Active Campaigns',
-                'stats4': 'Transparency Score',
-                'trust': 'Trusted by leading organizations worldwide',
-                // How It Works
-                'howItWorksTitle': 'How It Works',
-                'howItWorksSubtitle': 'Our transparent process ensures your donation makes the maximum impact',
-                'step1Title': 'Explore Verified Causes',
-                'step1Desc': 'Choose from 100% verified campaigns across health, hunger, education, disaster relief, and more.',
-                'step1Badge': 'Verified by Global NGO Network',
-                'step2Title': 'Make a Secure Donation',
-                'step2Desc': 'Donate using Visa, PayPal, Mobile Money, Apple Pay, or Crypto with end-to-end encryption.',
-                'step2Badge': '100% Safe • 0% Fraud Risk',
-                'step3Title': 'Track Your Impact Live',
-                'step3Desc': 'Follow your donation from the moment it\'s sent until it reaches the beneficiary in real-time.',
-                'step3Badge': 'Real-Time Tracking',
-                'step4Title': 'Receive Certificate & Updates',
-                'step4Desc': 'Get a personalized certificate, share your impact, and receive real stories showing lives you\'ve changed.',
-                'step4Badge': 'Impact Certificate',
-                // Donation Modal
-                'donationTitle': 'Make a Donation',
-                'donationAmount': 'Donation Amount',
-                'donationMethod': 'Payment Method',
-                'donationConfirm': 'Donate Now',
-                // Login Modal
-                'loginTitle': 'Create Account',
-                'loginSubtitle': 'Select your role to continue',
-                'loginSecurity': 'Secure by SSL / Verified Platform'
-            },
-            fr: {
-                'login': 'Connexion / Inscription',
-                'donate': 'Faire un Don',
-                'heroTitle': 'Autonomiser l\'Humanité par un Don Transparent',
-                'heroSubtitle': 'Suivez chaque don. Témoignez de chaque impact. Rejoignez une nouvelle ère de l\'action humanitaire.',
-                'explore': 'Explorer les Causes',
-                'stats1': 'Vies Impactées',
-                'stats2': 'Donateurs Totaux',
-                'stats3': 'Campagnes Actives',
-                'stats4': 'Score de Transparence',
-                'trust': 'De confiance par les organisations leaders mondiales',
-                'howItWorksTitle': 'Comment ça Marche',
-                'howItWorksSubtitle': 'Notre processus transparent garantit que votre don a le maximum d\'impact',
-                'step1Title': 'Explorez des Causes Vérifiées',
-                'step1Desc': 'Choisissez parmi des campagnes 100% vérifiées dans la santé, la faim, l\'éducation, les secours en cas de catastrophe, et plus encore.',
-                'step1Badge': 'Vérifié par le Réseau Mondial des ONG',
-                'step2Title': 'Faites un Don Sécurisé',
-                'step2Desc': 'Faites un don en utilisant Visa, PayPal, Mobile Money, Apple Pay ou Crypto avec un chiffrement de bout en bout.',
-                'step2Badge': '100% Sécurisé • 0% Risque de Fraude',
-                'step3Title': 'Suivez Votre Impact en Direct',
-                'step3Desc': 'Suivez votre don dès son envoi jusqu\'à ce qu\'il atteigne le bénéficiaire en temps réel.',
-                'step3Badge': 'Suivi en Temps Réel',
-                'step4Title': 'Recevez un Certificat et des Mises à Jour',
-                'step4Desc': 'Obtenez un certificat personnalisé, partagez votre impact et recevez de vraies histoires montrant les vies que vous avez changées.',
-                'step4Badge': 'Certificat d\'Impact',
-                'donationTitle': 'Faire un Don',
-                'donationAmount': 'Montant du Don',
-                'donationMethod': 'Méthode de Paiement',
-                'donationConfirm': 'Faire un Don',
-                'loginTitle': 'Créer un Compte',
-                'loginSubtitle': 'Sélectionnez votre rôle pour continuer',
-                'loginSecurity': 'Sécurisé par SSL / Plateforme Vérifiée'
-            },
-            es: {
-                'login': 'Iniciar Sesión / Registrarse',
-                'donate': 'Donar Ahora',
-                'heroTitle': 'Empoderando a la Humanidad a través de Donaciones Transparentes',
-                'heroSubtitle': 'Rastrea cada donación. Atestigua cada impacto. Únete a una nueva era de acción humanitaria.',
-                'explore': 'Explorar Causas',
-                'stats1': 'Vidas Impactadas',
-                'stats2': 'Donantes Totales',
-                'stats3': 'Campañas Activas',
-                'stats4': 'Puntuación de Transparencia',
-                'trust': 'Con la confianza de las principales organizaciones mundiales',
-                'howItWorksTitle': 'Cómo Funciona',
-                'howItWorksSubtitle': 'Nuestro proceso transparente asegura que tu donación tenga el máximo impacto',
-                'step1Title': 'Explora Causas Verificadas',
-                'step1Desc': 'Elige entre campañas 100% verificadas en salud, hambre, educación, ayuda en desastres y más.',
-                'step1Badge': 'Verificado por la Red Global de ONG',
-                'step2Title': 'Haz una Donación Segura',
-                'step2Desc': 'Dona usando Visa, PayPal, Mobile Money, Apple Pay o Cripto con cifrado de extremo a extremo.',
-                'step2Badge': '100% Seguro • 0% Riesgo de Fraude',
-                'step3Title': 'Rastrea tu Impacto en Vivo',
-                'step3Desc': 'Sigue tu donación desde el momento en que se envía hasta que llega al beneficiario en tiempo real.',
-                'step3Badge': 'Seguimiento en Tiempo Real',
-                'step4Title': 'Recibe Certificado y Actualizaciones',
-                'step4Desc': 'Obtén un certificado personalizado, comparte tu impacto y recibe historias reales que muestran las vidas que has cambiado.',
-                'step4Badge': 'Certificado de Impacto',
-                'donationTitle': 'Hacer una Donación',
-                'donationAmount': 'Monto de Donación',
-                'donationMethod': 'Método de Pago',
-                'donationConfirm': 'Donar Ahora',
-                'loginTitle': 'Crear Cuenta',
-                'loginSubtitle': 'Selecciona tu rol para continuar',
-                'loginSecurity': 'Seguro por SSL / Plataforma Verificada'
-            },
-            de: {
-                'login': 'Anmelden / Registrieren',
-                'donate': 'Jetzt Spenden',
-                'heroTitle': 'Menschen durch transparentes Geben stärken',
-                'heroSubtitle': 'Verfolgen Sie jede Spende. Sehen Sie jede Wirkung. Werden Sie Teil einer neuen Ära der humanitären Hilfe.',
-                'explore': 'Ursachen erkunden',
-                'stats1': 'Betroffene Leben',
-                'stats2': 'Gesamtspender',
-                'stats3': 'Aktive Kampagnen',
-                'stats4': 'Transparenz-Score',
-                'trust': 'Vertraut von führenden Organisationen weltweit',
-                'howItWorksTitle': 'So funktioniert es',
-                'howItWorksSubtitle': 'Unser transparenter Prozess stellt sicher, dass Ihre Spende maximale Wirkung erzielt',
-                'step1Title': 'Geprüfte Ursachen erkunden',
-                'step1Desc': 'Wählen Sie aus 100% geprüften Kampagnen in den Bereichen Gesundheit, Hunger, Bildung, Katastrophenhilfe und mehr.',
-                'step1Badge': 'Geprüft vom Globalen NGO-Netzwerk',
-                'step2Title': 'Sichere Spende tätigen',
-                'step2Desc': 'Spenden Sie mit Visa, PayPal, Mobile Money, Apple Pay oder Krypto mit End-to-End-Verschlüsselung.',
-                'step2Badge': '100% Sicher • 0% Betrugsrisiko',
-                'step3Title': 'Ihre Wirkung live verfolgen',
-                'step3Desc': 'Verfolgen Sie Ihre Spende vom Moment des Versands bis sie den Begünstigten in Echtzeit erreicht.',
-                'step3Badge': 'Echtzeit-Verfolgung',
-                'step4Title': 'Zertifikat & Updates erhalten',
-                'step4Desc': 'Erhalten Sie ein personalisiertes Zertifikat, teilen Sie Ihre Wirkung und erhalten Sie echte Geschichten, die zeigen, welche Leben Sie verändert haben.',
-                'step4Badge': 'Wirkungszertifikat',
-                'donationTitle': 'Spenden tätigen',
-                'donationAmount': 'Spendenbetrag',
-                'donationMethod': 'Zahlungsmethode',
-                'donationConfirm': 'Jetzt spenden',
-                'loginTitle': 'Konto erstellen',
-                'loginSubtitle': 'Wählen Sie Ihre Rolle, um fortzufahren',
-                'loginSecurity': 'Sicher durch SSL / Verifizierte Plattform'
-            },
-            it: {
-                'login': 'Accedi / Registrati',
-                'donate': 'Dona Ora',
-                'heroTitle': 'Migliorare l\'Umanità Attraverso Donazioni Trasparenti',
-                'heroSubtitle': 'Traccia ogni donazione. Testimonia ogni impatto. Unisciti a una nuova era di azione umanitaria.',
-                'explore': 'Esplora le Cause',
-                'stats1': 'Vite Influenzate',
-                'stats2': 'Donatori Totali',
-                'stats3': 'Campagne Attive',
-                'stats4': 'Punteggio di Trasparenza',
-                'trust': 'Fidati delle principali organizzazioni mondiali',
-                'howItWorksTitle': 'Come Funziona',
-                'howItWorksSubtitle': 'Il nostro processo trasparente garantisce che la tua donazione abbia il massimo impatto',
-                'step1Title': 'Esplora Cause Verificate',
-                'step1Desc': 'Scegli tra campagne verificate al 100% in salute, fame, educazione, soccorso in caso di calamità e altro ancora.',
-                'step1Badge': 'Verificato dalla Rete Globale delle ONG',
-                'step2Title': 'Fai una Donazione Sicura',
-                'step2Desc': 'Dona utilizzando Visa, PayPal, Mobile Money, Apple Pay o Crypto con crittografia end-to-end.',
-                'step2Badge': '100% Sicuro • 0% Rischio di Frode',
-                'step3Title': 'Traccia il Tuo Impatto in Diretta',
-                'step3Desc': 'Segui la tua donazione dal momento in cui viene inviata fino a quando raggiunge il beneficiario in tempo reale.',
-                'step3Badge': 'Tracciamento in Tempo Reale',
-                'step4Title': 'Ricevi Certificato e Aggiornamenti',
-                'step4Desc': 'Ottieni un certificato personalizzato, condividi il tuo impatto e ricevi storie reali che mostrano le vite che hai cambiato.',
-                'step4Badge': 'Certificato di Impatto',
-                'donationTitle': 'Fai una Donazione',
-                'donationAmount': 'Importo della Donazione',
-                'donationMethod': 'Metodo di Pagamento',
-                'donationConfirm': 'Dona Ora',
-                'loginTitle': 'Crea Account',
-                'loginSubtitle': 'Seleziona il tuo ruolo per continuare',
-                'loginSecurity': 'Sicuro tramite SSL / Piattaforma Verificata'
-            },
-            pt: {
-                'login': 'Entrar / Cadastrar',
-                'donate': 'Doe Agora',
-                'heroTitle': 'Capacitando a Humanidade Através de Doações Transparentes',
-                'heroSubtitle': 'Acompanhe cada doação. Testemunhe cada impacto. Junte-se a uma nova era de ação humanitária.',
-                'explore': 'Explorar Causas',
-                'stats1': 'Vidas Impactadas',
-                'stats2': 'Doadores Totais',
-                'stats3': 'Campanhas Ativas',
-                'stats4': 'Pontuação de Transparência',
-                'trust': 'Confiado pelas principais organizações mundiais',
-                'howItWorksTitle': 'Como Funciona',
-                'howItWorksSubtitle': 'Nosso processo transparente garante que sua doação tenha o máximo impacto',
-                'step1Title': 'Explore Causas Verificadas',
-                'step1Desc': 'Escolha entre campanhas 100% verificadas em saúde, fome, educação, ajuda em desastres e muito mais.',
-                'step1Badge': 'Verificado pela Rede Global de ONGs',
-                'step2Title': 'Faça uma Doação Segura',
-                'step2Desc': 'Doe usando Visa, PayPal, Mobile Money, Apple Pay ou Cripto com criptografia de ponta a ponta.',
-                'step2Badge': '100% Seguro • 0% Risco de Fraude',
-                'step3Title': 'Acompanhe Seu Impacto Ao Vivo',
-                'step3Desc': 'Acompanhe sua doação desde o momento em que é enviada até chegar ao beneficiário em tempo real.',
-                'step3Badge': 'Acompanhamento em Tempo Real',
-                'step4Title': 'Receba Certificado e Atualizações',
-                'step4Desc': 'Obtenha um certificado personalizado, compartilhe seu impacto e receba histórias reais mostrando as vidas que você mudou.',
-                'step4Badge': 'Certificado de Impacto',
-                'donationTitle': 'Fazer uma Doação',
-                'donationAmount': 'Valor da Doação',
-                'donationMethod': 'Método de Pagamento',
-                'donationConfirm': 'Doe Agora',
-                'loginTitle': 'Criar Conta',
-                'loginSubtitle': 'Selecione sua função para continuar',
-                'loginSecurity': 'Seguro por SSL / Plataforma Verificada'
-            },
-            ru: {
-                'login': 'Войти / Зарегистрироваться',
-                'donate': 'Пожертвовать',
-                'heroTitle': 'Расширение возможностей человечества через прозрачные пожертвования',
-                'heroSubtitle': 'Отслеживайте каждое пожертвование. Станьте свидетелем каждого воздействия. Присоединяйтесь к новой эре гуманитарной деятельности.',
-                'explore': 'Исследовать причины',
-                'stats1': 'Затронутые жизни',
-                'stats2': 'Всего доноров',
-                'stats3': 'Активные кампании',
-                'stats4': 'Оценка прозрачности',
-                'trust': 'Доверяют ведущие мировые организации',
-                'howItWorksTitle': 'Как это работает',
-                'howItWorksSubtitle': 'Наш прозрачный процесс гарантирует, что ваше пожертвование окажет максимальное воздействие',
-                'step1Title': 'Изучите проверенные причины',
-                'step1Desc': 'Выбирайте из 100% проверенных кампаний в области здравоохранения, голода, образования, помощи при стихийных бедствиях и многого другого.',
-                'step1Badge': 'Проверено Глобальной сетью НПО',
-                'step2Title': 'Сделайте безопасное пожертвование',
-                'step2Desc': 'Пожертвуйте с помощью Visa, PayPal, Mobile Money, Apple Pay или Crypto со сквозным шифрованием.',
-                'step2Badge': '100% Безопасно • 0% Риска мошенничества',
-                'step3Title': 'Отслеживайте свое влияние в реальном времени',
-                'step3Desc': 'Следите за своим пожертвованием с момента отправки до получения бенефициаром в реальном времени.',
-                'step3Badge': 'Отслеживание в реальном времени',
-                'step4Title': 'Получите сертификат и обновления',
-                'step4Desc': 'Получите персонализированный сертификат, поделитесь своим влиянием и получайте реальные истории, показывающие жизни, которые вы изменили.',
-                'step4Badge': 'Сертификат о воздействии',
-                'donationTitle': 'Сделать пожертвование',
-                'donationAmount': 'Сумма пожертвования',
-                'donationMethod': 'Способ оплаты',
-                'donationConfirm': 'Пожертвовать сейчас',
-                'loginTitle': 'Создать аккаунт',
-                'loginSubtitle': 'Выберите свою роль, чтобы продолжить',
-                'loginSecurity': 'Защищено SSL / Проверенная платформа'
-            },
-            zh: {
-                'login': '登录 / 注册',
-                'donate': '立即捐款',
-                'heroTitle': '通过透明捐赠赋予人类力量',
-                'heroSubtitle': '追踪每笔捐款。见证每次影响。加入人道主义行动的新时代。',
-                'explore': '探索事业',
-                'stats1': '受影响的生命',
-                'stats2': '总捐赠者',
-                'stats3': '活跃活动',
-                'stats4': '透明度得分',
-                'trust': '受全球领先组织信任',
-                'howItWorksTitle': '运作方式',
-                'howItWorksSubtitle': '我们的透明流程确保您的捐赠产生最大影响',
-                'step1Title': '探索已验证的事业',
-                'step1Desc': '从健康、饥饿、教育、灾难救援等领域的100%验证活动中选择。',
-                'step1Badge': '经全球非政府组织网络验证',
-                'step2Title': '进行安全捐赠',
-                'step2Desc': '使用Visa、PayPal、移动货币、Apple Pay或加密货币进行捐赠，采用端到端加密。',
-                'step2Badge': '100% 安全 • 0% 欺诈风险',
-                'step3Title': '实时追踪您的影响',
-                'step3Desc': '从发送捐款到受益人收到捐款，实时跟踪您的捐款。',
-                'step3Badge': '实时追踪',
-                'step4Title': '接收证书和更新',
-                'step4Desc': '获取个性化证书，分享您的影响，并接收展示您改变的生命真实故事。',
-                'step4Badge': '影响证书',
-                'donationTitle': '进行捐赠',
-                'donationAmount': '捐赠金额',
-                'donationMethod': '支付方式',
-                'donationConfirm': '立即捐款',
-                'loginTitle': '创建账户',
-                'loginSubtitle': '选择您的角色继续',
-                'loginSecurity': '通过SSL保护 / 已验证平台'
-            },
-            ja: {
-                'login': 'ログイン / サインアップ',
-                'donate': '今すぐ寄付',
-                'heroTitle': '透明性のある寄付を通じて人類に力を与える',
-                'heroSubtitle': 'すべての寄付を追跡。すべての影響を目撃。人道支援の新時代に参加しましょう。',
-                'explore': '原因を探る',
-                'stats1': '影響を受けた命',
-                'stats2': '寄付者総数',
-                'stats3': '活動中のキャンペーン',
-                'stats4': '透明性スコア',
-                'trust': '世界の主要組織に信頼されています',
-                'howItWorksTitle': '仕組み',
-                'howItWorksSubtitle': '私たちの透明性のあるプロセスにより、あなたの寄付が最大の影響を与えることが保証されます',
-                'step1Title': '検証済みの原因を探る',
-                'step1Desc': '健康、飢餓、教育、災害救援などの100％検証済みキャンペーンから選択できます。',
-                'step1Badge': 'グローバルNGOネットワークによって検証済み',
-                'step2Title': '安全な寄付を行う',
-                'step2Desc': 'Visa、PayPal、モバイルマネー、Apple Pay、または暗号通貨を使用して、エンドツーエンドの暗号化で寄付します。',
-                'step2Badge': '100％安全 • 0％詐欺リスク',
-                'step3Title': 'あなたの影響をライブで追跡',
-                'step3Desc': '寄付が送信された瞬間から受益者に届くまでをリアルタイムで追跡します。',
-                'step3Badge': 'リアルタイム追跡',
-                'step4Title': '証明書と更新を受け取る',
-                'step4Desc': 'パーソナライズされた証明書を取得し、あなたの影響を共有し、あなたが変えた人生を示す実際の物語を受け取ります。',
-                'step4Badge': '影響証明書',
-                'donationTitle': '寄付を行う',
-                'donationAmount': '寄付金額',
-                'donationMethod': '支払い方法',
-                'donationConfirm': '今すぐ寄付',
-                'loginTitle': 'アカウントを作成',
-                'loginSubtitle': '続行するにはあなたの役割を選択してください',
-                'loginSecurity': 'SSLで保護 / 検証済みプラットフォーム'
-            },
-            ar: {
-                'login': 'تسجيل الدخول / الاشتراك',
-                'donate': 'تبرع الآن',
-                'heroTitle': 'تمكين الإنسانية من خلال العطاء الشفاف',
-                'heroSubtitle': 'تتبع كل تبرع. شاهد كل تأثير. انضم إلى عصر جديد من العمل الإنساني.',
-                'explore': 'استكشاف القضايا',
-                'stats1': 'الأرواح المتأثرة',
-                'stats2': 'إجمالي المتبرعين',
-                'stats3': 'الحملات النشطة',
-                'stats4': 'درجة الشفافية',
-                'trust': 'موثوق به من قبل المنظمات الرائدة عالمياً',
-                'howItWorksTitle': 'كيف يعمل',
-                'howItWorksSubtitle': 'ضمان عمليةنا الشفافة أقصى تأثير لتبرعك',
-                'step1Title': 'استكشف القضايا الموثوقة',
-                'step1Desc': 'اختر من بين الحملات الم verified 100٪ في الصحة والجوع والتعليم والإغاثة في حالات الكوارث وغير ذلك.',
-                'step1Badge': 'تم التحقق منه من قبل الشبكة العالمية للمنظمات غير الحكومية',
-                'step2Title': 'قم بتبرع آمن',
-                'step2Desc': 'تبرع باستخدام فيزا، PayPal، Mobile Money، Apple Pay، أو Crypto مع تشفير من طرف إلى طرف.',
-                'step2Badge': 'آمن 100٪ • 0٪ مخاطر الاحتيال',
-                'step3Title': 'تتبع تأثيرك مباشرة',
-                'step3Desc': 'اتبع تبرعك من لحظة إرساله حتى يصل إلى المستفيد في الوقت الفعلي.',
-                'step3Badge': 'التتبع في الوقت الحقيقي',
-                'step4Title': 'احصل على شهادة وتحديثات',
-                'step4Desc': 'احصل على شهادة شخصية ، وشارك تأثيرك ، واستقبل قصص حقيقية تظهر الأرواح التي غيرتها.',
-                'step4Badge': 'شهادة التأثير',
-                'donationTitle': 'تقديم تبرع',
-                'donationAmount': 'مبلغ التبرع',
-                'donationMethod': 'طريقة الدفع',
-                'donationConfirm': 'تبرع الآن',
-                'loginTitle': 'إنشاء حساب',
-                'loginSubtitle': 'حدد دورك للمتابعة',
-                'loginSecurity': 'مؤمن بواسطة SSL / منصة verified'
-            },
-            hi: {
-                'login': 'लॉग इन / साइन अप',
-                'donate': 'अभी दान करें',
-                'heroTitle': 'पारदर्शी दान के माध्यम से मानवता को सशक्त बनाना',
-                'heroSubtitle': 'हर दान को ट्रैक करें। हर प्रभाव को देखें। मानवीय कार्रवाई के एक नए युग में शामिल हों।',
-                'explore': 'कारणों का अन्वेषण करें',
-                'stats1': 'प्रभावित जीवन',
-                'stats2': 'कुल दाता',
-                'stats3': 'सक्रिय अभियान',
-                'stats4': 'पारदर्शिता स्कोर',
-                'trust': 'दुनिया भर की प्रमुख संस्थाओं द्वारा विश्वसनीय',
-                'howItWorksTitle': 'यह कैसे काम करता है',
-                'howItWorksSubtitle': 'हमारी पारदर्शी प्रक्रिया सुनिश्चित करती है कि आपका दान अधिकतम प्रभाव डाले',
-                'step1Title': 'सत्यापित कारणों का अन्वेषण करें',
-                'step1Desc': 'स्वास्थ्य, भूख, शिक्षा, आपदा राहत और अधिक में 100% सत्यापित अभियानों में से चुनें।',
-                'step1Badge': 'वैश्विक एनजीओ नेटवर्क द्वारा सत्यापित',
-                'step2Title': 'एक सुरक्षित दान करें',
-                'step2Desc': 'एंड-टू-एंड एन्क्रिप्शन के साथ वीज़ा, पेपैल, मोबाइल मनी, एप्पल पे या क्रिप्टो का उपयोग करके दान करें।',
-                'step2Badge': '100% सुरक्षित • 0% धोखाधड़ी जोखिम',
-                'step3Title': 'अपने प्रभाव को लाइव ट्रैक करें',
-                'step3Desc': 'अपने दान को उस समय से ट्रैक करें जब इसे भेजा जाता है जब तक कि यह वास्तविक समय में लाभार्थी तक पहुंचता है।',
-                'step3Badge': 'रीयल-टाइम ट्रैकिंग',
-                'step4Title': 'प्रमाणपत्र और अपडेट प्राप्त करें',
-                'step4Desc': 'एक व्यक्तिगत प्रमाणपत्र प्राप्त करें, अपने प्रभाव को साझा करें, और वास्तविक कहानियां प्राप्त करें जो उन जीवनों को दिखाती हैं जिन्हें आपने बदला है।',
-                'step4Badge': 'प्रभाव प्रमाणपत्र',
-                'donationTitle': 'दान करें',
-                'donationAmount': 'दान राशि',
-                'donationMethod': 'भुगतान विधि',
-                'donationConfirm': 'अभी दान करें',
-                'loginTitle': 'खाता बनाएं',
-                'loginSubtitle': 'जारी रखने के लिए अपनी भूमिका चुनें',
-                'loginSecurity': 'एसएसएल द्वारा सुरक्षित / सत्यापित प्लेटफ़ॉर्म'
-            },
-            tr: {
-                'login': 'Giriş Yap / Kayıt Ol',
-                'donate': 'Şimdi Bağış Yap',
-                'heroTitle': 'Şeffaf Bağışlarla İnsanlığı Güçlendirmek',
-                'heroSubtitle': 'Her bağışı takip edin. Her etkiyi görün. İnsani eylemin yeni bir çağına katılın.',
-                'explore': 'Nedenleri Keşfedin',
-                'stats1': 'Etkilenen Yaşamlar',
-                'stats2': 'Toplam Bağışçı',
-                'stats3': 'Aktif Kampanyalar',
-                'stats4': 'Şeffaflık Skoru',
-                'trust': 'Dünya çapındaki önde gelen kuruluşlar tarafından güvenilir',
-                'howItWorksTitle': 'Nasıl Çalışır',
-                'howItWorksSubtitle': 'Şeffaf sürecimiz, bağışınızın maksimum etkiye sahip olmasını sağlar',
-                'step1Title': 'Doğrulanmış Nedenleri Keşfedin',
-                'step1Desc': 'Sağlık, açlık, eğitim, afet yardımı ve daha fazlasında %100 doğrulanmış kampanyalar arasından seçim yapın.',
-                'step1Badge': 'Küresel STK Ağı Tarafından Doğrulandı',
-                'step2Title': 'Güvenli Bir Bağış Yapın',
-                'step2Desc': 'Uçtan uca şifreleme ile Visa, PayPal, Mobile Money, Apple Pay veya Crypto kullanarak bağış yapın.',
-                'step2Badge': '%100 Güvenli • %0 Dolandırıcılık Riski',
-                'step3Title': 'Etkinizi Canlı Olarak İzleyin',
-                'step3Desc': 'Bağışınızı gönderildiği andan itibaren gerçek zamanlı olarak faydalanıcıya ulaşana kadar takip edin.',
-                'step3Badge': 'Gerçek Zamanlı Takip',
-                'step4Title': 'Sertifika ve Güncellemeler Alın',
-                'step4Desc': 'Kişiselleştirilmiş bir sertifika alın, etkinizi paylaşın ve değiştirdiğiniz yaşamları gösteren gerçek hikayeler alın.',
-                'step4Badge': 'Etki Sertifikası',
-                'donationTitle': 'Bağış Yap',
-                'donationAmount': 'Bağış Miktarı',
-                'donationMethod': 'Ödeme Yöntemi',
-                'donationConfirm': 'Şimdi Bağış Yap',
-                'loginTitle': 'Hesap Oluştur',
-                'loginSubtitle': 'Devam etmek için rolünüzü seçin',
-                'loginSecurity': 'SSL ile Güvenli / Doğrulanmış Platform'
+        // Background Controller
+        const backgroundController = {
+            init() {
+                // Background functionality can be extended here
+                console.log("Background controller initialized");
             }
         };
 
-        // Set initial language
-        let currentLanguage = localStorage.getItem('selected-language') || 'en';
-        
-        // Function to apply translations
-        function applyTranslations(lang) {
-            const translation = translations[lang];
+        // Donation System
+        const donationSystem = {
+            currentAmount: 0,
+            frequency: 'one-time',
             
-            // Update all elements with data attributes
-            document.querySelectorAll('.login-text').forEach(el => {
-                el.textContent = translation.login;
-            });
-            
-            document.querySelectorAll('.donate-text').forEach(el => {
-                el.textContent = translation.donate;
-            });
-            
-            document.querySelector('.hero-title').textContent = translation.heroTitle;
-            document.querySelector('.hero-subtitle').textContent = translation.heroSubtitle;
-            document.querySelector('.explore-text').textContent = translation.explore;
-            
-            document.querySelectorAll('.stats-text-1').forEach(el => {
-                el.textContent = translation.stats1;
-            });
-            document.querySelectorAll('.stats-text-2').forEach(el => {
-                el.textContent = translation.stats2;
-            });
-            document.querySelectorAll('.stats-text-3').forEach(el => {
-                el.textContent = translation.stats3;
-            });
-            document.querySelectorAll('.stats-text-4').forEach(el => {
-                el.textContent = translation.stats4;
-            });
-            
-            document.querySelector('.trust-text').textContent = translation.trust;
-            document.querySelector('.how-it-works-title').textContent = translation.howItWorksTitle;
-            document.querySelector('.how-it-works-subtitle').textContent = translation.howItWorksSubtitle;
-            
-            document.querySelector('.step-title-1').textContent = translation.step1Title;
-            document.querySelector('.step-desc-1').textContent = translation.step1Desc;
-            document.querySelector('.step-badge-1').textContent = translation.step1Badge;
-            
-            document.querySelector('.step-title-2').textContent = translation.step2Title;
-            document.querySelector('.step-desc-2').textContent = translation.step2Desc;
-            document.querySelector('.step-badge-2').textContent = translation.step2Badge;
-            
-            document.querySelector('.step-title-3').textContent = translation.step3Title;
-            document.querySelector('.step-desc-3').textContent = translation.step3Desc;
-            document.querySelector('.step-badge-3').textContent = translation.step3Badge;
-            
-            document.querySelector('.step-title-4').textContent = translation.step4Title;
-            document.querySelector('.step-desc-4').textContent = translation.step4Desc;
-            document.querySelector('.step-badge-4').textContent = translation.step4Badge;
-            
-            document.querySelector('.donation-title').textContent = translation.donationTitle;
-            document.querySelector('.donation-amount-text').textContent = translation.donationAmount;
-            document.querySelector('.donation-method-text').textContent = translation.donationMethod;
-            document.querySelector('.donation-confirm-text').textContent = translation.donationConfirm;
-            
-            document.querySelector('.login-title').textContent = translation.loginTitle;
-            document.querySelector('.login-subtitle').textContent = translation.loginSubtitle;
-            document.querySelector('.login-security-text').textContent = translation.loginSecurity;
-            
-            // Update current language display
-            currentLanguageElement.textContent = lang.toUpperCase();
-            mobileCurrentLanguageElement.textContent = lang.toUpperCase();
-            
-            // Update HTML lang attribute
-            document.documentElement.lang = lang;
-            
-            // Store selected language
-            localStorage.setItem('selected-language', lang);
-            currentLanguage = lang;
-        }
-
-        // Add event listeners to language options
-        languageOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                const lang = this.dataset.lang;
-                applyTranslations(lang);
+            init() {
+                // Donation button event
+                document.getElementById('donate-btn').addEventListener('click', () => {
+                    this.openModal();
+                });
                 
-                // Close any open dropdowns
-                document.querySelectorAll('.group').forEach(group => {
-                    const dropdown = group.querySelector('.absolute');
-                    if (dropdown) {
-                        dropdown.classList.add('opacity-0', 'invisible');
+                // Close modal events
+                document.querySelector('.donation-close').addEventListener('click', () => {
+                    this.closeModal();
+                });
+                
+                window.addEventListener('click', (event) => {
+                    if (event.target === document.getElementById('donation-modal')) {
+                        this.closeModal();
                     }
                 });
                 
-                // Close mobile language dropdown
-                mobileLanguageDropdown.classList.add('hidden');
-            });
-        });
-
-        // Initialize with current language
-        applyTranslations(currentLanguage);
-
-        // Animate Statistics
-        function animateValue(id, start, end, duration) {
-            let obj = document.getElementById(id);
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const value = Math.floor(progress * (end - start) + start);
-                obj.innerHTML = value + (id === 'transparency-score' ? '%' : '+');
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
+                // Donation option selection
+                document.querySelectorAll('.donation-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        document.querySelectorAll('.donation-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        option.classList.add('selected');
+                        this.currentAmount = parseInt(option.dataset.amount);
+                        document.querySelector('.donation-custom').value = '';
+                    });
+                });
+                
+                // Custom amount input
+                document.querySelector('.donation-custom').addEventListener('input', (e) => {
+                    this.currentAmount = parseInt(e.target.value) || 0;
+                    document.querySelectorAll('.donation-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                });
+                
+                // Frequency selection
+                document.querySelectorAll('input[name="frequency"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        this.frequency = e.target.value;
+                    });
+                });
+                
+                // Form submission
+                document.querySelector('.donation-submit').addEventListener('click', () => {
+                    this.processDonation();
+                });
+            },
+            
+            openModal() {
+                document.getElementById('donation-modal').style.display = 'flex';
+            },
+            
+            closeModal() {
+                document.getElementById('donation-modal').style.display = 'none';
+            },
+            
+            processDonation() {
+                if (this.currentAmount <= 0) {
+                    alert('Please select or enter a donation amount');
+                    return;
                 }
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        // Intersection Observer for statistics animation
-        const observerOptions = {
-            threshold: 0.5
+                
+                // In a real implementation, this would connect to a payment processor
+                // For demonstration, we'll show a confirmation message
+                const frequencyText = this.frequency === 'monthly' ? 'monthly' : 'one-time';
+                alert(`Thank you for your ${frequencyText} donation of $${this.currentAmount}! This would normally redirect to a secure payment processor.`);
+                
+                // Reset form and close modal
+                this.currentAmount = 0;
+                this.frequency = 'one-time';
+                document.querySelectorAll('.donation-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                document.querySelector('.donation-custom').value = '';
+                document.querySelector('input[name="frequency"][value="one-time"]').checked = true;
+                
+                this.closeModal();
+            }
         };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateValue('lives-impacted', 0, 125430, 2000);
-                    animateValue('total-donors', 0, 18732, 2000);
-                    animateValue('ongoing-campaigns', 0, 54, 1500);
-                    animateValue('transparency-score', 0, 98.7, 2000);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        // Observe the hero section
-        const heroSection = document.querySelector('.hero-bg');
-        observer.observe(heroSection);
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
+        // Emergency Call System
+        const emergencySystem = {
+            init() {
+                document.getElementById('emergency-btn').addEventListener('click', () => {
+                    this.initiateEmergencyCall();
+                });
+            },
+            
+            initiateEmergencyCall() {
+                if (confirm('Are you sure you want to call the emergency hotline? This should only be used for genuine emergencies.')) {
+                    // In a real implementation, this would initiate a phone call
+                    // For demonstration, we'll show the number and log the action
+                    const emergencyNumber = '+250788123456';
+                    alert(`In a real implementation, this would call: ${emergencyNumber}\n\nFor now, please dial this number manually if this is a real emergency.`);
                     
-                    // Close mobile menu if open
-                    mobileMenu.classList.add('hidden');
+                    // Log the emergency call attempt (in a real system, this would notify emergency responders)
+                    console.log(`Emergency call initiated to: ${emergencyNumber} at ${new Date().toLocaleString()}`);
                 }
-            });
+            }
+        };
+
+        // Statistics Counter Animation
+        const statisticsSystem = {
+            targets: {
+                'food-distributed': 1244,
+                'children-educated': 568,
+                'safety-reports': 192,
+                'youth-trained': 323
+            },
+            duration: 2000,
+            
+            init() {
+                // Create Intersection Observer to trigger animation when element is in view
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            this.animateValue(entry.target.id, 0, this.targets[entry.target.id], this.duration);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                // Observe all stat elements
+                Object.keys(this.targets).forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) observer.observe(element);
+                });
+            },
+            
+            animateValue(id, start, end, duration) {
+                const obj = document.getElementById(id);
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    const value = Math.floor(progress * (end - start) + start);
+                    obj.textContent = value.toLocaleString();
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+        };
+
+        // Interactive Gallery
+        const gallerySystem = {
+            images: [
+                {
+                    url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Education Programs',
+                    description: 'Children participating in educational activities at the camp learning center.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Community Gathering',
+                    description: 'Residents gathering for community meetings and decision-making processes.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1584467735871-8db9ac8d0e92?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Health Services',
+                    description: 'Medical professionals providing healthcare services to camp residents.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Food Distribution',
+                    description: 'Volunteers distributing food supplies to families in need.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1516627145497-ae69578cfc06?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Youth Activities',
+                    description: 'Young people engaged in skills training and recreational activities.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Women\'s Safe Space',
+                    description: 'Dedicated safe spaces for women to gather, share, and support each other.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Water Access',
+                    description: 'Clean water distribution points throughout the camp.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1584467735871-8db9ac8d0e92?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Shelter Construction',
+                    description: 'Ongoing construction and improvement of living shelters.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Cultural Events',
+                    description: 'Celebrations of diverse cultures and traditions within the camp.'
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1516627145497-ae69578cfc06?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                    title: 'Agricultural Projects',
+                    description: 'Community gardens and agricultural initiatives for food security.'
+                }
+            ],
+            
+            init() {
+                this.renderGallery();
+                this.setupGalleryInteractions();
+            },
+            
+            renderGallery() {
+                const galleryContainer = document.getElementById('gallery-container');
+                galleryContainer.innerHTML = '';
+                
+                this.images.forEach((image, index) => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item';
+                    galleryItem.innerHTML = `
+                        <img src="${image.url}" alt="${image.title}" loading="lazy">
+                        <div class="gallery-caption">
+                            <h3>${image.title}</h3>
+                            <p>${image.description}</p>
+                        </div>
+                    `;
+                    galleryContainer.appendChild(galleryItem);
+                });
+            },
+            
+            setupGalleryInteractions() {
+                // Add click events to gallery items for potential lightbox functionality
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        // In a full implementation, this would open a lightbox
+                        const title = item.querySelector('h3').textContent;
+                        console.log(`Gallery item clicked: ${title}`);
+                    });
+                });
+            }
+        };
+
+        // Navigation Interactivity
+        const navigationSystem = {
+            init() {
+                this.setupDropdowns();
+                this.setupMobileMenu();
+            },
+            
+            setupDropdowns() {
+                // Add interactivity to navigation dropdowns
+                const dropdowns = document.querySelectorAll('.nav-dropdown');
+                dropdowns.forEach(dropdown => {
+                    dropdown.addEventListener('mouseenter', () => {
+                        dropdown.querySelector('.dropdown-content').style.display = 'block';
+                    });
+                    dropdown.addEventListener('mouseleave', () => {
+                        dropdown.querySelector('.dropdown-content').style.display = 'none';
+                    });
+                });
+            },
+            
+            setupMobileMenu() {
+                // Mobile menu toggle functionality
+                const toggle = document.querySelector('.nav-toggle');
+                if (toggle) {
+                    toggle.addEventListener('click', () => {
+                        const menu = document.querySelector('.nav-menu');
+                        menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+                    });
+                }
+            }
+        };
+
+        // Form Handling System
+        const formSystem = {
+            init() {
+                // Initialize any form handling functionality
+                console.log("Form system initialized");
+            }
+        };
+
+        // Initialize all systems when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            backgroundController.init();
+            donationSystem.init();
+            emergencySystem.init();
+            statisticsSystem.init();
+            gallerySystem.init();
+            navigationSystem.init();
+            formSystem.init();
+            
+            console.log("All systems initialized successfully");
         });
+
+        // Utility Functions
+        const utils = {
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(amount);
+            },
+            
+            debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+        };
     </script>
 </body>
 </html>
