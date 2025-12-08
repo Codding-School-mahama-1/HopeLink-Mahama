@@ -404,6 +404,55 @@
                 left: -100%;
             }
         }
+
+        /* AUTHENTICATION STYLES */
+        .user-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            min-width: 250px;
+            z-index: 1000;
+        }
+        .user-menu.show {
+            display: block;
+        }
+        .profile-section {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3b82f6;
+        }
+        .menu-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .menu-item:hover {
+            background: #f3f4f6;
+            padding-left: 1.25rem;
+        }
+        .auth-form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        .auth-form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3);
+            border-color: #3b82f6;
+        }
+        .auth-btn-primary {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+        }
     </style>
 </head>
 <body class="font-sans bg-gray-50 scroll-smooth">
@@ -474,17 +523,67 @@
                     </div>
                 </div>
 
-                <!-- Right Section with Login, Signup, and Donate -->
-                <div class="desktop-nav hidden lg-md:flex items-center space-x-2 lg-md:space-x-3 flex-shrink-0">
-                    <a href="login.html" class="login-btn px-3 py-2 lg-md:px-4 lg-md:py-2 rounded-lg transition flex items-center">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Login
-                    </a>
-                    <a href="signup.html" class="signup-btn px-3 py-2 lg-md:px-4 lg-md:py-2 rounded-lg transition flex items-center">
-                        <i class="fas fa-user-plus mr-2"></i>Sign Up
-                    </a>
+                <!-- Right Section with Donate button first, then Login/Signup OR User Profile -->
+                <div id="nav-right-section" class="desktop-nav hidden lg-md:flex items-center space-x-2 lg-md:space-x-3 flex-shrink-0">
+                    <!-- Donate Button (First in the right section) -->
                     <button onclick="openModal('donateModal')" class="donate-btn btn-professional bg-primary-green text-white px-4 py-2 lg-md:px-5 lg-md:py-2 rounded-lg transition transform hover:scale-105 shadow-lg">
                         <i class="fas fa-heart mr-2"></i>Donate
                     </button>
+
+                    <!-- Login/Signup Buttons (Visible when not logged in) -->
+                    <div id="auth-buttons-section" class="flex space-x-2 lg-md:space-x-3">
+                        <a href="auth.html?view=login" class="login-btn px-3 py-2 lg-md:px-4 lg-md:py-2 rounded-lg transition flex items-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a href="auth.html?view=signup" class="signup-btn px-3 py-2 lg-md:px-4 lg-md:py-2 rounded-lg transition flex items-center">
+                            <i class="fas fa-user-plus mr-2"></i>Sign Up
+                        </a>
+                    </div>
+
+                    <!-- User Profile Section (Visible when logged in) -->
+                    <div id="user-profile-section" class="hidden relative">
+                        <button id="user-menu-btn" class="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 rounded-xl p-2 transition-all duration-300">
+                            <img id="user-avatar" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                                 class="w-8 h-8 rounded-full border-2 border-blue-500">
+                            <div class="text-left">
+                                <div id="user-name" class="font-semibold text-gray-800">Guest</div>
+                                <div id="user-role" class="text-xs text-gray-500">Not logged in</div>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </button>
+                        
+                        <!-- User Dropdown Menu -->
+                        <div id="user-dropdown" class="user-menu">
+                            <div class="profile-section">
+                                <div class="flex items-center space-x-3">
+                                    <img id="dropdown-avatar" style="border-radius: 50%;" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                                         class="profile-pic">
+                                    <div>
+                                        <div id="dropdown-name" class="font-bold text-gray-800">Guest User</div>
+                                        <div id="dropdown-email" class="text-sm text-gray-500">guest@example.com</div>
+                                        <div id="dropdown-role" class="text-xs text-blue-600 font-semibold">Guest</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="py-2">
+                                <div class="menu-item" onclick="goToDashboard()">
+                                    <i class="fas fa-tachometer-alt text-blue-500 mr-3"></i>
+                                    Dashboard
+                                </div>
+                                <div class="menu-item" onclick="openProfileModal()">
+                                    <i class="fas fa-user-circle text-green-500 mr-3"></i>
+                                    My Profile
+                                </div>
+                                <div class="border-t border-gray-200 mt-2 pt-2">
+                                    <div class="menu-item text-red-600" onclick="logout()">
+                                        <i class="fas fa-sign-out-alt mr-3"></i>
+                                        Logout
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Mobile Menu Button -->
@@ -538,24 +637,49 @@
                         </div>
                     </div>
                    
-                    <!-- Login and Signup buttons for mobile -->
-                    <div class="flex flex-col space-y-2 pt-2">
-                        <a href="login.html" class="login-btn px-4 py-2 rounded-lg transition flex items-center justify-center">
-                            <i class="fas fa-sign-in-alt mr-2"></i>Login
-                        </a>
-                        <a href="signup.html" class="signup-btn px-4 py-2 rounded-lg transition flex items-center justify-center">
-                            <i class="fas fa-user-plus mr-2"></i>Sign Up
-                        </a>
-                    </div>
-                   
-                    <button onclick="openModal('donateModal')" class="w-full donate-btn btn-professional bg-primary-green text-white px-6 py-2 rounded-lg transition transform hover:scale-105 text-left flex items-center">
+                    <!-- Mobile Donate Button (Now first) -->
+                    <button onclick="openModal('donateModal')" class="w-full donate-btn btn-professional bg-primary-green text-white px-6 py-2 rounded-lg transition transform hover:scale-105 text-left flex items-center mt-2">
                         <i class="fas fa-heart mr-2"></i>Donate Now
                     </button>
+
+                    <!-- Mobile Login/Signup/Profile Section -->
+                    <div id="mobile-auth-section" class="flex flex-col space-y-2 pt-2">
+                        <!-- Mobile User Profile (visible when logged in) -->
+                        <div id="mobile-user-profile" class="hidden">
+                            <div class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
+                                <img id="mobile-user-avatar" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                                     class="w-10 h-10 rounded-full border-2 border-blue-500">
+                                <div class="flex-1">
+                                    <div id="mobile-user-name" class="font-semibold text-gray-800">Guest</div>
+                                    <div id="mobile-user-role" class="text-xs text-gray-500">Not logged in</div>
+                                </div>
+                            </div>
+                            <div class="mt-2 space-y-1">
+                                <button onclick="openProfileModal()" class="w-full text-left py-2 px-3 text-gray-600 hover:bg-blue-50 rounded">
+                                    <i class="fas fa-user-circle mr-2 text-green-500"></i>My Profile
+                                </button>
+                                <button onclick="logout()" class="w-full text-left py-2 px-3 text-red-600 hover:bg-red-50 rounded">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Login/Signup buttons (visible when not logged in) -->
+                        <div id="mobile-auth-buttons" class="flex flex-col space-y-2">
+                            <a href="auth.html?view=login" class="login-btn px-4 py-2 rounded-lg transition flex items-center justify-center">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Login
+                            </a>
+                            <a href="auth.html?view=signup" class="signup-btn px-4 py-2 rounded-lg transition flex items-center justify-center">
+                                <i class="fas fa-user-plus mr-2"></i>Sign Up
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Rest of your existing volunteer page content remains the same -->
     <!-- Hero Section -->
     <section class="pt-32 min-h-screen flex items-center relative overflow-hidden section-gradient">
         <!-- Animated background elements -->
@@ -1073,28 +1197,372 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">My Profile</h3>
+                    <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="flex flex-col items-center space-y-4">
+                        <img id="modal-avatar" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                             class="w-32 h-32 rounded-full border-4 border-blue-500 object-cover">
+                        <div class="text-center">
+                            <h4 id="modal-fullname" class="text-xl font-bold text-gray-800">Guest User</h4>
+                            <p id="modal-email" class="text-gray-600">guest@example.com</p>
+                            <span id="modal-role" class="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+                                Guest
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">First Name</label>
+                            <input type="text" id="profile-firstname" 
+                                   class="auth-form-input w-full p-3 rounded-lg" placeholder="First Name">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Last Name</label>
+                            <input type="text" id="profile-lastname" 
+                                   class="auth-form-input w-full p-3 rounded-lg" placeholder="Last Name">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Phone Number</label>
+                            <input type="tel" id="profile-phone" 
+                                   class="auth-form-input w-full p-3 rounded-lg" placeholder="Phone Number">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Address</label>
+                            <input type="text" id="profile-address" 
+                                   class="auth-form-input w-full p-3 rounded-lg" placeholder="Address">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Bio</label>
+                        <textarea id="profile-bio" rows="4" 
+                                  class="auth-form-input w-full p-3 rounded-lg" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button onclick="closeProfileModal()" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium">
+                            Cancel
+                        </button>
+                        <button onclick="updateProfile()" class="auth-btn-primary px-6 py-3 rounded-lg font-semibold">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ========== MODAL MANAGEMENT ==========
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
+        // ==============================
+        // AUTHENTICATION SYSTEM
+        // ==============================
+
+        // Global state
+        let currentUser = null;
+
+        // Initialize localStorage for demo users
+        if (!localStorage.getItem('hopelink_users')) {
+            localStorage.setItem('hopelink_users', JSON.stringify([]));
+        }
+
+        // Get all users from localStorage
+        function getAllLocalUsers() {
+            return JSON.parse(localStorage.getItem('hopelink_users') || '[]');
+        }
+
+        // Get user by email from localStorage
+        function getLocalUserByEmail(email) {
+            const users = getAllLocalUsers();
+            return users.find(u => u.email === email);
+        }
+
+        // Update user in localStorage
+        function updateLocalUser(userId, updates) {
+            const users = getAllLocalUsers();
+            const index = users.findIndex(u => u.id === userId);
+            if (index !== -1) {
+                users[index] = { ...users[index], ...updates };
+                localStorage.setItem('hopelink_users', JSON.stringify(users));
+                
+                // Update current user in session
+                if (currentUser && currentUser.id === userId) {
+                    currentUser = users[index];
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateUI();
+                }
+            }
+        }
+
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            notification.className = 'notification';
+            notification.classList.add(type);
+            icon.className = type === 'success' ? 'fas fa-check-circle mr-2' :
+                           type === 'error' ? 'fas fa-exclamation-circle mr-2' :
+                           'fas fa-info-circle mr-2';
+            
+            messageEl.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(hideNotification, 5000);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+
+        // Check login status
+        function checkLoginStatus() {
+            // Check session storage for existing login
+            const userJson = sessionStorage.getItem('currentUser');
+            if (userJson) {
+                try {
+                    currentUser = JSON.parse(userJson);
+                    showUserSection();
+                    updateUI();
+                    return;
+                } catch (e) {
+                    console.error("Error parsing user data:", e);
+                    sessionStorage.removeItem('currentUser');
+                }
+            }
+            
+            // No user logged in
+            showAuthSection();
+        }
+
+        // Update UI based on user state
+        function updateUI() {
+            if (currentUser) {
+                const userInfo = currentUser;
+                
+                // Update desktop navigation
+                document.getElementById('user-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('user-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                
+                // Generate avatar URL
+                let userAvatar;
+                if (userInfo.photoURL) {
+                    userAvatar = userInfo.photoURL;
+                } else if (userInfo.email) {
+                    userAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.displayName || userInfo.name || userInfo.email)}&background=random`;
+                } else {
+                    userAvatar = 'https://ui-avatars.com/api/?name=Guest&background=random';
+                }
+                
+                document.getElementById('user-avatar').src = userAvatar;
+                
+                // Update dropdown
+                document.getElementById('dropdown-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('dropdown-email').textContent = userInfo.email || 'No email';
+                document.getElementById('dropdown-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('dropdown-avatar').src = userAvatar;
+                
+                // Update mobile navigation
+                document.getElementById('mobile-user-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('mobile-user-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('mobile-user-avatar').src = userAvatar;
+                
+                // Update modal
+                document.getElementById('modal-fullname').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('modal-email').textContent = userInfo.email || 'No email';
+                document.getElementById('modal-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('modal-avatar').src = userAvatar;
+                
+                document.getElementById('profile-firstname').value = userInfo.firstName || userInfo.displayName?.split(' ')[0] || '';
+                document.getElementById('profile-lastname').value = userInfo.lastName || userInfo.displayName?.split(' ')[1] || '';
+                document.getElementById('profile-phone').value = userInfo.phone || '';
+                document.getElementById('profile-address').value = userInfo.address || '';
+                document.getElementById('profile-bio').value = userInfo.bio || '';
+            }
+        }
+
+        // Show/Hide sections
+        function showUserSection() {
+            // Show user profile, hide auth buttons
+            document.getElementById('user-profile-section').classList.remove('hidden');
+            document.getElementById('auth-buttons-section').classList.add('hidden');
+            
+            // Mobile version
+            document.getElementById('mobile-user-profile').classList.remove('hidden');
+            document.getElementById('mobile-auth-buttons').classList.add('hidden');
+            
+            updateUI();
+        }
+
+        function showAuthSection() {
+            // Show auth buttons, hide user profile
+            document.getElementById('user-profile-section').classList.add('hidden');
+            document.getElementById('auth-buttons-section').classList.remove('hidden');
+            
+            // Mobile version
+            document.getElementById('mobile-user-profile').classList.add('hidden');
+            document.getElementById('mobile-auth-buttons').classList.remove('hidden');
+        }
+
+        // Dashboard navigation
+        function goToDashboard() {
+            if (currentUser && currentUser.role === 'admin') {
+                window.location.href = 'dashboard.html';
+            } else {
+                showNotification('You need admin privileges to access the dashboard', 'error');
+            }
+        }
+
+        // Profile modal functions
+        function openProfileModal() {
+            document.getElementById('profile-modal').classList.remove('hidden');
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userDropdown) {
+                userDropdown.classList.remove('show');
+            }
             document.body.style.overflow = 'hidden';
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            document.body.style.overflow = 'auto';
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.body.style.overflow = '';
         }
 
-        // Close modal when clicking outside content
-        document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-                document.body.style.overflow = 'auto';
+        // Update profile
+        function updateProfile() {
+            const firstName = document.getElementById('profile-firstname').value;
+            const lastName = document.getElementById('profile-lastname').value;
+            const phone = document.getElementById('profile-phone').value;
+            const address = document.getElementById('profile-address').value;
+            const bio = document.getElementById('profile-bio').value;
+            
+            if (!currentUser) return;
+            
+            const updates = {
+                firstName: firstName,
+                lastName: lastName,
+                displayName: `${firstName} ${lastName}`,
+                phone: phone,
+                address: address,
+                bio: bio
+            };
+            
+            // Update local storage
+            if (currentUser.id) {
+                updateLocalUser(currentUser.id, updates);
             }
-        });
+            
+            // Update current user in session
+            currentUser = { ...currentUser, ...updates };
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            updateUI();
+            showNotification('Profile updated successfully!', 'success');
+            closeProfileModal();
+        }
 
-        // ========== NAVIGATION FUNCTIONALITY ==========
+        // Logout
+        function logout() {
+            // Clear session storage
+            sessionStorage.removeItem('currentUser');
+            currentUser = null;
+            
+            // Update UI
+            showAuthSection();
+            showNotification('Logged out successfully', 'info');
+            
+            // Close dropdowns
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userDropdown) {
+                userDropdown.classList.remove('show');
+            }
+            
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu && mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                const icon = document.querySelector('#mobileMenuButton i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        }
+
+        // Check for auth redirect from auth.html
+        function checkForAuthRedirect() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const authSuccess = urlParams.get('auth');
+            const view = urlParams.get('view');
+            
+            if (authSuccess === 'success') {
+                // Remove the parameter from URL
+                const url = new URL(window.location);
+                url.searchParams.delete('auth');
+                url.searchParams.delete('view');
+                window.history.replaceState({}, '', url);
+                
+                // Check login status
+                checkLoginStatus();
+                
+                // Show welcome message
+                if (currentUser) {
+                    showNotification(`Welcome ${currentUser.displayName || currentUser.email}!`, 'success');
+                }
+            }
+            
+            // Check if we should redirect to auth page with specific view
+            if (view && (view === 'login' || view === 'signup')) {
+                window.location.href = `auth.html?view=${view}`;
+            }
+        }
+
+        // ==============================
+        // EXISTING VOLUNTEER PAGE FUNCTIONALITY
+        // ==============================
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize authentication
+            checkLoginStatus();
+            checkForAuthRedirect();
+            
+            // Toggle user dropdown
+            const userMenuBtn = document.getElementById('user-menu-btn');
+            if (userMenuBtn) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    document.getElementById('user-dropdown').classList.toggle('show');
+                });
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                const userDropdown = document.getElementById('user-dropdown');
+                if (userDropdown) {
+                    userDropdown.classList.remove('show');
+                }
+            });
+
+            // Prevent dropdown close when clicking inside
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userDropdown) {
+                userDropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
             // Mobile menu toggle
             document.getElementById('mobileMenuButton').addEventListener('click', function() {
                 document.getElementById('mobileMenu').classList.toggle('active');
@@ -1156,6 +1624,25 @@
                 }
             });
 
+            // ========== MODAL MANAGEMENT ==========
+            window.openModal = function(modalId) {
+                document.getElementById(modalId).classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            window.closeModal = function(modalId) {
+                document.getElementById(modalId).classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+
+            // Close modal when clicking outside content
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
             // ========== FORM HANDLING ==========
             // Donation form
             document.getElementById('donationForm').addEventListener('submit', function(e) {
@@ -1182,11 +1669,6 @@
                 
                 if (!name || !email) {
                     showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                if (!isValidEmail(email)) {
-                    showNotification('Please enter a valid email address', 'error');
                     return;
                 }
                 
@@ -1429,39 +1911,6 @@
                 });
             };
 
-            window.isValidEmail = function(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            };
-
-            // ========== NOTIFICATION SYSTEM ==========
-            window.showNotification = function(message, type = 'success') {
-                const notification = document.getElementById('notification');
-                const notificationIcon = document.getElementById('notificationIcon');
-                const notificationMessage = document.getElementById('notificationMessage');
-                
-                // Set notification content and style
-                notificationMessage.textContent = message;
-                notification.className = 'notification ' + type;
-                
-                if (type === 'success') {
-                    notificationIcon.className = 'fas fa-check-circle mr-2';
-                    notification.classList.add('bg-primary-green');
-                } else {
-                    notificationIcon.className = 'fas fa-exclamation-circle mr-2';
-                    notification.classList.add('bg-red-500');
-                }
-                
-                // Show notification
-                notification.classList.add('show');
-                
-                // Hide after 5 seconds
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 5000);
-            };
-
-            // ========== INITIALIZATION ==========
             // Show welcome notification after page loads
             setTimeout(() => {
                 showNotification('Welcome to HopeLink Mahama Volunteer Program!', 'success');
