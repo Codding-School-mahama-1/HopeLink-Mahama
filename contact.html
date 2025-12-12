@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Education & Vocational Training - Mahama Refugee Camp</title>
+    <title>Contact Us - HopeLink Mahama | Empowering Refugees Through Technology</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -524,10 +524,126 @@
                 left: -100%;
             }
         }
+
+        /* AUTHENTICATION STYLES */
+        .user-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            min-width: 250px;
+            z-index: 1000;
+        }
+        .user-menu.show {
+            display: block;
+        }
+        .profile-section {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3b82f6;
+        }
+        .menu-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .menu-item:hover {
+            background: #f3f4f6;
+            padding-left: 1.25rem;
+        }
+        .auth-form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        .auth-form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3);
+            border-color: #3b82f6;
+        }
+        .auth-btn-primary {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+        }
+
+        /* Photo upload styles */
+        .upload-dropzone {
+            transition: all 0.3s ease;
+        }
+        .upload-dropzone.drag-over {
+            border-color: #3b82f6 !important;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Home icon button */
+        .home-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .home-icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Photo modal sections */
+        .photo-section {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .photo-section.hidden {
+            opacity: 0;
+            transform: translateX(-20px);
+            pointer-events: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+        .photo-section:not(.hidden) {
+            opacity: 1;
+            transform: translateX(0);
+            position: relative;
+            width: auto;
+            height: auto;
+            overflow: visible;
+        }
+
+        /* Crop overlay styles */
+        #crop-overlay {
+            pointer-events: none;
+        }
+        #crop-image {
+            transition: transform 0.3s ease;
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        #photo-back-btn {
+            transition: all 0.3s ease;
+        }
+        #photo-back-btn:hover {
+            transform: translateX(-3px);
+        }
     </style>
 </head>
 
-<body class="font-sans bg-gray-50">
+<body class="font-sans bg-white">
     <!-- Scroll Progress Bar -->
     <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -560,7 +676,7 @@
                             </button>
                             <div class="dropdown-content" id="programs-dropdown">
                                 <a href="hunger-help.html" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-primary-blue transition">Hunger Help</a>
-                                <a href="./Youth Empowerment .html" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-primary-blue transition">Youth Empowerment</a>
+                                <a href="youth-empowerment.html" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-primary-blue transition">Youth Empowerment</a>
                                 <a href="mental-wellness.html" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-primary-blue transition">Mental Wellness</a>
                             </div>
                         </div>
@@ -580,7 +696,7 @@
                             </div>
                         </div>
                        
-                        <a href="contact.html" class="nav-item text-gray-600 hover:text-primary-blue transition duration-300">Contact</a>
+                        <a href="contact.html" class="nav-item text-primary-blue font-semibold transition duration-300">Contact</a>
                        
                         <!-- Opportunities -->
                         <div class="dropdown relative">
@@ -596,17 +712,79 @@
                     </div>
                 </div>
 
-                <!-- Right Section with Login, Signup, and Donate -->
-                <div class="desktop-nav hidden lg-md:flex items-center space-x-2 lg-md:space-x-3 flex-shrink-0">
-                    <a href="login.html" class="login-btn px-3 py-2 lg-md:px-4 lg-md:py-2 rounded-lg transition flex items-center">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Login
-                    </a>
-                    <a href="signup.html" class="signup-btn px-3 py-2 lg-md:px-4 lg-md:py-2 rounded-lg transition flex items-center">
-                        <i class="fas fa-user-plus mr-2"></i>Sign Up
-                    </a>
+                <!-- Right Section with Authentication -->
+                <div id="nav-right-section" class="desktop-nav hidden lg-md:flex items-center space-x-2 lg-md:space-x-3 flex-shrink-0">
+                    <!-- Donate Button -->
                     <button onclick="openModal('donateModal')" class="donate-btn btn-professional bg-primary-green text-white px-4 py-2 lg-md:px-5 lg-md:py-2 rounded-lg transition transform hover:scale-105 shadow-lg">
                         <i class="fas fa-heart mr-2"></i>Donate
                     </button>
+
+                    <!-- Login/Signup Buttons (Visible when not logged in) -->
+                    <div id="auth-buttons-section" class="flex space-x-2 lg-md:space-x-3">
+                        <button onclick="window.location.href='auth.html?view=login'" class="login-btn px-3 py-2 lg-md:px-4 lg-md:py-2 rounded-lg transition flex items-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </button>
+                        <button onclick="window.location.href='auth.html?view=signup'" class="signup-btn px-3 py-2 lg-md:px-4 lg-md:py-2 rounded-lg transition flex items-center">
+                            <i class="fas fa-user-plus mr-2"></i>Sign Up
+                        </button>
+                    </div>
+
+                    <!-- User Profile Section (Visible when logged in) -->
+                    <div id="user-profile-section" class="hidden relative">
+                        <button id="user-menu-btn" class="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 rounded-xl p-2 transition-all duration-300">
+                            <img id="user-avatar" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                                 class="w-8 h-8 rounded-full border-2 border-blue-500">
+                            <div class="text-left">
+                                <div id="user-name" class="font-semibold text-gray-800">Guest</div>
+                                <div id="user-role" class="text-xs text-gray-500">Not logged in</div>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </button>
+                        
+                        <!-- User Dropdown Menu -->
+                        <div id="user-dropdown" class="user-menu">
+                            <div class="profile-section">
+                                <div class="flex items-center space-x-3">
+                                    <img id="dropdown-avatar" style="border-radius: 50%;" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                                         class="profile-pic">
+                                    <div>
+                                        <div id="dropdown-name" class="font-bold text-gray-800">Guest User</div>
+                                        <div id="dropdown-email" class="text-sm text-gray-500">guest@example.com</div>
+                                        <div id="dropdown-role" class="text-xs text-blue-600 font-semibold">Guest</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="py-2">
+                                <div class="menu-item" onclick="goToHome()">
+                                    <i class="fas fa-home text-blue-500 mr-3"></i>
+                                    Go to Homepage
+                                </div>
+                                <div class="menu-item" onclick="goToDashboard()">
+                                    <i class="fas fa-tachometer-alt text-blue-500 mr-3"></i>
+                                    Dashboard
+                                </div>
+                                <div class="menu-item" onclick="openProfileModal()">
+                                    <i class="fas fa-user-circle text-green-500 mr-3"></i>
+                                    My Profile
+                                </div>
+                                <div class="menu-item" onclick="openPhotoModal()">
+                                    <i class="fas fa-camera text-pink-500 mr-3"></i>
+                                    Change Photo
+                                </div>
+                                <div class="menu-item" onclick="openPasswordModal()">
+                                    <i class="fas fa-key text-yellow-500 mr-3"></i>
+                                    Change Password
+                                </div>
+                                <div class="border-t border-gray-200 mt-2 pt-2">
+                                    <div class="menu-item text-red-600" onclick="logout()">
+                                        <i class="fas fa-sign-out-alt mr-3"></i>
+                                        Logout
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Mobile and Tablet Menu Button -->
@@ -625,13 +803,9 @@
                         <button class="mobile-dropdown-btn w-full text-left py-2 mobile-nav-item text-gray-600 hover:text-primary-blue transition flex items-center justify-between">
                             Programs <i class="fas fa-chevron-down text-xs"></i>
                         </button>
-                        <div class="pl-4 mt-2 space-y-2 hidden" id="mobileProgramsMenu">
-                            <a href="hunger-help.html" class="block py-1 text-gray-600 hover:text-primary-blue transition">Hunger Help</a>
-                            <a href="./Youth Empowerment .html" class="block py-1 text-gray-600 hover:text-primary-blue transition">Youth Empowerment</a>
-                            <a href="mental-wellness.html" class="block py-1 text-gray-600 hover:text-primary-blue transition">Mental Wellness</a>
                         <div class="mobile-dropdown-content">
                             <a href="hunger-help.html" class="block py-2 text-gray-600 hover:text-primary-blue transition pl-4">Hunger Help</a>
-                            <a href="./Youth Empowerment .html" class="block py-2 text-gray-600 hover:text-primary-blue transition pl-4">Youth Empowerment</a>
+                            <a href="youth-empowerment.html" class="block py-2 text-gray-600 hover:text-primary-blue transition pl-4">Youth Empowerment</a>
                             <a href="mental-wellness.html" class="block py-2 text-gray-600 hover:text-primary-blue transition pl-4">Mental Wellness</a>
                         </div>
                     </div>
@@ -651,7 +825,7 @@
                         </div>
                     </div>
                    
-                    <a href="contact.html" class="block py-2 mobile-nav-item text-gray-600 hover:text-primary-blue transition">Contact</a>
+                    <a href="contact.html" class="block py-2 mobile-nav-item text-primary-blue font-semibold border-l-4 border-primary-blue pl-2 transition">Contact</a>
                    
                     <!-- Opportunities Mobile Dropdown -->
                     <div class="mobile-dropdown">
@@ -665,19 +839,50 @@
                         </div>
                     </div>
                    
-                    <!-- Login and Signup buttons for mobile -->
-                    <div class="flex flex-col space-y-2 pt-2">
-                        <a href="login.html" class="login-btn px-4 py-2 rounded-lg transition flex items-center justify-center">
-                            <i class="fas fa-sign-in-alt mr-2"></i>Login
-                        </a>
-                        <a href="signup.html" class="signup-btn px-4 py-2 rounded-lg transition flex items-center justify-center">
-                            <i class="fas fa-user-plus mr-2"></i>Sign Up
-                        </a>
-                    </div>
-                   
-                    <button onclick="openModal('donateModal')" class="w-full donate-btn btn-professional bg-primary-green text-white px-6 py-2 rounded-lg transition transform hover:scale-105 text-left flex items-center">
+                    <!-- Mobile Donate Button -->
+                    <button onclick="openModal('donateModal')" class="w-full donate-btn btn-professional bg-primary-green text-white px-6 py-2 rounded-lg transition transform hover:scale-105 text-left flex items-center mt-2">
                         <i class="fas fa-heart mr-2"></i>Donate Now
                     </button>
+
+                    <!-- Mobile Login/Signup/Profile Section -->
+                    <div id="mobile-auth-section" class="flex flex-col space-y-2 pt-2">
+                        <!-- Mobile User Profile (visible when logged in) -->
+                        <div id="mobile-user-profile" class="hidden">
+                            <div class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
+                                <img id="mobile-user-avatar" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                                     class="w-10 h-10 rounded-full border-2 border-blue-500">
+                                <div class="flex-1">
+                                    <div id="mobile-user-name" class="font-semibold text-gray-800">Guest</div>
+                                    <div id="mobile-user-role" class="text-xs text-gray-500">Not logged in</div>
+                                </div>
+                            </div>
+                            <div class="mt-2 space-y-1">
+                                <button onclick="goToHome()" class="w-full text-left py-2 px-3 text-gray-600 hover:bg-blue-50 rounded flex items-center">
+                                    <i class="fas fa-home mr-2 text-blue-500"></i>
+                                    <span>Go to Homepage</span>
+                                </button>
+                                <button onclick="openProfileModal()" class="w-full text-left py-2 px-3 text-gray-600 hover:bg-blue-50 rounded">
+                                    <i class="fas fa-user-circle mr-2 text-green-500"></i>My Profile
+                                </button>
+                                <button onclick="openPhotoModal()" class="w-full text-left py-2 px-3 text-gray-600 hover:bg-blue-50 rounded">
+                                    <i class="fas fa-camera mr-2 text-pink-500"></i>Change Photo
+                                </button>
+                                <button onclick="logout()" class="w-full text-left py-2 px-3 text-red-600 hover:bg-red-50 rounded">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Login/Signup buttons (visible when not logged in) -->
+                        <div id="mobile-auth-buttons" class="flex flex-col space-y-2">
+                            <button onclick="window.location.href='auth.html?view=login'" class="login-btn px-4 py-2 rounded-lg transition flex items-center justify-center">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Login
+                            </button>
+                            <button onclick="window.location.href='auth.html?view=signup'" class="signup-btn px-4 py-2 rounded-lg transition flex items-center justify-center">
+                                <i class="fas fa-user-plus mr-2"></i>Sign Up
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -691,554 +896,325 @@
         </div>
     </div>
 
-    <!-- Main Education Content -->
-    <main class="pt-32">
-        <!-- Header Section -->
-        <section class="bg-gradient-to-r from-purple-600 to-blue-600 py-20 text-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center fade-in">
-                    <h1 class="text-4xl md:text-5xl font-bold mb-6">Education & Vocational Training</h1>
-                    <p class="text-xl md:text-2xl mb-8 opacity-90 max-w-4xl mx-auto">
-                        Empowering refugees through quality education, literacy programs, and skills development in Mahama Refugee Camp
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button onclick="scrollToSection('primary-education')" class="btn-responsive btn-professional bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition transform hover:scale-105 shadow-lg">
-                            <i class="fas fa-graduation-cap mr-2"></i>Primary Education
-                        </button>
-                        <button onclick="scrollToSection('vocational-training')" class="btn-responsive btn-professional bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-purple-600 transition transform hover:scale-105">
-                            <i class="fas fa-tools mr-2"></i>Vocational Training
-                        </button>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-gradient-to-br from-primary-blue to-primary-green text-white">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="animate-fade-in">
+                <span class="inline-block bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full font-semibold mb-6 animate-pulse-slow">
+                    We're Here to Help
+                </span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                    Get In <span class="text-primary-yellow">Touch</span> With Us
+                </h1>
+                <p class="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto mb-8 leading-relaxed">
+                    Whether you need support, information, or want to partner with us, we're ready to listen and help. Your voice matters to us.
+                </p>
+                
+                <!-- Contact Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10 max-w-2xl mx-auto">
+                    <div class="text-center bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                        <div class="text-2xl md:text-3xl font-bold text-primary-yellow">24/7</div>
+                        <div class="text-sm opacity-90">Emergency Support</div>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Executive Summary -->
-        <section class="py-16 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Education in Mahama Refugee Camp</h2>
-                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">Comprehensive analysis of educational programs and vocational training opportunities</p>
+                    <div class="text-center bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                        <div class="text-2xl md:text-3xl font-bold text-white">2-4h</div>
+                        <div class="text-sm opacity-90">Response Time</div>
+                    </div>
+                    <div class="text-center bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                        <div class="text-2xl md:text-3xl font-bold text-primary-green">98%</div>
+                        <div class="text-sm opacity-90">Satisfaction Rate</div>
+                    </div>
+                    <div class="text-center bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                        <div class="text-2xl md:text-3xl font-bold text-blue-200">5,000+</div>
+                        <div class="text-sm opacity-90">People Helped</div>
+                    </div>
                 </div>
                 
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 mb-8 fade-in">
-                    <div class="flex items-start">
-                        <i class="fas fa-school text-3xl text-purple-600 mr-4 mt-1"></i>
-                        <div>
-                            <h3 class="text-2xl font-bold text-gray-800 mb-4">Overview</h3>
-                            <p class="text-gray-700 text-lg leading-relaxed">
-                                Mahama Refugee Camp in Rwanda hosts approximately 60,000 refugees, with over 60% being children under 18. 
-                                Education is a fundamental right and a critical component of refugee protection and empowerment. 
-                                Multiple organizations collaborate to provide comprehensive educational services from early childhood 
-                                through vocational training, following both Rwandan and Burundian curricula to accommodate the diverse refugee population.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Key Education Statistics -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                    <div class="stat-card text-white text-center p-6 rounded-2xl shadow-lg">
-                        <div class="text-3xl font-bold mb-2 counter" data-target="15000">0</div>
-                        <div class="text-lg">School-aged Children</div>
-                    </div>
-                    <div class="stat-card text-white text-center p-6 rounded-2xl shadow-lg">
-                        <div class="text-3xl font-bold mb-2 counter" data-target="8">0</div>
-                        <div class="text-lg">Primary Schools</div>
-                    </div>
-                    <div class="stat-card text-white text-center p-6 rounded-2xl shadow-lg">
-                        <div class="text-3xl font-bold mb-2 counter" data-target="85">0</div>
-                        <div class="text-lg">Enrollment Rate %</div>
-                    </div>
-                    <div class="stat-card text-white text-center p-6 rounded-2xl shadow-lg">
-                        <div class="text-3xl font-bold mb-2 counter" data-target="1200">0</div>
-                        <div class="text-lg">Vocational Trainees</div>
-                    </div>
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="#contact-form" class="bg-white text-primary-blue px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105 shadow-lg flex items-center">
+                        <i class="fas fa-envelope mr-3"></i>
+                        Send a Message
+                    </a>
+                    <a href="#emergency" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary-blue transition duration-300 transform hover:scale-105 flex items-center">
+                        <i class="fas fa-phone mr-3"></i>
+                        Emergency Contacts
+                    </a>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Primary Education Section -->
-        <section id="primary-education" class="py-16 bg-gray-50">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Primary Education</h2>
-                    <p class="text-xl text-gray-600">Building foundations for future generations</p>
-                </div>
-
-                <div class="education-card bg-white rounded-2xl shadow-lg overflow-hidden border-l-4 border-blue-500 fade-in hover-lift mb-8">
-                    <div class="p-8">
-                        <div class="flex items-start justify-between mb-6">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-child text-blue-600 text-xl"></i>
+    <!-- Contact Form & Information -->
+    <section id="contact-form" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="animate-fade-in">
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Send us a Message</h2>
+                        <form id="contactForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2 font-medium">First Name *</label>
+                                    <input type="text" id="firstName" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue transition">
+                                    <div class="text-red-500 text-sm mt-1 hidden" id="firstNameError">Please enter your first name</div>
                                 </div>
                                 <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">Early Childhood Education</h3>
-                                    <p class="text-gray-600">Ages 3-6 • Foundation for lifelong learning</p>
+                                    <label class="block text-gray-700 mb-2 font-medium">Last Name *</label>
+                                    <input type="text" id="lastName" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue transition">
+                                    <div class="text-red-500 text-sm mt-1 hidden" id="lastNameError">Please enter your last name</div>
                                 </div>
                             </div>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
-                                <i class="fas fa-school mr-1"></i>5 ECD Centers
-                            </span>
-                        </div>
-                        
-                        <div class="grid md:grid-cols-2 gap-8">
+                            
                             <div>
-                                <h4 class="font-semibold text-gray-700 mb-4 text-lg">Program Features</h4>
-                                <ul class="space-y-3">
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
-                                        <span>Play-based learning and cognitive development</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
-                                        <span>Psychosocial support and trauma healing</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
-                                        <span>Nutrition support and health monitoring</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
-                                        <span>Parental education and involvement programs</span>
-                                    </li>
-                                </ul>
+                                <label class="block text-gray-700 mb-2 font-medium">Email Address *</label>
+                                <input type="email" id="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue transition">
+                                <div class="text-red-500 text-sm mt-1 hidden" id="emailError">Please enter a valid email address</div>
                             </div>
-                            <div class="bg-blue-50 rounded-lg p-6">
-                                <h4 class="font-semibold text-gray-700 mb-4 text-lg">Key Partners</h4>
-                                <div class="space-y-2">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-university text-blue-600 mr-3"></i>
-                                        <span>UNHCR - Coordination & Funding</span>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <i class="fas fa-book-open text-green-600 mr-3"></i>
-                                        <span>UNICEF - Learning Materials</span>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <i class="fas fa-hands-helping text-purple-600 mr-3"></i>
-                                        <span>Plan International - Implementation</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="education-card bg-white rounded-2xl shadow-lg overflow-hidden border-l-4 border-green-500 fade-in hover-lift">
-                    <div class="p-8">
-                        <div class="flex items-start justify-between mb-6">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-user-graduate text-green-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">Primary School Education</h3>
-                                    <p class="text-gray-600">Grades 1-6 • Ages 6-12</p>
-                                </div>
-                            </div>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
-                                <i class="fas fa-users mr-1"></i>12,000+ Students
-                            </span>
-                        </div>
-                        
-                        <div class="grid md:grid-cols-2 gap-8">
+                            
                             <div>
-                                <h4 class="font-semibold text-gray-700 mb-4 text-lg">Curriculum & Structure</h4>
-                                <ul class="space-y-3">
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                        <span>Rwandan national curriculum with Burundian adaptations</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                        <span>Bilingual education (Kinyarwanda, French, English)</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                        <span>Inclusive education for children with disabilities</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                        <span>School feeding programs to improve attendance</span>
-                                    </li>
-                                </ul>
+                                <label class="block text-gray-700 mb-2 font-medium">Phone Number</label>
+                                <input type="tel" id="phone" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue transition">
                             </div>
-                            <div class="bg-green-50 rounded-lg p-6">
-                                <h4 class="font-semibold text-gray-700 mb-4 text-lg">Achievements & Challenges</h4>
-                                <div class="space-y-3">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-700">Enrollment Rate:</span>
-                                        <span class="font-semibold text-green-600">85%</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-700">Girls Enrollment:</span>
-                                        <span class="font-semibold text-green-600">49%</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-700">Teacher-Student Ratio:</span>
-                                        <span class="font-semibold text-orange-600">1:65</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Adult Literacy Programs -->
-        <section class="py-16 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Adult Literacy & Education Programs</h2>
-                    <p class="text-xl text-gray-600">Empowering adults through education and skills development</p>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="education-card bg-white rounded-2xl shadow-lg overflow-hidden border-l-4 border-purple-500 fade-in hover-lift p-8">
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-book-reader text-purple-600 text-xl"></i>
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-800">Adult Literacy Programs</h3>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <div class="flex items-start">
-                                <i class="fas fa-check text-purple-500 mt-1 mr-3"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Basic Literacy & Numeracy</h4>
-                                    <p class="text-gray-600 text-sm">Reading, writing, and basic mathematics for adults</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-check text-purple-500 mt-1 mr-3"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Functional Literacy</h4>
-                                    <p class="text-gray-600 text-sm">Practical skills for daily life and income generation</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-check text-purple-500 mt-1 mr-3"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Women's Literacy Circles</h4>
-                                    <p class="text-gray-600 text-sm">Gender-specific programs addressing women's needs</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6 bg-purple-50 rounded-lg p-4">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-700">Participants:</span>
-                                <span class="font-semibold text-purple-600">2,500+ adults</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="education-card bg-white rounded-2xl shadow-lg overflow-hidden border-l-4 border-orange-500 fade-in hover-lift p-8">
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-chalkboard-teacher text-orange-600 text-xl"></i>
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-800">Accelerated Learning</h3>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <div class="flex items-start">
-                                <i class="fas fa-check text-orange-500 mt-1 mr-3"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Catch-up Programs</h4>
-                                    <p class="text-gray-600 text-sm">For youth who missed formal schooling</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-check text-orange-500 mt-1 mr-3"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Alternative Basic Education</h4>
-                                    <p class="text-gray-600 text-sm">Flexible learning pathways for older children</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fas fa-check text-orange-500 mt-1 mr-3"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Life Skills Integration</h4>
-                                    <p class="text-gray-600 text-sm">Combining academic and practical life skills</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6 bg-orange-50 rounded-lg p-4">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-700">Success Rate:</span>
-                                <span class="font-semibold text-orange-600">78% completion</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Vocational Training Section -->
-        <section id="vocational-training" class="py-16 bg-gray-50">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Vocational Training & Skills Development</h2>
-                    <p class="text-xl text-gray-600">Building practical skills for self-reliance and economic empowerment</p>
-                </div>
-
-                <div class="education-card bg-white rounded-2xl shadow-lg overflow-hidden border-l-4 border-red-500 fade-in hover-lift mb-8">
-                    <div class="p-8">
-                        <div class="flex items-start justify-between mb-6">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-tools text-red-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">Technical Vocational Training</h3>
-                                    <p class="text-gray-600">Market-driven skills for employment and entrepreneurship</p>
-                                </div>
-                            </div>
-                            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">
-                                <i class="fas fa-briefcase mr-1"></i>1,200+ Trainees
-                            </span>
-                        </div>
-                        
-                        <div class="grid md:grid-cols-3 gap-6 mb-8">
-                            <div class="text-center p-4 bg-red-50 rounded-lg">
-                                <i class="fas fa-sewing-machine text-red-600 text-2xl mb-2"></i>
-                                <h5 class="font-semibold">Tailoring & Fashion</h5>
-                                <p class="text-sm text-gray-600">6-month certification program</p>
-                            </div>
-                            <div class="text-center p-4 bg-blue-50 rounded-lg">
-                                <i class="fas fa-laptop-code text-blue-600 text-2xl mb-2"></i>
-                                <h5 class="font-semibold">IT & Digital Skills</h5>
-                                <p class="text-sm text-gray-600">Basic computing to advanced IT</p>
-                            </div>
-                            <div class="text-center p-4 bg-green-50 rounded-lg">
-                                <i class="fas fa-hammer text-green-600 text-2xl mb-2"></i>
-                                <h5 class="font-semibold">Construction Skills</h5>
-                                <p class="text-sm text-gray-600">Masonry, carpentry, plumbing</p>
-                            </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-8">
+                            
                             <div>
-                                <h4 class="font-semibold text-gray-700 mb-4 text-lg">Training Programs</h4>
-                                <ul class="space-y-3">
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-red-500 mt-1 mr-3"></i>
-                                        <span>Hairdressing and beauty therapy (6 months)</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-red-500 mt-1 mr-3"></i>
-                                        <span>Motorcycle repair and maintenance (8 months)</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-red-500 mt-1 mr-3"></i>
-                                        <span>Catering and hotel management (6 months)</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-red-500 mt-1 mr-3"></i>
-                                        <span>Solar technology installation (4 months)</span>
-                                    </li>
-                                </ul>
+                                <label class="block text-gray-700 mb-2 font-medium">Subject *</label>
+                                <select id="subject" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue transition">
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="support">Need Support</option>
+                                    <option value="volunteer">Volunteering</option>
+                                    <option value="donation">Donation</option>
+                                    <option value="partnership">Partnership</option>
+                                    <option value="feedback">Feedback</option>
+                                    <option value="emergency">Emergency Assistance</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="subjectError">Please select a subject</div>
                             </div>
-                            <div class="bg-red-50 rounded-lg p-6">
-                                <h4 class="font-semibold text-gray-700 mb-4 text-lg">Key Partners & Impact</h4>
-                                <div class="space-y-3">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-700">UNHCR & WFP:</span>
-                                        <span class="font-semibold">Funding & Coordination</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-700">Edukans Foundation:</span>
-                                        <span class="font-semibold">Technical Support</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-700">Employment Rate:</span>
-                                        <span class="font-semibold text-green-600">65%</span>
-                                    </div>
-                                </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-2 font-medium">Message *</label>
+                                <textarea id="message" rows="5" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue transition"></textarea>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="messageError">Please enter your message</div>
                             </div>
-                        </div>
+                            
+                            <div class="pt-4">
+                                <button type="submit" class="w-full bg-primary-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-300 flex items-center justify-center">
+                                    <i class="fas fa-paper-plane mr-2"></i> Send Message
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-
-                <!-- Entrepreneurship Support -->
-                <div class="education-card bg-white rounded-2xl shadow-lg overflow-hidden border-l-4 border-yellow-500 fade-in hover-lift">
-                    <div class="p-8">
-                        <div class="flex items-start justify-between mb-6">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-chart-line text-yellow-600 text-xl"></i>
+                
+                <!-- Contact Information -->
+                <div class="animate-fade-in">
+                    <div class="space-y-8">
+                        <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Contact Information</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 bg-primary-blue rounded-full flex items-center justify-center mt-1 mr-4">
+                                        <i class="fas fa-map-marker-alt text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800">📍 Location</h3>
+                                        <p class="text-gray-600">Mahama Refugee Camp<br>Kirehe District, Rwanda</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">Entrepreneurship & Business Skills</h3>
-                                    <p class="text-gray-600">From training to startup support</p>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 bg-primary-green rounded-full flex items-center justify-center mt-1 mr-4">
+                                        <i class="fas fa-phone text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800">📞 Phone</h3>
+                                        <p class="text-gray-600">General Inquiries: +250 788 123 456</p>
+                                        <p class="text-gray-600">Emergency: +250 788 555 456</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 bg-primary-yellow rounded-full flex items-center justify-center mt-1 mr-4">
+                                        <i class="fas fa-envelope text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800">📧 Email</h3>
+                                        <p class="text-gray-600">info@hopelinkmahama.org</p>
+                                        <p class="text-gray-600">support@hopelinkmahama.org</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mt-1 mr-4">
+                                        <i class="fas fa-clock text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800">🕒 Office Hours</h3>
+                                        <p class="text-gray-600">Monday - Friday: 8:00 AM - 5:00 PM</p>
+                                        <p class="text-gray-600">Saturday: 9:00 AM - 1:00 PM</p>
+                                        <p class="text-gray-600">Emergency services available 24/7</p>
+                                    </div>
                                 </div>
                             </div>
-                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
-                                <i class="fas fa-rocket mr-1"></i>300+ Startups
-                            </span>
                         </div>
                         
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <div>
-                                <h4 class="font-semibold text-gray-700 mb-4 text-lg">Business Development Services</h4>
-                                <ul class="space-y-3">
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-yellow-500 mt-1 mr-3"></i>
-                                        <span>Business plan development and management</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-yellow-500 mt-1 mr-3"></i>
-                                        <span>Financial literacy and savings groups</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-yellow-500 mt-1 mr-3"></i>
-                                        <span>Market analysis and value chain development</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-yellow-500 mt-1 mr-3"></i>
-                                        <span>Access to microfinance and startup capital</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="bg-yellow-50 rounded-lg p-6">
-                                <h4 class="font-semibold text-gray-700 mb-4 text-lg">Success Stories</h4>
-                                <p class="text-gray-700 text-sm leading-relaxed">
-                                    "The entrepreneurship program helped me start my tailoring business. I now employ two other refugees and can support my family."
-                                    <br><span class="font-semibold">- Marie, Fashion Entrepreneur</span>
-                                </p>
+                        <!-- Quick Actions -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Quick Actions</h2>
+                            <div class="space-y-3">
+                                <button onclick="openVolunteerModal()" class="w-full bg-primary-green text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition duration-300 flex items-center justify-center">
+                                    <i class="fas fa-hands-helping mr-2"></i> Become a Volunteer
+                                </button>
+                                <button onclick="openModal('donateModal')" class="w-full bg-primary-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-300 flex items-center justify-center">
+                                    <i class="fas fa-donate mr-2"></i> Make a Donation
+                                </button>
+                                <button onclick="openPartnershipModal()" class="w-full bg-primary-yellow text-gray-800 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition duration-300 flex items-center justify-center">
+                                    <i class="fas fa-handshake mr-2"></i> Partner With Us
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Partner Organizations -->
-        <section class="py-16 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Partner Organizations</h2>
-                    <p class="text-xl text-gray-600">Collaborating for comprehensive education solutions</p>
+    <!-- Emergency Contacts -->
+    <section id="emergency" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Immediate help when you need it most</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
+                    <div class="h-4 bg-red-500"></div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">🚨 Immediate Danger</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">If you are in immediate danger or need urgent help:</p>
+                        <button onclick="callEmergency('+250788555456')" class="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-phone mr-2"></i> Call Emergency: +250 788 555 456
+                        </button>
+                    </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-gray-50 rounded-2xl p-6 text-center fade-in hover-lift">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-university text-blue-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
+                    <div class="h-4 bg-blue-500"></div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-heart text-blue-500 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">💙 Mental Health Crisis</h3>
                         </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">UNHCR</h4>
-                        <p class="text-gray-600 text-sm">Coordination, funding, and policy leadership</p>
+                        <p class="text-gray-600 mb-4">For emotional support and mental health emergencies:</p>
+                        <button onclick="callEmergency('+250788555789')" class="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-phone mr-2"></i> Crisis Support: +250 788 555 789
+                        </button>
                     </div>
-                    
-                    <div class="bg-gray-50 rounded-2xl p-6 text-center fade-in hover-lift">
-                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-book-open text-green-600 text-2xl"></i>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
+                    <div class="h-4 bg-purple-500"></div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-shield-alt text-purple-500 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">🛡️ Women's Safety</h3>
                         </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">UNICEF</h4>
-                        <p class="text-gray-600 text-sm">Learning materials and teacher training</p>
+                        <p class="text-gray-600 mb-4">Confidential support for gender-based violence:</p>
+                        <button onclick="callEmergency('+250788555123')" class="w-full bg-purple-500 text-white py-3 rounded-lg font-semibold hover:bg-purple-600 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-phone mr-2"></i> GBV Hotline: +250 788 555 123
+                        </button>
                     </div>
-                    
-                    <div class="bg-gray-50 rounded-2xl p-6 text-center fade-in hover-lift">
-                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-hands-helping text-purple-600 text-2xl"></i>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
+                    <div class="h-4 bg-orange-500"></div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-child text-orange-500 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">👶 Children's Safety</h3>
                         </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">Plan International</h4>
-                        <p class="text-gray-600 text-sm">Youth programs and gender equality</p>
-                    </div>
-                    
-                    <div class="bg-gray-50 rounded-2xl p-6 text-center fade-in hover-lift">
-                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-graduation-cap text-orange-600 text-2xl"></i>
-                        </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">Edukans Foundation</h4>
-                        <p class="text-gray-600 text-sm">Vocational training expertise</p>
+                        <p class="text-gray-600 mb-4">Protection and support for children in danger:</p>
+                        <button onclick="callEmergency('+250788555999')" class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-phone mr-2"></i> Child Safety: +250 788 555 999
+                        </button>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Challenges & Opportunities -->
-        <section class="py-16 bg-gray-50">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <!-- Challenges -->
-                    <div class="fade-in">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-exclamation-triangle mr-3 text-orange-600"></i>
-                            Key Challenges
-                        </h2>
-                        <div class="space-y-4">
-                            <div class="flex items-start p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                                <i class="fas fa-chalkboard-teacher text-orange-600 mt-1 mr-4"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 text-lg">Teacher Shortage</h4>
-                                    <p class="text-gray-700 mt-1">High student-teacher ratio (1:65) affects learning quality</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-                                <i class="fas fa-book text-red-600 mt-1 mr-4"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 text-lg">Limited Resources</h4>
-                                    <p class="text-gray-700 mt-1">Insufficient learning materials and infrastructure</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-                                <i class="fas fa-language text-purple-600 mt-1 mr-4"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 text-lg">Language Barriers</h4>
-                                    <p class="text-gray-700 mt-1">Multiple languages (Kinyarwanda, French, English, Kirundi)</p>
-                                </div>
-                            </div>
-                        </div>
+    <!-- FAQ Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Quick answers to common questions</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in border border-gray-200">
+                    <button class="faq-question w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition duration-300">
+                        <h3 class="text-lg font-semibold text-gray-800">How can I get immediate help for food assistance?</h3>
+                        <i class="fas fa-chevron-down text-primary-blue transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer p-6 border-t border-gray-200 hidden">
+                        <p class="text-gray-600">You can visit our Hunger Help center at the main camp during operating hours (8 AM - 5 PM) or call our emergency food hotline at +250 788 555 456 for urgent needs outside of these hours.</p>
                     </div>
+                </div>
 
-                    <!-- Opportunities -->
-                    <div class="fade-in">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-lightbulb mr-3 text-green-600"></i>
-                            Future Opportunities
-                        </h2>
-                        <div class="space-y-4">
-                            <div class="flex items-start p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-                                <i class="fas fa-laptop text-green-600 mt-1 mr-4"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 text-lg">Digital Learning</h4>
-                                    <p class="text-gray-700 mt-1">Expanding e-learning and digital skills programs</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                                <i class="fas fa-handshake text-blue-600 mt-1 mr-4"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 text-lg">Private Sector Partnerships</h4>
-                                    <p class="text-gray-700 mt-1">Connecting vocational training with job opportunities</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
-                                <i class="fas fa-seedling text-yellow-600 mt-1 mr-4"></i>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 text-lg">Sustainability Programs</h4>
-                                    <p class="text-gray-700 mt-1">Developing income-generating activities for schools</p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in border border-gray-200">
+                    <button class="faq-question w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition duration-300">
+                        <h3 class="text-lg font-semibold text-gray-800">What youth programs are currently available?</h3>
+                        <i class="fas fa-chevron-down text-primary-blue transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer p-6 border-t border-gray-200 hidden">
+                        <p class="text-gray-600">We currently offer digital skills training, leadership development workshops, career counseling, and entrepreneurship programs. Visit our Youth Empowerment center for more information and registration.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in border border-gray-200">
+                    <button class="faq-question w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition duration-300">
+                        <h3 class="text-lg font-semibold text-gray-800">How can I volunteer with HopeLink Mahama?</h3>
+                        <i class="fas fa-chevron-down text-primary-blue transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer p-6 border-t border-gray-200 hidden">
+                        <p class="text-gray-600">We welcome volunteers in various capacities including teaching, administrative support, community outreach, and technical assistance. Please fill out our volunteer application form or visit our office to discuss opportunities.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in border border-gray-200">
+                    <button class="faq-question w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition duration-300">
+                        <h3 class="text-lg font-semibold text-gray-800">Are your mental health services confidential?</h3>
+                        <i class="fas fa-chevron-down text-primary-blue transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer p-6 border-t border-gray-200 hidden">
+                        <p class="text-gray-600">Yes, all our mental health services are completely confidential. Our trained counselors provide a safe, non-judgmental space for you to share your concerns and receive support.</p>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid md:grid-cols-4 gap-8">
                 <div>
-                    <!-- Footer Logo -->
                     <div class="flex items-center mb-4">
                         <div class="bg-gradient-to-r from-primary-blue to-primary-green p-2 rounded-lg mr-3">
                             <i class="fas fa-hands-helping text-white"></i>
@@ -1249,29 +1225,17 @@
                         </div>
                     </div>
                     <p class="text-gray-400 text-sm">
-                        Empowering refugees through education and skills development in Mahama Camp, Rwanda.
+                        Empowering refugees through technology and innovation in Mahama Camp, Rwanda.
                     </p>
                 </div>
                 
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Education Programs</h4>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li class="flex items-center">
-                            <i class="fas fa-child mr-3 text-xs"></i>
-                            Early Childhood Education
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-graduation-cap mr-3 text-xs"></i>
-                            Primary Education
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-book-reader mr-3 text-xs"></i>
-                            Adult Literacy
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-tools mr-3 text-xs"></i>
-                            Vocational Training
-                        </li>
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="about-us.html" class="text-gray-400 hover:text-white transition">About</a></li>
+                        <li><a href="get-involved.html" class="text-gray-400 hover:text-white transition">Get Involved</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition">Contact</a></li>
                     </ul>
                 </div>
                 
@@ -1284,11 +1248,7 @@
                         </p>
                         <p class="flex items-center">
                             <i class="fas fa-envelope mr-3"></i>
-                            education.hopelink@gmail.com
-                        </p>
-                        <p class="flex items-center">
-                            <i class="fas fa-phone mr-3"></i>
-                            +250 123 456 789
+                            hopelink.mahama@gmail.com
                         </p>
                     </div>
                 </div>
@@ -1296,25 +1256,21 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Follow Us</h4>
                     <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary-blue transition transform hover:scale-110">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary-blue transition">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-pink-600 transition transform hover:scale-110">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-pink-600 transition">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-blue-400 transition transform hover:scale-110">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-blue-400 transition">
                             <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-red-500 transition transform hover:scale-110">
-                            <i class="fab fa-youtube"></i>
                         </a>
                     </div>
                 </div>
             </div>
             
             <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 HopeLink Mahama — Empowering Refugees Through Education.</p>
-                <p class="text-xs mt-2">Data Sources: UNHCR, UNICEF, Plan International, Edukans Foundation</p>
+                <p>&copy; 2025 HopeLink Mahama — Empowering Refugees Through Innovation.</p>
             </div>
         </div>
     </footer>
@@ -1371,9 +1327,1323 @@
         </div>
     </div>
 
+    <!-- Volunteer Modal -->
+    <div id="volunteerModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Volunteer Application</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700" data-modal="volunteerModal">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="volunteerForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">First Name</label>
+                        <input type="text" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Last Name</label>
+                        <input type="text" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Email</label>
+                    <input type="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Phone Number</label>
+                    <input type="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Area of Interest</label>
+                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                        <option value="">Select an area</option>
+                        <option value="teaching">Teaching/Tutoring</option>
+                        <option value="tech">Technology Support</option>
+                        <option value="outreach">Community Outreach</option>
+                        <option value="fundraising">Fundraising</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-primary-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition">
+                        Submit Application
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Partnership Modal -->
+    <div id="partnershipModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Partnership Inquiry</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700" data-modal="partnershipModal">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="partnershipForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Organization Name</label>
+                    <input type="text" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Contact Person</label>
+                    <input type="text" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Email Address</label>
+                    <input type="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Type of Partnership</label>
+                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                        <option value="">Select partnership type</option>
+                        <option value="financial">Financial Support</option>
+                        <option value="technical">Technical Assistance</option>
+                        <option value="volunteer">Volunteer Program</option>
+                        <option value="resource">Resource Sharing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Message</label>
+                    <textarea rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"></textarea>
+                </div>
+                
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-primary-yellow text-gray-800 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition">
+                        Send Partnership Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content text-center">
+            <div class="w-16 h-16 bg-primary-green rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check text-white text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2" id="successModalTitle">Thank You!</h3>
+            <p class="text-gray-600 mb-6" id="successModalMessage">Your message has been sent successfully. We'll get back to you soon.</p>
+            <button onclick="closeModal('successModal')" class="w-full bg-primary-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION MODALS -->
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">My Profile</h3>
+                    <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="flex flex-col items-center space-y-4">
+                        <img id="modal-avatar" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                             class="w-32 h-32 rounded-full border-4 border-blue-500 object-cover">
+                        <div class="text-center">
+                            <h4 id="modal-fullname" class="text-xl font-bold text-gray-800">Guest User</h4>
+                            <p id="modal-email" class="text-gray-600">guest@example.com</p>
+                            <span id="modal-role" class="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+                                Guest
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">First Name</label>
+                            <input type="text" id="profile-firstname" 
+                                   class="auth-form-input w-full p-3 rounded-lg" placeholder="First Name">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Last Name</label>
+                            <input type="text" id="profile-lastname" 
+                                   class="auth-form-input w-full p-3 rounded-lg" placeholder="Last Name">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Phone Number</label>
+                            <input type="tel" id="profile-phone" 
+                                   class="auth-form-input w-full p-3 rounded-lg" placeholder="Phone Number">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Address</label>
+                            <input type="text" id="profile-address" 
+                                   class="auth-form-input w-full p-3 rounded-lg" placeholder="Address">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Bio</label>
+                        <textarea id="profile-bio" rows="4" 
+                                  class="auth-form-input w-full p-3 rounded-lg" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button onclick="closeProfileModal()" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium">
+                            Cancel
+                        </button>
+                        <button onclick="updateProfile()" class="auth-btn-primary px-6 py-3 rounded-lg font-semibold">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Photo Modal with Back Navigation -->
+    <div id="photo-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-md">
+            <div class="p-6">
+                <!-- Updated header with back button -->
+                <div class="flex items-center mb-6">
+                    <!-- Back Button -->
+                    <button id="photo-back-btn" class="mr-4 text-gray-500 hover:text-gray-700 transition-colors">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h3 class="text-2xl font-bold text-gray-800 flex-1">Change Profile Photo</h3>
+                    <button onclick="closePhotoModal()" class="text-gray-500 hover:text-gray-700 ml-4">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Current Photo Section (Upload) -->
+                    <div id="current-photo-section" class="photo-section transition-all duration-300">
+                        <div class="flex justify-center">
+                            <div class="relative">
+                                <img id="current-photo" src="https://ui-avatars.com/api/?name=Guest&background=random" 
+                                     class="w-32 h-32 rounded-full border-4 border-blue-500 object-cover">
+                                <div class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Photo Actions -->
+                        <div class="mt-6 space-y-3">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-3">Upload New Photo</label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-500 transition-colors upload-dropzone"
+                                     id="upload-dropzone">
+                                    <i class="fas fa-cloud-upload-alt text-gray-400 text-3xl mb-3"></i>
+                                    <p class="text-gray-600 mb-2" id="upload-text">Drag & drop your photo here</p>
+                                    <p class="text-sm text-gray-500 mb-4">or</p>
+                                    <input type="file" id="photo-upload" accept="image/*" class="hidden">
+                                    <label for="photo-upload" class="auth-btn-primary px-6 py-2 rounded-lg font-semibold cursor-pointer inline-block">
+                                        Browse Files
+                                    </label>
+                                    <p class="text-xs text-gray-500 mt-3">JPG, PNG or GIF (Max 5MB)</p>
+                                </div>
+                                <div id="upload-progress" class="hidden mt-3">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div id="progress-bar" class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                    <p id="progress-text" class="text-xs text-gray-600 mt-1">Uploading...</p>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4">
+                                <h4 class="text-sm font-medium text-gray-700 mb-3">Or choose a default avatar</h4>
+                                <div class="grid grid-cols-4 gap-3 mb-4">
+                                    <div class="aspect-square rounded-full bg-gradient-to-r from-blue-400 to-purple-500 cursor-pointer hover:scale-110 transition" 
+                                         onclick="selectAvatar('blue')" title="Blue Avatar"></div>
+                                    <div class="aspect-square rounded-full bg-gradient-to-r from-green-400 to-teal-500 cursor-pointer hover:scale-110 transition" 
+                                         onclick="selectAvatar('green')" title="Green Avatar"></div>
+                                    <div class="aspect-square rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 cursor-pointer hover:scale-110 transition" 
+                                         onclick="selectAvatar('yellow')" title="Yellow Avatar"></div>
+                                    <div class="aspect-square rounded-full bg-gradient-to-r from-pink-400 to-red-500 cursor-pointer hover:scale-110 transition" 
+                                         onclick="selectAvatar('pink')" title="Pink Avatar"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end space-x-4 pt-4">
+                                <button onclick="closePhotoModal()" class="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                                    Cancel
+                                </button>
+                                <button id="upload-next-btn" onclick="handleUploadNext()" class="auth-btn-primary px-6 py-2 rounded-lg font-semibold">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Crop Section (Hidden by default) -->
+                    <div id="crop-section" class="photo-section hidden transition-all duration-300">
+                        <div class="mb-4">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-2">Crop Your Photo</h4>
+                            <p class="text-sm text-gray-600">Adjust the cropping area to get the perfect profile picture</p>
+                        </div>
+                        
+                        <!-- Crop Area -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 mb-4">
+                            <div id="crop-container" class="w-full h-64 bg-gray-100 rounded flex items-center justify-center">
+                                <div id="crop-preview" class="relative overflow-hidden rounded-lg">
+                                    <img id="crop-image" src="" alt="Crop preview" class="max-w-full max-h-56">
+                                    <div id="crop-overlay" class="absolute inset-0 border-2 border-white border-dashed"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Crop Controls -->
+                            <div class="mt-4 space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Zoom</label>
+                                    <input type="range" id="crop-zoom" min="1" max="3" step="0.1" value="1" 
+                                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="cropRotate(-90)" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                    <button onclick="cropRotate(90)" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                    <button onclick="resetCrop()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between space-x-4 pt-4">
+                            <button onclick="backToUpload()" class="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium flex items-center">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <div class="space-x-3">
+                                <button onclick="cancelCrop()" class="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                                    Cancel
+                                </button>
+                                <button onclick="applyCrop()" class="auth-btn-primary px-6 py-2 rounded-lg font-semibold">
+                                    Apply Crop
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview Section (Hidden by default) -->
+                    <div id="preview-section" class="photo-section hidden transition-all duration-300">
+                        <div class="text-center mb-6">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-2">Preview Your New Photo</h4>
+                            <p class="text-sm text-gray-600">This is how your profile will look to others</p>
+                        </div>
+                        
+                        <div class="flex flex-col items-center space-y-6">
+                            <!-- Large Preview -->
+                            <div class="relative">
+                                <img id="final-preview" src="" alt="Final preview" 
+                                     class="w-40 h-40 rounded-full border-4 border-blue-500 object-cover">
+                                <div class="absolute -bottom-2 -right-2 bg-green-500 text-white p-2 rounded-full">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Profile Card Preview -->
+                            <div class="bg-gray-50 rounded-xl p-6 w-full max-w-sm">
+                                <div class="flex items-center space-x-4">
+                                    <img id="preview-avatar" src="" alt="Preview avatar" 
+                                         class="w-16 h-16 rounded-full border-2 border-blue-500 object-cover">
+                                    <div>
+                                        <h5 class="font-bold text-gray-800" id="preview-name">Guest User</h5>
+                                        <p class="text-sm text-gray-600" id="preview-email">guest@example.com</p>
+                                        <span class="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                                            Member
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center space-x-4 pt-6 w-full">
+                                <button onclick="backToCrop()" class="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                                    Edit Again
+                                </button>
+                                <button onclick="saveFinalPhoto()" class="auth-btn-primary px-6 py-2 rounded-lg font-semibold">
+                                    Save Photo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Change Password</h3>
+                    <button onclick="closePasswordModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="change-password-form" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Current Password</label>
+                        <input type="password" id="current-password" required
+                               class="auth-form-input w-full p-3 rounded-lg" placeholder="Enter current password">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">New Password</label>
+                        <input type="password" id="new-password" required
+                               class="auth-form-input w-full p-3 rounded-lg" placeholder="Enter new password">
+                        <div class="text-xs text-gray-500 mt-1">Must be at least 6 characters</div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Confirm New Password</label>
+                        <input type="password" id="confirm-new-password" required
+                               class="auth-form-input w-full p-3 rounded-lg" placeholder="Confirm new password">
+                    </div>
+                    
+                    <div id="password-error" class="hidden bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm"></div>
+                    <div id="password-success" class="hidden bg-green-50 border border-green-200 text-green-700 p-3 rounded-lg text-sm"></div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" class="w-full auth-btn-primary py-3 rounded-lg font-semibold">
+                            Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ========== NAVIGATION FUNCTIONALITY ==========
+        // ==============================
+        // INTEGRATED AUTHENTICATION SYSTEM
+        // ==============================
+
+        // Global state
+        let currentUser = null;
+        let currentPhotoState = 'upload'; // 'upload', 'crop', 'preview'
+        let currentUploadedImage = null;
+
+        // Initialize localStorage for demo users (fallback)
+        if (!localStorage.getItem('hopelink_users')) {
+            localStorage.setItem('hopelink_users', JSON.stringify([]));
+        }
+
+        // Get all users from localStorage (demo fallback)
+        function getAllLocalUsers() {
+            return JSON.parse(localStorage.getItem('hopelink_users') || '[]');
+        }
+
+        // Get user by email from localStorage (demo fallback)
+        function getLocalUserByEmail(email) {
+            const users = getAllLocalUsers();
+            return users.find(u => u.email === email);
+        }
+
+        // Update user in localStorage (demo fallback)
+        function updateLocalUser(userId, updates) {
+            const users = getAllLocalUsers();
+            const index = users.findIndex(u => u.id === userId);
+            if (index !== -1) {
+                users[index] = { ...users[index], ...updates };
+                localStorage.setItem('hopelink_users', JSON.stringify(users));
+                
+                // Update current user in session
+                if (currentUser && currentUser.id === userId) {
+                    currentUser = users[index];
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateUI();
+                }
+            }
+        }
+
+        // ==============================
+        // FIREBASE INTEGRATION FUNCTIONS
+        // ==============================
+
+        // Check if Firebase is available
+        function isFirebaseAvailable() {
+            return typeof window.firebaseAuth !== 'undefined' && 
+                   typeof window.firebaseDb !== 'undefined';
+        }
+
+        // Save user data to Firebase Firestore
+        async function saveUserToFirebase(userData) {
+            if (!isFirebaseAvailable() || !currentUser || !currentUser.uid) {
+                console.log('Firebase not available or no user logged in');
+                return false;
+            }
+
+            try {
+                const userRef = doc(window.firebaseDb, "users", currentUser.uid);
+                await setDoc(userRef, {
+                    ...userData,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+                console.log("User data saved to Firebase Firestore");
+                return true;
+            } catch (error) {
+                console.error("Error saving to Firebase:", error);
+                return false;
+            }
+        }
+
+        // Get user data from Firebase Firestore
+        async function getUserFromFirebase() {
+            if (!isFirebaseAvailable() || !currentUser || !currentUser.uid) {
+                console.log('Firebase not available or no user logged in');
+                return null;
+            }
+
+            try {
+                const userRef = doc(window.firebaseDb, "users", currentUser.uid);
+                const userDoc = await getDoc(userRef);
+                
+                if (userDoc.exists()) {
+                    console.log("User data retrieved from Firebase");
+                    return userDoc.data();
+                }
+                return null;
+            } catch (error) {
+                console.error("Error getting user from Firebase:", error);
+                return null;
+            }
+        }
+
+        // ==============================
+        // UNIFIED USER MANAGEMENT
+        // ==============================
+
+        // Get user data from Firebase or localStorage
+        async function getUserData() {
+            // Try Firebase first
+            if (isFirebaseAvailable() && currentUser && currentUser.uid) {
+                const firebaseData = await getUserFromFirebase();
+                if (firebaseData) {
+                    return { source: 'firebase', data: firebaseData };
+                }
+            }
+            
+            // Fallback to localStorage
+            if (currentUser && currentUser.id) {
+                const localData = getLocalUserByEmail(currentUser.email);
+                if (localData) {
+                    return { source: 'local', data: localData };
+                }
+            }
+            
+            return { source: 'none', data: null };
+        }
+
+        // Update user data in Firebase or localStorage
+        async function updateUserData(updates) {
+            if (!currentUser) return false;
+            
+            let success = false;
+            
+            // Try Firebase first
+            if (isFirebaseAvailable() && currentUser.uid) {
+                success = await saveUserToFirebase(updates);
+                if (success) {
+                    console.log("User data updated in Firebase");
+                }
+            }
+            
+            // Also update localStorage for fallback
+            if (currentUser.id) {
+                updateLocalUser(currentUser.id, updates);
+                success = true;
+                console.log("User data updated in localStorage");
+            }
+            
+            // Update current user in session
+            currentUser = { ...currentUser, ...updates };
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUI();
+            
+            return success;
+        }
+
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            notification.className = 'notification';
+            notification.classList.add(type);
+            icon.className = type === 'success' ? 'fas fa-check-circle mr-2' :
+                           type === 'error' ? 'fas fa-exclamation-circle mr-2' :
+                           'fas fa-info-circle mr-2';
+            
+            messageEl.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(hideNotification, 5000);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+
+        // Check login status - integrated with both Firebase and localStorage
+        async function checkLoginStatus() {
+            // Check for Firebase user first
+            if (isFirebaseAvailable() && window.firebaseAuth.currentUser) {
+                const firebaseUser = window.firebaseAuth.currentUser;
+                console.log("Firebase user detected:", firebaseUser.email);
+                
+                currentUser = {
+                    email: firebaseUser.email,
+                    uid: firebaseUser.uid,
+                    displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+                    emailVerified: firebaseUser.emailVerified,
+                    isAnonymous: firebaseUser.isAnonymous,
+                    metadata: firebaseUser.metadata,
+                    providerData: firebaseUser.providerData,
+                    loginTime: new Date().toISOString(),
+                    isFirebaseUser: true,
+                    id: firebaseUser.uid // Use Firebase UID as ID
+                };
+                
+                // Try to get additional user data from Firestore
+                const userData = await getUserFromFirebase();
+                if (userData) {
+                    currentUser = { ...currentUser, ...userData };
+                }
+                
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showUserSection();
+                updateUI();
+                return;
+            }
+            
+            // Check session storage for existing login
+            const userJson = sessionStorage.getItem('currentUser');
+            if (userJson) {
+                try {
+                    currentUser = JSON.parse(userJson);
+                    
+                    // Check if this is a Firebase user
+                    if (currentUser.isFirebaseUser && isFirebaseAvailable()) {
+                        // Verify Firebase user is still logged in
+                        if (window.firebaseAuth.currentUser) {
+                            showUserSection();
+                            updateUI();
+                            return;
+                        } else {
+                            // Firebase user logged out, clear session
+                            sessionStorage.removeItem('currentUser');
+                            currentUser = null;
+                        }
+                    } else {
+                        // Local storage user
+                        showUserSection();
+                        updateUI();
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Error parsing user data:", e);
+                    sessionStorage.removeItem('currentUser');
+                }
+            }
+            
+            // No user logged in
+            showAuthSection();
+        }
+
+        // Update UI based on user state
+        async function updateUI() {
+            if (currentUser) {
+                // Get user data from appropriate source
+                const userData = await getUserData();
+                const userInfo = userData.data || currentUser;
+                
+                // Update desktop navigation
+                document.getElementById('user-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('user-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                
+                // Generate avatar URL
+                let userAvatar;
+                if (userInfo.photoURL) {
+                    userAvatar = userInfo.photoURL;
+                } else if (userInfo.email) {
+                    userAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.displayName || userInfo.name || userInfo.email)}&background=random`;
+                } else {
+                    userAvatar = 'https://ui-avatars.com/api/?name=Guest&background=random';
+                }
+                
+                document.getElementById('user-avatar').src = userAvatar;
+                
+                // Update dropdown
+                document.getElementById('dropdown-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('dropdown-email').textContent = userInfo.email || 'No email';
+                document.getElementById('dropdown-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('dropdown-avatar').src = userAvatar;
+                
+                // Update mobile navigation
+                document.getElementById('mobile-user-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('mobile-user-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('mobile-user-avatar').src = userAvatar;
+                
+                // Update modals
+                document.getElementById('modal-fullname').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('modal-email').textContent = userInfo.email || 'No email';
+                document.getElementById('modal-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('modal-avatar').src = userAvatar;
+                document.getElementById('current-photo').src = userAvatar;
+                
+                document.getElementById('profile-firstname').value = userInfo.firstName || userInfo.displayName?.split(' ')[0] || '';
+                document.getElementById('profile-lastname').value = userInfo.lastName || userInfo.displayName?.split(' ')[1] || '';
+                document.getElementById('profile-phone').value = userInfo.phone || '';
+                document.getElementById('profile-address').value = userInfo.address || '';
+                document.getElementById('profile-bio').value = userInfo.bio || '';
+                
+                // Update photo modal previews
+                document.getElementById('preview-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
+                document.getElementById('preview-email').textContent = userInfo.email || 'No email';
+                
+                // Update UI based on data source
+                const authSource = currentUser.isFirebaseUser ? 'Firebase' : 'Local';
+                console.log(`User UI updated from ${authSource} source`);
+            }
+        }
+
+        // Show/Hide sections
+        function showUserSection() {
+            // Show user profile, hide auth buttons
+            document.getElementById('user-profile-section').classList.remove('hidden');
+            document.getElementById('auth-buttons-section').classList.add('hidden');
+            
+            // Mobile version
+            document.getElementById('mobile-user-profile').classList.remove('hidden');
+            document.getElementById('mobile-auth-buttons').classList.add('hidden');
+            
+            updateUI();
+        }
+
+        function showAuthSection() {
+            // Show auth buttons, hide user profile
+            document.getElementById('user-profile-section').classList.add('hidden');
+            document.getElementById('auth-buttons-section').classList.remove('hidden');
+            
+            // Mobile version
+            document.getElementById('mobile-user-profile').classList.add('hidden');
+            document.getElementById('mobile-auth-buttons').classList.remove('hidden');
+        }
+
+        // Homepage navigation function
+        function goToHome() {
+            window.location.href = 'index.html';
+        }
+
+        // ==============================
+        // PHOTO MODAL BACK NAVIGATION SYSTEM
+        // ==============================
+
+        // Open photo modal with proper state reset
+        function openPhotoModal() {
+            document.getElementById('photo-modal').classList.remove('hidden');
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userDropdown) {
+                userDropdown.classList.remove('show');
+            }
+            document.body.style.overflow = 'hidden';
+            
+            // Reset to upload state
+            resetPhotoModal();
+        }
+
+        // Reset photo modal to initial state
+        function resetPhotoModal() {
+            currentPhotoState = 'upload';
+            currentUploadedImage = null;
+            
+            // Show only upload section
+            document.getElementById('current-photo-section').classList.remove('hidden');
+            document.getElementById('crop-section').classList.add('hidden');
+            document.getElementById('preview-section').classList.add('hidden');
+            
+            // Update back button visibility
+            const backBtn = document.getElementById('photo-back-btn');
+            if (backBtn) {
+                backBtn.style.visibility = 'hidden';
+            }
+            
+            // Reset current photo to user's current photo
+            if (currentUser) {
+                const userAvatar = currentUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.displayName || currentUser.email)}&background=random`;
+                document.getElementById('current-photo').src = userAvatar;
+            }
+            
+            // Reset file input
+            document.getElementById('photo-upload').value = '';
+            document.getElementById('upload-text').textContent = 'Drag & drop your photo here';
+        }
+
+        // Close photo modal
+        function closePhotoModal() {
+            document.getElementById('photo-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            resetPhotoModal();
+        }
+
+        // Handle back button in photo modal
+        function handlePhotoModalBack() {
+            switch(currentPhotoState) {
+                case 'crop':
+                    // Go back to upload from crop
+                    backToUpload();
+                    break;
+                case 'preview':
+                    // Go back to crop from preview
+                    backToCrop();
+                    break;
+                default:
+                    // If in upload state, close modal
+                    closePhotoModal();
+            }
+        }
+
+        // Navigate to crop section
+        function navigateToCrop(imageSrc) {
+            currentPhotoState = 'crop';
+            currentUploadedImage = imageSrc;
+            
+            // Hide upload, show crop
+            document.getElementById('current-photo-section').classList.add('hidden');
+            document.getElementById('crop-section').classList.remove('hidden');
+            document.getElementById('preview-section').classList.add('hidden');
+            
+            // Set image for cropping
+            document.getElementById('crop-image').src = imageSrc;
+            
+            // Show back button
+            const backBtn = document.getElementById('photo-back-btn');
+            if (backBtn) {
+                backBtn.style.visibility = 'visible';
+            }
+            
+            // Initialize crop
+            initializeCrop();
+        }
+
+        // Navigate to preview section
+        function navigateToPreview(imageSrc) {
+            currentPhotoState = 'preview';
+            
+            // Hide crop, show preview
+            document.getElementById('current-photo-section').classList.add('hidden');
+            document.getElementById('crop-section').classList.add('hidden');
+            document.getElementById('preview-section').classList.remove('hidden');
+            
+            // Set final preview image
+            document.getElementById('final-preview').src = imageSrc;
+            document.getElementById('preview-avatar').src = imageSrc;
+        }
+
+        // Back to upload from crop
+        function backToUpload() {
+            currentPhotoState = 'upload';
+            
+            document.getElementById('current-photo-section').classList.remove('hidden');
+            document.getElementById('crop-section').classList.add('hidden');
+            document.getElementById('preview-section').classList.add('hidden');
+            
+            // Hide back button
+            const backBtn = document.getElementById('photo-back-btn');
+            if (backBtn) {
+                backBtn.style.visibility = 'hidden';
+            }
+        }
+
+        // Back to crop from preview
+        function backToCrop() {
+            navigateToCrop(currentUploadedImage);
+        }
+
+        // Handle upload next button
+        function handleUploadNext() {
+            const fileInput = document.getElementById('photo-upload');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    navigateToCrop(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // If no file, show error
+                showNotification('Please select a photo first', 'error');
+            }
+        }
+
+        // Crop functionality
+        function initializeCrop() {
+            // Simple crop initialization
+            const cropImage = document.getElementById('crop-image');
+            const cropZoom = document.getElementById('crop-zoom');
+            
+            if (cropImage && cropZoom) {
+                cropZoom.addEventListener('input', function() {
+                    const scale = this.value;
+                    cropImage.style.transform = `scale(${scale})`;
+                });
+                
+                // Reset to default
+                cropImage.style.transform = 'scale(1)';
+                cropZoom.value = 1;
+            }
+        }
+
+        function cropRotate(degrees) {
+            const cropImage = document.getElementById('crop-image');
+            if (cropImage) {
+                const currentRotation = cropImage.style.transform.match(/rotate\(([-]?\d+)deg\)/);
+                const currentAngle = currentRotation ? parseInt(currentRotation[1]) : 0;
+                const newAngle = currentAngle + degrees;
+                cropImage.style.transform = cropImage.style.transform.replace(/rotate\(([-]?\d+)deg\)/, '') + ` rotate(${newAngle}deg)`;
+            }
+        }
+
+        function resetCrop() {
+            const cropImage = document.getElementById('crop-image');
+            const cropZoom = document.getElementById('crop-zoom');
+            
+            if (cropImage) {
+                cropImage.style.transform = 'scale(1) rotate(0deg)';
+            }
+            if (cropZoom) {
+                cropZoom.value = 1;
+            }
+        }
+
+        function cancelCrop() {
+            backToUpload();
+        }
+
+        function applyCrop() {
+            // For demo purposes, we'll just use the uploaded image
+            // In a real app, you would actually crop the image here
+            navigateToPreview(currentUploadedImage);
+        }
+
+        // Save final photo - integrated with both Firebase and localStorage
+        async function saveFinalPhoto() {
+            const finalImage = document.getElementById('final-preview').src;
+            
+            if (!currentUser) return;
+            
+            // Update user data in appropriate storage
+            const success = await updateUserData({ 
+                photoURL: finalImage,
+                photoData: finalImage // Store base64 data
+            });
+            
+            if (success) {
+                showNotification('Profile photo updated successfully!', 'success');
+            } else {
+                showNotification('Failed to update photo', 'error');
+            }
+            
+            closePhotoModal();
+        }
+
+        // Update the simulateUpload function to navigate to crop
+        function simulateUpload(file) {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const uploadProgress = document.getElementById('upload-progress');
+            const uploadText = document.getElementById('upload-text');
+            
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('Image must be less than 5MB', 'error');
+                return;
+            }
+            
+            // Show progress bar
+            uploadProgress.classList.remove('hidden');
+            uploadText.textContent = `Selected: ${file.name}`;
+            
+            // Simulate upload progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `Uploading... ${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    progressText.textContent = 'Upload complete!';
+                    
+                    // After upload completes, read the file and navigate to crop
+                    setTimeout(() => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imageSrc = e.target.result;
+                            uploadProgress.classList.add('hidden');
+                            uploadText.textContent = 'Drag & drop your photo here';
+                            progressBar.style.width = '0%';
+                            
+                            // Store the file in the photo upload input
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            document.getElementById('photo-upload').files = dataTransfer.files;
+                            
+                            // Navigate to crop section
+                            navigateToCrop(imageSrc);
+                        };
+                        reader.readAsDataURL(file);
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        // Update selectAvatar function
+        function selectAvatar(color) {
+            if (!currentUser) return;
+            
+            const userName = currentUser.displayName || currentUser.name || currentUser.email;
+            const photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=${color}&color=fff`;
+            
+            // Update user data in appropriate storage
+            updateUserData({ photoURL: photoURL })
+                .then(success => {
+                    if (success) {
+                        showNotification('Avatar selected successfully!', 'success');
+                    } else {
+                        showNotification('Failed to update avatar', 'error');
+                    }
+                    closePhotoModal();
+                });
+        }
+
+        // ==============================
+        // EXISTING MODAL FUNCTIONS (Updated)
+        // ==============================
+
+        function openProfileModal() {
+            document.getElementById('profile-modal').classList.remove('hidden');
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userDropdown) {
+                userDropdown.classList.remove('show');
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openPasswordModal() {
+            document.getElementById('password-modal').classList.remove('hidden');
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userDropdown) {
+                userDropdown.classList.remove('show');
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePasswordModal() {
+            document.getElementById('password-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Update profile - integrated with both Firebase and localStorage
+        async function updateProfile() {
+            const firstName = document.getElementById('profile-firstname').value;
+            const lastName = document.getElementById('profile-lastname').value;
+            const phone = document.getElementById('profile-phone').value;
+            const address = document.getElementById('profile-address').value;
+            const bio = document.getElementById('profile-bio').value;
+            
+            if (!currentUser) return;
+            
+            const updates = {
+                firstName: firstName,
+                lastName: lastName,
+                displayName: `${firstName} ${lastName}`,
+                phone: phone,
+                address: address,
+                bio: bio
+            };
+            
+            const success = await updateUserData(updates);
+            
+            if (success) {
+                showNotification('Profile updated successfully!', 'success');
+            } else {
+                showNotification('Failed to update profile', 'error');
+            }
+            
+            closeProfileModal();
+        }
+
+        // Photo upload handlers
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                simulateUpload(file);
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const dropzone = document.getElementById('upload-dropzone');
+            dropzone.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    simulateUpload(file);
+                } else {
+                    showNotification('Please drop an image file (JPG, PNG, GIF)', 'error');
+                }
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropzone = document.getElementById('upload-dropzone');
+            dropzone.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropzone = document.getElementById('upload-dropzone');
+            dropzone.classList.remove('drag-over');
+        }
+
+        // Change password - integrated with both Firebase and localStorage
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-new-password').value;
+            
+            if (!currentUser) return;
+            
+            // For Firebase users, this would need Firebase-specific implementation
+            // For demo/local users, we'll update localStorage
+            
+            if (newPassword.length < 6) {
+                document.getElementById('password-error').textContent = 'New password must be at least 6 characters';
+                document.getElementById('password-error').classList.remove('hidden');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                document.getElementById('password-error').textContent = 'New passwords do not match';
+                document.getElementById('password-error').classList.remove('hidden');
+                return;
+            }
+            
+            // Update password in appropriate storage
+            if (currentUser.isFirebaseUser) {
+                // Firebase password update would go here
+                showNotification('Firebase password update requires Firebase implementation', 'info');
+            } else {
+                // Update local user password
+                if (currentUser.password !== currentPassword) {
+                    document.getElementById('password-error').textContent = 'Current password is incorrect';
+                    document.getElementById('password-error').classList.remove('hidden');
+                    return;
+                }
+                
+                await updateUserData({ password: newPassword });
+            }
+            
+            document.getElementById('password-success').textContent = 'Password updated successfully!';
+            document.getElementById('password-success').classList.remove('hidden');
+            document.getElementById('password-error').classList.add('hidden');
+            
+            showNotification('Password updated successfully!', 'success');
+            
+            // Clear form
+            document.getElementById('change-password-form').reset();
+            
+            setTimeout(() => {
+                closePasswordModal();
+            }, 1500);
+        }
+
+        function goToDashboard() {
+            if (currentUser && currentUser.role === 'admin') {
+                window.location.href = 'dashboard.html';
+            } else {
+                showNotification('You need admin privileges to access the dashboard', 'error');
+            }
+        }
+
+        // Logout - integrated with both Firebase and localStorage
+        async function logout() {
+            // Firebase logout if available
+            if (isFirebaseAvailable() && window.firebaseAuth) {
+                try {
+                    await window.firebaseAuth.signOut();
+                    console.log("Firebase user logged out");
+                } catch (error) {
+                    console.error("Firebase logout error:", error);
+                }
+            }
+            
+            // Clear session storage
+            sessionStorage.removeItem('currentUser');
+            currentUser = null;
+            
+            // Update UI
+            showAuthSection();
+            showNotification('Logged out successfully', 'info');
+            
+            // Close dropdowns
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userDropdown) {
+                userDropdown.classList.remove('show');
+            }
+            
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu && mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                const icon = document.querySelector('#mobileMenuButton i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        }
+
+        // ==============================
+        // CHECK FOR AUTH REDIRECT
+        // ==============================
+
+        function checkForAuthRedirect() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const authSuccess = urlParams.get('auth');
+            const view = urlParams.get('view');
+            
+            if (authSuccess === 'success') {
+                // Remove the parameter from URL
+                const url = new URL(window.location);
+                url.searchParams.delete('auth');
+                url.searchParams.delete('view');
+                window.history.replaceState({}, '', url);
+                
+                // Check login status
+                checkLoginStatus();
+                
+                // Show welcome message
+                if (currentUser) {
+                    showNotification(`Welcome ${currentUser.displayName || currentUser.email}!`, 'success');
+                }
+            }
+            
+            // Check if we should redirect to auth page with specific view
+            if (view && (view === 'login' || view === 'signup')) {
+                window.location.href = `auth.html?view=${view}`;
+            }
+        }
+
+        // ==============================
+        // EVENT LISTENERS
+        // ==============================
+
+        // Toggle user dropdown
+        const userMenuBtn = document.getElementById('user-menu-btn');
+        if (userMenuBtn) {
+            userMenuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.getElementById('user-dropdown').classList.toggle('show');
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userDropdown) {
+                userDropdown.classList.remove('show');
+            }
+        });
+
+        // Prevent dropdown close when clicking inside
+        const userDropdown = document.getElementById('user-dropdown');
+        if (userDropdown) {
+            userDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Password form event listener
+        const passwordForm = document.getElementById('change-password-form');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', handleChangePassword);
+        }
+
+        // ==============================
+        // EXISTING CONTACT PAGE FUNCTIONALITY
+        // ==============================
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize authentication
+            checkLoginStatus();
+            checkForAuthRedirect();
+            
+            // Initialize photo upload
+            const photoUpload = document.getElementById('photo-upload');
+            if (photoUpload) {
+                photoUpload.addEventListener('change', handleFileSelect);
+            }
+            
+            // Initialize photo back button
+            const photoBackBtn = document.getElementById('photo-back-btn');
+            if (photoBackBtn) {
+                photoBackBtn.addEventListener('click', handlePhotoModalBack);
+            }
+            
+            // Initialize upload next button
+            const uploadNextBtn = document.getElementById('upload-next-btn');
+            if (uploadNextBtn) {
+                uploadNextBtn.addEventListener('click', handleUploadNext);
+            }
+            
+            // Initialize drag and drop
+            const dropzone = document.getElementById('upload-dropzone');
+            if (dropzone) {
+                dropzone.addEventListener('dragover', handleDragOver);
+                dropzone.addEventListener('dragleave', handleDragLeave);
+                dropzone.addEventListener('drop', handleDrop);
+            }
+            
             // Mobile menu toggle
             const mobileMenuButton = document.getElementById('mobileMenuButton');
             const mobileMenu = document.getElementById('mobileMenu');
@@ -1381,90 +2651,249 @@
             if (mobileMenuButton && mobileMenu) {
                 mobileMenuButton.addEventListener('click', function() {
                     mobileMenu.classList.toggle('active');
-                    const icon = this.querySelector('i');
-                    if (mobileMenu.classList.contains('active')) {
-                        icon.className = 'fas fa-times text-xl';
+                    // Toggle menu icon
+                    const icon = mobileMenuButton.querySelector('i');
+                    if (icon.classList.contains('fa-bars')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
                     } else {
-                        icon.className = 'fas fa-bars text-xl';
-                        // Close all mobile dropdowns when closing mobile menu
-                        document.querySelectorAll('.mobile-dropdown-content').forEach(dropdown => {
-                            dropdown.classList.remove('active');
-                        });
-                        document.querySelectorAll('.mobile-dropdown-btn').forEach(btn => {
-                            btn.classList.remove('active');
-                        });
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
                     }
                 });
             }
-
-            // Desktop dropdown functionality - CLICK TO OPEN
-            const dropdownButtons = document.querySelectorAll('.dropdown-btn');
             
-            dropdownButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const dropdownId = this.getAttribute('data-dropdown');
-                    const dropdown = document.getElementById(`${dropdownId}-dropdown`);
-                    
-                    // Close all other dropdowns
-                    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
-                        if (dropdown.id !== `${dropdownId}-dropdown`) {
-                            dropdown.classList.remove('active');
-                        }
-                    });
-                    
-                    // Remove active class from all dropdown buttons
-                    document.querySelectorAll('.dropdown-btn').forEach(btn => {
-                        if (btn !== this) {
-                            btn.classList.remove('active');
-                        }
-                    });
-                    
-                    // Toggle current dropdown
-                    dropdown.classList.toggle('active');
-                    this.classList.toggle('active');
-                });
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (mobileMenu && mobileMenu.classList.contains('active') && 
+                    !mobileMenu.contains(event.target) && 
+                    !mobileMenuButton.contains(event.target)) {
+                    mobileMenu.classList.remove('active');
+                    const icon = mobileMenuButton.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
             });
-
+            
             // Mobile dropdown functionality
             const mobileDropdownButtons = document.querySelectorAll('.mobile-dropdown-btn');
-            
             mobileDropdownButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                button.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    content.classList.toggle('active');
                     
-                    const dropdownContent = this.nextElementSibling;
-                    
-                    // Toggle dropdown content
-                    dropdownContent.classList.toggle('active');
-                    this.classList.toggle('active');
+                    // Rotate arrow icon
+                    const icon = this.querySelector('i');
+                    icon.classList.toggle('fa-chevron-down');
+                    icon.classList.toggle('fa-chevron-up');
                 });
             });
-
+            
+            // Desktop dropdown functionality
+            const dropdownButtons = document.querySelectorAll('.dropdown-btn');
+            dropdownButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const dropdownId = this.getAttribute('data-dropdown');
+                    const dropdown = document.getElementById(`${dropdownId}-dropdown`);
+                    dropdown.classList.toggle('active');
+                });
+            });
+            
             // Close dropdowns when clicking outside
             document.addEventListener('click', function(event) {
-                // Close desktop dropdowns
-                if (!event.target.closest('.dropdown')) {
-                    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                dropdownButtons.forEach(button => {
+                    const dropdownId = button.getAttribute('data-dropdown');
+                    const dropdown = document.getElementById(`${dropdownId}-dropdown`);
+                    if (dropdown && !button.contains(event.target) && !dropdown.contains(event.target)) {
                         dropdown.classList.remove('active');
-                    });
-                    document.querySelectorAll('.dropdown-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
+                    }
+                });
+            });
+            
+            // Modal functionality
+            window.openModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+            
+            window.closeModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            };
+            
+            // Close modal when clicking outside
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Scroll progress bar
+            window.addEventListener('scroll', function() {
+                const scrollProgress = document.getElementById('scrollProgress');
+                if (scrollProgress) {
+                    const windowHeight = window.innerHeight;
+                    const documentHeight = document.documentElement.scrollHeight - windowHeight;
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const scrollPercentage = (scrollTop / documentHeight) * 100;
+                    scrollProgress.style.width = scrollPercentage + '%';
                 }
                 
-                // Close mobile dropdowns
-                if (!event.target.closest('.mobile-dropdown')) {
-                    document.querySelectorAll('.mobile-dropdown-content').forEach(dropdown => {
-                        dropdown.classList.remove('active');
-                    });
-                    document.querySelectorAll('.mobile-dropdown-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
+                // Navbar scroll effect
+                const navbar = document.getElementById('mainNav');
+                if (navbar) {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('nav-scrolled');
+                    } else {
+                        navbar.classList.remove('nav-scrolled');
+                    }
                 }
+            });
+            
+            // Contact form validation
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form data
+                    const firstName = document.getElementById('firstName').value;
+                    const lastName = document.getElementById('lastName').value;
+                    const email = document.getElementById('email').value;
+                    const phone = document.getElementById('phone').value;
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value;
+                    
+                    // Validate form
+                    let isValid = true;
+                    
+                    // Reset errors
+                    document.querySelectorAll('.text-red-500').forEach(error => {
+                        error.classList.add('hidden');
+                    });
+                    
+                    // Validate first name
+                    if (!firstName) {
+                        document.getElementById('firstNameError').classList.remove('hidden');
+                        isValid = false;
+                    }
+                    
+                    // Validate last name
+                    if (!lastName) {
+                        document.getElementById('lastNameError').classList.remove('hidden');
+                        isValid = false;
+                    }
+                    
+                    // Validate email
+                    if (!email) {
+                        document.getElementById('emailError').textContent = 'Please enter your email address';
+                        document.getElementById('emailError').classList.remove('hidden');
+                        isValid = false;
+                    } else if (!isValidEmail(email)) {
+                        document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                        document.getElementById('emailError').classList.remove('hidden');
+                        isValid = false;
+                    }
+                    
+                    // Validate subject
+                    if (!subject) {
+                        document.getElementById('subjectError').classList.remove('hidden');
+                        isValid = false;
+                    }
+                    
+                    // Validate message
+                    if (!message) {
+                        document.getElementById('messageError').classList.remove('hidden');
+                        isValid = false;
+                    }
+                    
+                    if (!isValid) {
+                        showNotification('Validation Error', 'Please fill in all required fields correctly', 'error');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+                    submitButton.disabled = true;
+                    
+                    // Simulate form submission (in a real app, this would send to a server)
+                    setTimeout(() => {
+                        // Show success message
+                        showNotification('Message Sent!', `Thank you ${firstName}! Your message has been sent successfully. We'll respond within 24 hours.`);
+                        
+                        // Show success modal
+                        document.getElementById('successModalTitle').textContent = 'Message Sent Successfully!';
+                        document.getElementById('successModalMessage').textContent = `Thank you ${firstName} for contacting us. We'll get back to you within 24 hours at ${email}.`;
+                        openModal('successModal');
+                        
+                        // Reset form
+                        document.getElementById('contactForm').reset();
+                        
+                        // Reset button state
+                        submitButton.innerHTML = originalText;
+                        submitButton.disabled = false;
+                    }, 2000);
+                });
+            }
+
+            // Volunteer form
+            const volunteerForm = document.getElementById('volunteerForm');
+            if (volunteerForm) {
+                volunteerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // In a real application, you would send this data to a server
+                    showNotification('Application Submitted!', 'Thank you for your volunteer application. We will contact you soon.');
+                    closeModal('volunteerModal');
+                    
+                    // Reset form
+                    this.reset();
+                });
+            }
+
+            // Partnership form
+            const partnershipForm = document.getElementById('partnershipForm');
+            if (partnershipForm) {
+                partnershipForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // In a real application, you would send this data to a server
+                    showNotification('Inquiry Sent!', 'Thank you for your partnership interest. Our team will review your inquiry and contact you soon.');
+                    closeModal('partnershipModal');
+                    
+                    // Reset form
+                    this.reset();
+                });
+            }
+
+            // Real-time form validation
+            document.querySelectorAll('#contactForm input, #contactForm textarea').forEach(field => {
+                field.addEventListener('blur', function() {
+                    if (this.hasAttribute('required') && !this.value) {
+                        this.classList.add('border-red-500');
+                    } else {
+                        this.classList.remove('border-red-500');
+                    }
+                    
+                    if (this.type === 'email' && this.value && !isValidEmail(this.value)) {
+                        this.classList.add('border-red-500');
+                    }
+                });
+                
+                field.addEventListener('input', function() {
+                    if (this.value) {
+                        this.classList.remove('border-red-500');
+                    }
+                });
             });
 
             // Donation form functionality
@@ -1504,147 +2933,81 @@
                     showNotification(`Redirecting to our ${platform} page...`);
                 });
             });
-        });
 
-        // ========== MODAL FUNCTIONALITY ==========
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal')) {
-                closeModal(event.target.id);
-            }
-        });
-
-        // ========== NOTIFICATION SYSTEM ==========
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            const notificationIcon = document.getElementById('notificationIcon');
-            const notificationMessage = document.getElementById('notificationMessage');
-
-            if (!notification) return;
-
-            // Set notification content and style
-            notificationMessage.textContent = message;
-            
-            // Remove all color classes
-            notification.className = 'notification';
-            
-            if (type === 'success') {
-                notification.classList.add('success');
-                notificationIcon.className = 'fas fa-check-circle mr-2';
-            } else {
-                notification.classList.add('error');
-                notificationIcon.className = 'fas fa-exclamation-circle mr-2';
-            }
-
-            // Show notification
-            notification.classList.add('show');
-
-            // Hide after 5 seconds
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 5000);
-        }
-
-        // ========== SMOOTH SCROLLING ==========
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                const offsetTop = element.offsetTop - 80; // Account for fixed header
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        // ========== SCROLL PROGRESS BAR ==========
-        window.addEventListener('scroll', function() {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            const scrollProgress = document.getElementById('scrollProgress');
-            if (scrollProgress) {
-                scrollProgress.style.width = scrolled + '%';
-            }
-
-            // Navbar background on scroll
-            const nav = document.getElementById('mainNav');
-            if (nav) {
-                if (window.scrollY > 100) {
-                    nav.classList.add('nav-scrolled');
-                } else {
-                    nav.classList.remove('nav-scrolled');
-                }
-            }
-        });
-
-        // ========== COUNTER ANIMATION ==========
-        function animateCounter(element, target) {
-            let current = 0;
-            const increment = target / 100;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    element.textContent = target;
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.floor(current);
-                }
-            }, 20);
-        }
-
-        // ========== INITIALIZATION ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            // Observe counter elements and animate when visible
-            const counterObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const target = parseInt(entry.target.getAttribute('data-target'));
-                        animateCounter(entry.target, target);
-                        counterObserver.unobserve(entry.target);
+            // FAQ functionality
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', function() {
+                    const answer = this.nextElementSibling;
+                    const icon = this.querySelector('i');
+                    
+                    // Toggle answer visibility
+                    answer.classList.toggle('hidden');
+                    
+                    // Rotate icon
+                    if (icon.classList.contains('fa-chevron-down')) {
+                        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                    } else {
+                        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
                     }
                 });
-            }, { threshold: 0.5 });
-
-            document.querySelectorAll('.counter[data-target]').forEach(counter => {
-                counterObserver.observe(counter);
             });
 
-            // Initialize fade-in animations
-            const fadeInObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
+            // Volunteer modal function
+            window.openVolunteerModal = function() {
+                openModal('volunteerModal');
+            };
+
+            // Partnership modal function
+            window.openPartnershipModal = function() {
+                openModal('partnershipModal');
+            };
+
+            // Emergency call function
+            window.callEmergency = function(phoneNumber) {
+                if (confirm(`Are you sure you want to call ${phoneNumber}? This is for emergencies only.`)) {
+                    // In a real application, this would initiate a phone call
+                    showNotification('Emergency Call', `Calling ${phoneNumber}... Please use your phone to complete the call.`, 'info');
+                    // Simulate call initiation
+                    setTimeout(() => {
+                        showNotification('Emergency Call', 'If this were a real phone, the call would be connecting now.', 'info');
+                    }, 1000);
+                }
+            };
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const headerHeight = document.querySelector('nav').offsetHeight;
+                        const targetPosition = targetElement.offsetTop - headerHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
                     }
                 });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('.fade-in').forEach(element => {
-                fadeInObserver.observe(element);
             });
-        });
 
-        // Show welcome notification after page loads
-        window.addEventListener('load', function() {
+            // Utility function for email validation
+            window.isValidEmail = function(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            };
+
+            // Show welcome notification after page loads
             setTimeout(() => {
-                showNotification('Welcome to our Education & Vocational Training page.', 'success');
+                showNotification('Welcome to our Contact page. How can we help you today?', 'success');
             }, 1000);
+
+            // Log system status
+            console.log('Integrated Authentication System Ready for Contact Page');
+            console.log('- Firebase Integration:', isFirebaseAvailable() ? 'Available' : 'Not Available');
+            console.log('- Local Storage: Available (Fallback)');
+            console.log('- User Profile Management: Integrated with both Firebase and Local Storage');
         });
     </script>
 </body>

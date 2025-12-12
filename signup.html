@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - HopeLink Mahama</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #4f46e5;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .auth-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+        
+        .form-input.valid {
+            border-color: var(--success-color);
+        }
+        
+        .form-input.invalid {
+            border-color: var(--error-color);
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 8px;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 18px;
+        }
+        
+        .input-with-icon {
+            padding-left: 52px;
+            padding-right: 52px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 20px;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            font-weight: 600;
+            padding: 18px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-success:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .btn-google {
+            background: white;
+            color: #374151;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-google:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 32px 0;
+            color: #6b7280;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+        
+        .divider span {
+            padding: 0 16px;
+            font-size: 14px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 24px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            color: white;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            min-width: 300px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, var(--error-color), #dc2626);
+        }
+        
+        .notification.info {
+            background: linear-gradient(135deg, var(--primary-color), #2563eb);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+        
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+            line-height: 1.2;
+        }
+        
+        .logo-text p {
+            font-size: 14px;
+            color: var(--success-color);
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+        
+        .password-strength {
+            margin-top: 8px;
+        }
+        
+        .strength-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            overflow: hidden;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+        
+        .strength-fill.weak {
+            background: var(--error-color);
+            width: 25%;
+        }
+        
+        .strength-fill.fair {
+            background: var(--warning-color);
+            width: 50%;
+        }
+        
+        .strength-fill.good {
+            background: #3b82f6;
+            width: 75%;
+        }
+        
+        .strength-fill.strong {
+            background: var(--success-color);
+            width: 100%;
+        }
+        
+        .strength-text {
+            font-size: 12px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        
+        .strength-text.weak {
+            color: var(--error-color);
+        }
+        
+        .strength-text.fair {
+            color: var(--warning-color);
+        }
+        
+        .strength-text.good {
+            color: #3b82f6;
+        }
+        
+        .strength-text.strong {
+            color: var(--success-color);
+        }
+        
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 24px 0 32px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid #d1d5db;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .checkbox.checked {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .terms-text {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .terms-text a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .terms-text a:hover {
+            color: #4338ca;
+            text-decoration: underline;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 32px;
+            color: #6b7280;
+            font-size: 14px;
+            padding-top: 24px;
+            border-top: 1px solid #f3f4f6;
+        }
+        
+        .login-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+            margin-left: 4px;
+        }
+        
+        .login-link a:hover {
+            color: #4338ca;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 640px) {
+            .auth-container {
+                padding: 16px;
+            }
+            
+            .auth-card {
+                border-radius: 20px;
+                max-width: 100%;
+            }
+            
+            .logo-text h1 {
+                font-size: 24px;
+            }
+            
+            .terms-checkbox {
+                padding: 12px;
+            }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .name-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        @media (max-width: 480px) {
+            .name-group {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+        
+        .success-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: scaleIn 0.5s ease;
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .success-icon i {
+            font-size: 32px;
+            color: white;
+        }
+        
+        .redirecting-text {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 16px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <div class="auth-card fade-in">
+            <div class="p-8">
+                <!-- Logo -->
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-hands-helping text-white text-2xl"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>HopeLink</h1>
+                        <p>Mahama Refugee Camp</p>
+                    </div>
+                </div>
+
+                <!-- Welcome Message -->
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
+                    <p class="text-gray-600">Join HopeLink community today</p>
+                </div>
+
+                <!-- Google Signup -->
+                <button onclick="handleGoogleSignup()" class="btn-google mb-6">
+                    <i class="fab fa-google text-red-500 text-lg"></i>
+                    <span>Sign up with Google</span>
+                </button>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>Or sign up with email</span>
+                </div>
+
+                <!-- Signup Form -->
+                <form id="signupForm" class="space-y-6">
+                    <!-- Name Fields -->
+                    <div class="name-group">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2 text-sm">First Name</label>
+                            <div class="input-group">
+                                <i class="input-icon fas fa-user"></i>
+                                <input type="text" 
+                                       id="firstName" 
+                                       class="form-input input-with-icon"
+                                       placeholder="John"
+                                       autocomplete="given-name"
+                                       required>
+                            </div>
+                            <div id="firstNameError" class="error-message"></div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2 text-sm">Last Name</label>
+                            <div class="input-group">
+                                <i class="input-icon fas fa-user"></i>
+                                <input type="text" 
+                                       id="lastName" 
+                                       class="form-input input-with-icon"
+                                       placeholder="Doe"
+                                       autocomplete="family-name"
+                                       required>
+                            </div>
+                            <div id="lastNameError" class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2 text-sm">Email Address</label>
+                        <div class="input-group">
+                            <i class="input-icon fas fa-envelope"></i>
+                            <input type="email" 
+                                   id="signupEmail" 
+                                   class="form-input input-with-icon"
+                                   placeholder="john.doe@example.com"
+                                   autocomplete="email"
+                                   required>
+                        </div>
+                        <div id="emailError" class="error-message"></div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2 text-sm">Password</label>
+                        <div class="input-group">
+                            <i class="input-icon fas fa-lock"></i>
+                            <input type="password" 
+                                   id="signupPassword" 
+                                   class="form-input input-with-icon"
+                                   placeholder="Create a strong password"
+                                   autocomplete="new-password"
+                                   required>
+                            <button type="button" 
+                                    class="password-toggle"
+                                    onclick="togglePassword('signupPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div id="strengthFill" class="strength-fill"></div>
+                            </div>
+                            <div id="strengthText" class="strength-text"></div>
+                        </div>
+                        <div id="passwordError" class="error-message"></div>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2 text-sm">Confirm Password</label>
+                        <div class="input-group">
+                            <i class="input-icon fas fa-lock"></i>
+                            <input type="password" 
+                                   id="confirmPassword" 
+                                   class="form-input input-with-icon"
+                                   placeholder="Confirm your password"
+                                   autocomplete="new-password"
+                                   required>
+                            <button type="button" 
+                                    class="password-toggle"
+                                    onclick="togglePassword('confirmPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="confirmPasswordError" class="error-message"></div>
+                    </div>
+
+                    <!-- Terms Agreement -->
+                    <div class="terms-checkbox">
+                        <div id="termsCheckbox" class="checkbox" onclick="toggleTerms()"></div>
+                        <label class="terms-text">
+                            I agree to the <a href="#" onclick="openTermsModal()">Terms of Service</a> and 
+                            <a href="#" onclick="openPrivacyModal()">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <div id="termsError" class="error-message"></div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            id="signupButton"
+                            class="btn-success">
+                        <span id="signupButtonText">Create Account</span>
+                        <span id="signupSpinner" class="loading-spinner hidden"></span>
+                    </button>
+                </form>
+
+                <!-- Success Screen (Hidden by default) -->
+                <div id="successScreen" class="success-screen hidden">
+                    <div class="success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Account Created Successfully!</h3>
+                    <p class="text-gray-600 mb-6">Welcome to the HopeLink community</p>
+                    <div class="bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl text-sm mb-8">
+                        Your account has been created and you will be redirected to the main website shortly.
+                    </div>
+                    <div class="redirecting-text">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                        Redirecting to main website...
+                    </div>
+                </div>
+
+                <!-- Login Link -->
+                <div class="login-link">
+                    Already have an account? 
+                    <a href="login.html">Sign in here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i id="notificationIcon"></i>
+                <div>
+                    <div id="notificationTitle" class="font-semibold text-sm"></div>
+                    <div id="notificationMessage" class="text-xs opacity-90"></div>
+                </div>
+            </div>
+            <button onclick="hideNotification()" 
+                    class="ml-4 opacity-70 hover:opacity-100">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase Configuration -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword,
+            updateProfile,
+            GoogleAuthProvider,
+            signInWithPopup
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc 
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6srTpyl7YXpr4t3Xij0Lx7DqmHsbaCPs",
+            authDomain: "hopelink-mahama-d9cd4.firebaseapp.com",
+            projectId: "hopelink-mahama-d9cd4",
+            storageBucket: "hopelink-mahama-d9cd4.firebasestorage.app",
+            messagingSenderId: "769873156422",
+            appId: "1:769873156422:web:5d89b8c5695ce95bb6ad47",
+            measurementId: "G-8TQ2LYP809"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        // Configure Google Provider
+        googleProvider.setCustomParameters({
+            prompt: 'select_account'
+        });
+
+        // Make Firebase functions globally available
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        
+        window.firebaseSignUp = async (email, password) => {
+            return await createUserWithEmailAndPassword(auth, email, password);
+        };
+        
+        window.firebaseUpdateProfile = async (user, profileData) => {
+            return await updateProfile(user, profileData);
+        };
+        
+        // Save user data to Firestore
+        window.saveUserToFirestore = async (user, userData) => {
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userRef);
+                
+                const fullUserData = {
+                    ...userData,
+                    email: user.email,
+                    uid: user.uid,
+                    emailVerified: user.emailVerified,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                await setDoc(userRef, fullUserData, { merge: true });
+                return true;
+            } catch (error) {
+                console.error("Error saving user to Firestore:", error);
+                return false;
+            }
+        };
+        
+        // Google Sign In/Sign Up
+        window.signInWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                
+                // Save user data to Firestore
+                await window.saveUserToFirestore(user, {
+                    displayName: user.displayName,
+                    photoURL: user.photoURL,
+                    provider: 'google',
+                    role: 'user',
+                    accountStatus: 'active',
+                    profileComplete: false
+                });
+                
+                return { success: true, user };
+            } catch (error) {
+                console.error("Google Auth Error:", error);
+                return { success: false, error };
+            }
+        };
+
+        console.log("Firebase Authentication System Initialized");
+    </script>
+
+    <!-- Application JavaScript -->
+    <script>
+        // ============================================================================
+        // SIGNUP FUNCTIONS
+        // ============================================================================
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.parentElement.querySelector('.password-toggle i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // Toggle terms checkbox
+        function toggleTerms() {
+            const checkbox = document.getElementById('termsCheckbox');
+            checkbox.classList.toggle('checked');
+            showError('termsError', '');
+        }
+
+        // Show loading state
+        function showLoadingState(buttonId, spinnerId, textId, loadingText) {
+            const button = document.getElementById(buttonId);
+            const spinner = document.getElementById(spinnerId);
+            const text = document.getElementById(textId);
+            
+            button.disabled = true;
+            text.textContent = loadingText;
+            spinner.classList.remove('hidden');
+        }
+
+        // Hide loading state
+        function hideLoadingState(buttonId, spinnerId, textId, originalText) {
+            const button = document.getElementById(buttonId);
+            const spinner = document.getElementById(spinnerId);
+            const text = document.getElementById(textId);
+            
+            button.disabled = false;
+            text.textContent = originalText;
+            spinner.classList.add('hidden');
+        }
+
+        // Show notification
+        function showNotification(title, message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            // Set icon based on type
+            switch(type) {
+                case 'success':
+                    icon.className = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    icon.className = 'fas fa-exclamation-circle';
+                    break;
+                case 'info':
+                    icon.className = 'fas fa-info-circle';
+                    break;
+            }
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(hideNotification, 5000);
+        }
+
+        // Hide notification
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+
+        // Validate email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Check password strength
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let strengthText = '';
+            let strengthClass = '';
+            
+            // Check password length
+            if (password.length >= 8) strength += 1;
+            
+            // Check for lowercase letters
+            if (/[a-z]/.test(password)) strength += 1;
+            
+            // Check for uppercase letters
+            if (/[A-Z]/.test(password)) strength += 1;
+            
+            // Check for numbers
+            if (/[0-9]/.test(password)) strength += 1;
+            
+            // Check for special characters
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Determine strength level
+            if (password.length === 0) {
+                strengthText = '';
+                strengthClass = '';
+            } else if (strength <= 2) {
+                strengthText = 'Weak password';
+                strengthClass = 'weak';
+            } else if (strength === 3) {
+                strengthText = 'Fair password';
+                strengthClass = 'fair';
+            } else if (strength === 4) {
+                strengthText = 'Good password';
+                strengthClass = 'good';
+            } else {
+                strengthText = 'Strong password';
+                strengthClass = 'strong';
+            }
+            
+            return { strength, strengthText, strengthClass };
+        }
+
+        // Update password strength indicator
+        function updatePasswordStrength(password) {
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            if (password.length === 0) {
+                strengthFill.className = 'strength-fill';
+                strengthText.className = 'strength-text';
+                strengthText.textContent = '';
+                return;
+            }
+            
+            const { strengthText: text, strengthClass } = checkPasswordStrength(password);
+            
+            strengthFill.className = `strength-fill ${strengthClass}`;
+            strengthText.className = `strength-text ${strengthClass}`;
+            strengthText.innerHTML = `<i class="fas fa-${strengthClass === 'strong' ? 'shield-alt' : 'shield'}"></i> ${text}`;
+        }
+
+        // Show error message
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (message) {
+                element.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+                element.style.display = 'flex';
+                const inputId = elementId.replace('Error', '');
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.classList.add('invalid');
+                    input.classList.remove('valid');
+                }
+            } else {
+                element.innerHTML = '';
+                element.style.display = 'none';
+                const inputId = elementId.replace('Error', '');
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.classList.remove('invalid');
+                    input.classList.remove('valid');
+                }
+            }
+        }
+
+        // Show success state
+        function showSuccess(inputId) {
+            const input = document.getElementById(inputId);
+            input.classList.add('valid');
+            input.classList.remove('invalid');
+            const errorId = inputId + 'Error';
+            showError(errorId, '');
+        }
+
+        // Handle Google Signup
+        async function handleGoogleSignup() {
+            try {
+                if (!window.signInWithGoogle) {
+                    showNotification('Service Unavailable', 'Google authentication is currently unavailable. Please use email signup.', 'error');
+                    return;
+                }
+
+                showLoadingState('signupButton', 'signupSpinner', 'signupButtonText', 'Connecting to Google...');
+                
+                const result = await window.signInWithGoogle();
+                
+                if (result.success) {
+                    const user = result.user;
+                    
+                    // Store user data
+                    localStorage.setItem('user', JSON.stringify({
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName || user.email.split('@')[0],
+                        photoURL: user.photoURL
+                    }));
+                    
+                    // Show success screen
+                    showSuccessScreen();
+                    
+                    showNotification('Account Created', `Welcome to HopeLink, ${user.displayName || user.email}!`, 'success');
+                    
+                    // Redirect to main website after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                } else {
+                    throw result.error;
+                }
+            } catch (error) {
+                console.error('Google signup error:', error);
+                
+                let errorMessage = 'Google signup failed. Please try again.';
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Signup popup was closed. Please try again.';
+                } else if (error.code === 'auth/account-exists-with-different-credential') {
+                    errorMessage = 'An account already exists with this email. Please sign in instead.';
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'Popup was blocked by your browser. Please allow popups for this site.';
+                }
+                
+                showNotification('Signup Failed', errorMessage, 'error');
+                hideLoadingState('signupButton', 'signupSpinner', 'signupButtonText', 'Create Account');
+            }
+        }
+
+        // Show success screen
+        function showSuccessScreen() {
+            const form = document.getElementById('signupForm');
+            const successScreen = document.getElementById('successScreen');
+            
+            form.classList.add('hidden');
+            successScreen.classList.remove('hidden');
+        }
+
+        // Handle Signup Form Submission
+        async function handleSignup(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const termsAccepted = document.getElementById('termsCheckbox').classList.contains('checked');
+            
+            // Reset errors
+            showError('firstNameError', '');
+            showError('lastNameError', '');
+            showError('emailError', '');
+            showError('passwordError', '');
+            showError('confirmPasswordError', '');
+            showError('termsError', '');
+            
+            // Validate inputs
+            let isValid = true;
+            
+            if (!firstName) {
+                showError('firstNameError', 'First name is required');
+                isValid = false;
+            } else if (firstName.length < 2) {
+                showError('firstNameError', 'First name must be at least 2 characters');
+                isValid = false;
+            } else {
+                showSuccess('firstName');
+            }
+            
+            if (!lastName) {
+                showError('lastNameError', 'Last name is required');
+                isValid = false;
+            } else if (lastName.length < 2) {
+                showError('lastNameError', 'Last name must be at least 2 characters');
+                isValid = false;
+            } else {
+                showSuccess('lastName');
+            }
+            
+            if (!email) {
+                showError('emailError', 'Email is required');
+                isValid = false;
+            } else if (!validateEmail(email)) {
+                showError('emailError', 'Please enter a valid email address');
+                isValid = false;
+            } else {
+                showSuccess('signupEmail');
+            }
+            
+            if (!password) {
+                showError('passwordError', 'Password is required');
+                isValid = false;
+            } else if (password.length < 6) {
+                showError('passwordError', 'Password must be at least 6 characters');
+                isValid = false;
+            } else {
+                showSuccess('signupPassword');
+            }
+            
+            if (!confirmPassword) {
+                showError('confirmPasswordError', 'Please confirm your password');
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                showError('confirmPasswordError', 'Passwords do not match');
+                isValid = false;
+            } else {
+                showSuccess('confirmPassword');
+            }
+            
+            if (!termsAccepted) {
+                showError('termsError', 'You must agree to the Terms of Service and Privacy Policy');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                document.getElementById('signupForm').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('signupForm').classList.remove('shake');
+                }, 500);
+                return;
+            }
+            
+            // Show loading state
+            showLoadingState('signupButton', 'signupSpinner', 'signupButtonText', 'Creating Account...');
+            
+            try {
+                if (window.firebaseSignUp && window.firebaseUpdateProfile && window.saveUserToFirestore) {
+                    // Create user with Firebase
+                    const userCredential = await window.firebaseSignUp(email, password);
+                    const user = userCredential.user;
+                    
+                    // Update user profile with name
+                    await window.firebaseUpdateProfile(user, {
+                        displayName: `${firstName} ${lastName}`
+                    });
+                    
+                    // Save user data to Firestore
+                    await window.saveUserToFirestore(user, {
+                        firstName,
+                        lastName,
+                        displayName: `${firstName} ${lastName}`,
+                        role: 'user',
+                        accountStatus: 'active',
+                        profileComplete: false
+                    });
+                    
+                    // Store user data in localStorage
+                    localStorage.setItem('user', JSON.stringify({
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: `${firstName} ${lastName}`,
+                        firstName,
+                        lastName
+                    }));
+                    
+                    // Show success screen
+                    showSuccessScreen();
+                    
+                    // Show notification
+                    showNotification('Account Created Successfully', `Welcome to HopeLink, ${firstName}!`, 'success');
+                    
+                    // Redirect to main website after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                } else {
+                    throw new Error('Signup service unavailable');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                
+                let errorMessage = 'Signup failed. Please try again.';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'An account already exists with this email address.';
+                    showError('emailError', errorMessage);
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address format.';
+                    showError('emailError', errorMessage);
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMessage = 'Email/password accounts are not enabled.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak. Please use a stronger password.';
+                    showError('passwordError', errorMessage);
+                }
+                
+                showNotification('Signup Failed', errorMessage, 'error');
+                hideLoadingState('signupButton', 'signupSpinner', 'signupButtonText', 'Create Account');
+            }
+        }
+
+        // Modal functions
+        function openTermsModal() {
+            alert('Terms of Service:\n\nBy creating an account, you agree to:\n1. Use HopeLink services responsibly\n2. Respect other community members\n3. Follow our community guidelines\n\nPlease review the full Terms of Service on our main website.');
+        }
+
+        function openPrivacyModal() {
+            alert('Privacy Policy:\n\nWe are committed to protecting your privacy:\n1. Your data is stored securely\n2. We never share your information without consent\n3. You can delete your account anytime\n\nYour trust is important to us.');
+        }
+
+        // Initialize the page
+        function initializePage() {
+            // Set up form submission
+            document.getElementById('signupForm').addEventListener('submit', handleSignup);
+            
+            // Real-time validation
+            document.getElementById('firstName').addEventListener('input', function() {
+                if (this.value.trim().length >= 2) {
+                    showSuccess('firstName');
+                } else if (this.value) {
+                    showError('firstNameError', 'First name must be at least 2 characters');
+                } else {
+                    showError('firstNameError', '');
+                }
+            });
+            
+            document.getElementById('lastName').addEventListener('input', function() {
+                if (this.value.trim().length >= 2) {
+                    showSuccess('lastName');
+                } else if (this.value) {
+                    showError('lastNameError', 'Last name must be at least 2 characters');
+                } else {
+                    showError('lastNameError', '');
+                }
+            });
+            
+            document.getElementById('signupEmail').addEventListener('input', function() {
+                if (validateEmail(this.value)) {
+                    showSuccess('signupEmail');
+                } else if (this.value) {
+                    showError('emailError', 'Please enter a valid email address');
+                } else {
+                    showError('emailError', '');
+                }
+            });
+            
+            document.getElementById('signupPassword').addEventListener('input', function() {
+                updatePasswordStrength(this.value);
+                
+                if (this.value.length >= 6) {
+                    showSuccess('signupPassword');
+                } else if (this.value) {
+                    showError('passwordError', 'Password must be at least 6 characters');
+                } else {
+                    showError('passwordError', '');
+                }
+                
+                // Check password match in real-time
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                if (confirmPassword && this.value !== confirmPassword) {
+                    showError('confirmPasswordError', 'Passwords do not match');
+                } else if (confirmPassword) {
+                    showSuccess('confirmPassword');
+                }
+            });
+            
+            document.getElementById('confirmPassword').addEventListener('input', function() {
+                const password = document.getElementById('signupPassword').value;
+                
+                if (this.value === password && password.length >= 6) {
+                    showSuccess('confirmPassword');
+                } else if (this.value && password) {
+                    showError('confirmPasswordError', 'Passwords do not match');
+                } else {
+                    showError('confirmPasswordError', '');
+                }
+            });
+            
+            // Prevent auto-redirect for this session
+            localStorage.setItem('autoRedirect', 'false');
+            
+            console.log('Signup page initialized');
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>
