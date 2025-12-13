@@ -12,6 +12,140 @@
     <!-- Razorpay Integration (for demo purposes) -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+    <!-- Firebase Integration -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+        import { getDatabase, ref, set, push, get, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6srTpyl7YXpr4t3Xij0Lx7DqmHsbaCPs",
+            authDomain: "hopelink-mahama-d9cd4.firebaseapp.com",
+            databaseURL: "https://hopelink-mahama-d9cd4-default-rtdb.firebaseio.com",
+            projectId: "hopelink-mahama-d9cd4",
+            storageBucket: "hopelink-mahama-d9cd4.firebasestorage.app",
+            messagingSenderId: "769873156422",
+            appId: "1:769873156422:web:5d89b8c5695ce95bb6ad47",
+            measurementId: "G-8TQ2LYP809"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        // Initialize Realtime Database
+        const database = getDatabase(app);
+        
+        // Make Firebase functions available globally
+        window.firebaseApp = app;
+        window.firebaseDatabase = database;
+        window.firebaseRef = ref;
+        window.firebaseSet = set;
+        window.firebasePush = push;
+        window.firebaseGet = get;
+        window.firebaseUpdate = update;
+        
+        console.log("Firebase initialized successfully!");
+    </script>    <!-- Real-time Campaign Updates -->
+    <script type="module">
+        // This script will update the website in real-time when campaigns are modified in the dashboard
+        
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+        // Your Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6srTpyl7YXpr4t3Xij0Lx7DqmHsbaCPs",
+            authDomain: "hopelink-mahama-d9cd4.firebaseapp.com",
+            databaseURL: "https://hopelink-mahama-d9cd4-default-rtdb.firebaseio.com",
+            projectId: "hopelink-mahama-d9cd4",
+            storageBucket: "hopelink-mahama-d9cd4.firebasestorage.app",
+            messagingSenderId: "769873156422",
+            appId: "1:769873156422:web:5d89b8c5695ce95bb6ad47",
+            measurementId: "G-8TQ2LYP809"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Listen for campaign updates
+        const campaignsRef = ref(database, 'campaigns');
+        onValue(campaignsRef, (snapshot) => {
+            const campaigns = snapshot.val();
+            if (campaigns) {
+                updateWebsiteCampaigns(campaigns);
+            }
+        });
+        
+        // Function to update campaign progress bars on the website
+        function updateWebsiteCampaigns(campaignsData) {
+            console.log('Updating website campaigns:', campaignsData);
+            
+            // Map campaign names to DOM elements
+            const campaignMap = {
+                'Emergency Food Fund': { element: '.progress-fill:nth-child(1)', goal: 10000 },
+                'Youth Education Program': { element: '.progress-fill:nth-child(2)', goal: 20000 },
+                'Community Health Initiative': { element: '.progress-fill:nth-child(3)', goal: 8000 },
+                'Digital Infrastructure': { element: '.progress-fill:nth-child(4)', goal: 5000 }
+            };
+            
+            // Update each campaign
+            Object.entries(campaignsData).forEach(([id, campaign]) => {
+                const campaignInfo = campaignMap[campaign.name];
+                if (campaignInfo && campaignInfo.element) {
+                    const progress = Math.min((campaign.current / campaignInfo.goal) * 100, 100);
+                    const element = document.querySelector(campaignInfo.element);
+                    if (element) {
+                        element.style.width = `${progress}%`;
+                        
+                        // Update amount text if it exists
+                        const amountElement = element.closest('div').querySelector('.font-bold');
+                        if (amountElement && amountElement.textContent.includes('$')) {
+                            const newText = `$${campaign.current.toLocaleString()}/$${campaignInfo.goal.toLocaleString()}`;
+                            amountElement.textContent = newText;
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Also listen for donation counter updates
+        const donationsRef = ref(database, 'donations');
+        onValue(donationsRef, (snapshot) => {
+            const donations = snapshot.val();
+            if (donations) {
+                updateDonationCounter(donations);
+            }
+        });
+        
+        function updateDonationCounter(donationsData) {
+            const totalAmount = Object.values(donationsData).reduce((sum, donation) => {
+                return sum + (parseFloat(donation.amount) || 0);
+            }, 0);
+            
+            const donorCount = new Set(Object.values(donationsData).map(d => d.email)).size;
+            
+            // Update counters on the page
+            const totalRaisedElement = document.querySelector('[data-target="238450"]');
+            const donorCountElement = document.querySelector('[data-target="12547"]');
+            
+            if (totalRaisedElement) {
+                totalRaisedElement.textContent = Math.round(238450 + totalAmount);
+            }
+            
+            if (donorCountElement) {
+                donorCountElement.textContent = 12547 + donorCount;
+            }
+        }
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -1519,8 +1653,221 @@
             event.currentTarget.classList.add('border-2', 'border-primary-green', 'bg-green-50');
         }
 
-        /* ========= DONATION FORM HANDLING ========= */
-        document.getElementById('donationForm').addEventListener('submit', function (e) {
+        /* ========= ENHANCED FIREBASE DONATION SUBMISSION ========= */
+        async function saveDonationToFirebaseEnhanced(donationData) {
+            try {
+                // Check if Firebase is available
+                if (!window.firebaseDatabase || !window.firebasePush || !window.firebaseRef) {
+                    console.error("Firebase not initialized");
+                    // Fallback to localStorage
+                    saveDonationToLocalStorage(donationData);
+                    return { success: false, message: "Firebase not available" };
+                }
+
+                // Create a reference to the donations node
+                const donationsRef = window.firebaseRef(window.firebaseDatabase, 'donations');
+                
+                // Generate a new donation ID
+                const newDonationRef = window.firebasePush(donationsRef);
+                
+                // Prepare donation data for Firebase
+                const firebaseDonationData = {
+                    firstName: donationData.firstName.trim(),
+                    lastName: donationData.lastName.trim(),
+                    email: donationData.email.toLowerCase().trim(),
+                    phone: donationData.phone ? donationData.phone.trim() : '',
+                    amount: parseFloat(donationData.amount),
+                    type: donationData.type,
+                    paymentMethod: donationData.paymentMethod,
+                    status: 'completed',
+                    timestamp: Date.now(),
+                    date: new Date().toISOString(),
+                    donationId: newDonationRef.key,
+                    campaign: 'General Donation' // You can customize this
+                };
+                
+                // Set the donation data in Firebase
+                await window.firebaseSet(newDonationRef, firebaseDonationData);
+                
+                console.log("Donation saved to Firebase successfully!");
+                
+                // Update dashboard statistics
+                await updateDashboardStatsInFirebase(donationData.amount);
+                
+                // Update campaign progress
+                await updateCampaignProgressInFirebase(donationData.amount);
+                
+                return { success: true, donationId: newDonationRef.key };
+                
+            } catch (error) {
+                console.error("Error saving donation to Firebase:", error);
+                // Fallback to localStorage
+                saveDonationToLocalStorage(donationData);
+                return { success: false, message: error.message };
+            }
+        }
+
+        /* ========= UPDATE DASHBOARD STATS ========= */
+        async function updateDashboardStatsInFirebase(amount) {
+            try {
+                if (!window.firebaseDatabase || !window.firebaseRef || !window.firebaseUpdate || !window.firebaseGet) {
+                    return false;
+                }
+
+                const statsRef = window.firebaseRef(window.firebaseDatabase, 'dashboardStats');
+                const snapshot = await window.firebaseGet(statsRef);
+                const stats = snapshot.val() || {
+                    totalDonations: 0,
+                    totalAmount: 0,
+                    monthlyDonations: 0,
+                    monthlyAmount: 0,
+                    lastUpdated: Date.now()
+                };
+
+                const currentMonth = new Date().getMonth();
+                const lastUpdateMonth = new Date(stats.lastUpdated).getMonth();
+                
+                // Update stats
+                const updatedStats = {
+                    totalDonations: (stats.totalDonations || 0) + 1,
+                    totalAmount: (stats.totalAmount || 0) + parseFloat(amount),
+                    monthlyDonations: currentMonth === lastUpdateMonth ? 
+                        (stats.monthlyDonations || 0) + 1 : 1,
+                    monthlyAmount: currentMonth === lastUpdateMonth ? 
+                        (stats.monthlyAmount || 0) + parseFloat(amount) : parseFloat(amount),
+                    lastUpdated: Date.now()
+                };
+
+                await window.firebaseUpdate(statsRef, updatedStats);
+                console.log("Dashboard stats updated in Firebase!");
+                
+                return true;
+            } catch (error) {
+                console.error("Error updating dashboard stats:", error);
+                return false;
+            }
+        }
+
+        /* ========= UPDATE CAMPAIGN PROGRESS ========= */
+        async function updateCampaignProgressInFirebase(amount) {
+            try {
+                if (!window.firebaseDatabase || !window.firebaseRef || !window.firebaseUpdate || !window.firebaseGet) {
+                    return false;
+                }
+
+                // Get campaigns from Firebase
+                const campaignsRef = window.firebaseRef(window.firebaseDatabase, 'campaigns');
+                const snapshot = await window.firebaseGet(campaignsRef);
+                const campaignsData = snapshot.val();
+                
+                if (!campaignsData) {
+                    // Create default campaigns if none exist
+                    await createDefaultCampaigns();
+                    return true;
+                }
+                
+                // Find active campaign to update (you can modify this logic)
+                const campaignEntries = Object.entries(campaignsData);
+                if (campaignEntries.length > 0) {
+                    // Update the first active campaign or first campaign
+                    const [campaignId, campaign] = campaignEntries.find(([id, camp]) => camp.active !== false) || campaignEntries[0];
+                    
+                    if (campaign) {
+                        const campaignRef = window.firebaseRef(window.firebaseDatabase, `campaigns/${campaignId}`);
+                        const newCurrent = (parseFloat(campaign.current) || 0) + parseFloat(amount);
+                        
+                        await window.firebaseUpdate(campaignRef, {
+                            current: newCurrent,
+                            updated: Date.now()
+                        });
+                        
+                        console.log(`Campaign "${campaign.name}" progress updated to $${newCurrent}`);
+                    }
+                }
+                
+                return true;
+            } catch (error) {
+                console.error("Error updating campaign progress:", error);
+                return false;
+            }
+        }
+
+        /* ========= CREATE DEFAULT CAMPAIGNS ========= */
+        async function createDefaultCampaigns() {
+            try {
+                const campaignsRef = window.firebaseRef(window.firebaseDatabase, 'campaigns');
+                
+                const defaultCampaigns = [
+                    {
+                        name: 'Emergency Food Fund',
+                        description: 'Provides immediate food assistance to 200 families',
+                        goal: 10000,
+                        current: 8450,
+                        color: 'green',
+                        active: true,
+                        created: Date.now()
+                    },
+                    {
+                        name: 'Youth Education Program',
+                        description: 'Supports digital skills training for 50 youth',
+                        goal: 20000,
+                        current: 15200,
+                        color: 'blue',
+                        active: true,
+                        created: Date.now()
+                    },
+                    {
+                        name: 'Community Health Initiative',
+                        description: 'Funds mental wellness support and basic healthcare',
+                        goal: 8000,
+                        current: 5800,
+                        color: 'yellow',
+                        active: true,
+                        created: Date.now()
+                    }
+                ];
+                
+                // Save each campaign
+                for (const campaign of defaultCampaigns) {
+                    const newCampaignRef = window.firebasePush(campaignsRef);
+                    await window.firebaseSet(newCampaignRef, campaign);
+                }
+                
+                console.log("Default campaigns created in Firebase!");
+                return true;
+            } catch (error) {
+                console.error("Error creating default campaigns:", error);
+                return false;
+            }
+        }
+
+        /* ========= LOCALSTORAGE FALLBACK WITH SYNC FLAG ========= */
+        function saveDonationToLocalStorage(donationData) {
+            try {
+                let donations = JSON.parse(localStorage.getItem('hopelink_donations') || '[]');
+                
+                const donationRecord = {
+                    ...donationData,
+                    id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    timestamp: Date.now(),
+                    date: new Date().toISOString(),
+                    status: 'completed',
+                    needsSync: true // Flag for dashboard to sync
+                };
+                
+                donations.push(donationRecord);
+                localStorage.setItem('hopelink_donations', JSON.stringify(donations));
+                
+                console.log("Donation saved to localStorage (needs sync):", donationRecord);
+                return true;
+            } catch (error) {
+                console.error("Error saving to localStorage:", error);
+                return false;
+            }
+        }
+
+        /* ========= ENHANCED DONATION FORM HANDLING ========= */
+        document.getElementById('donationForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             // Get form data
@@ -1535,6 +1882,23 @@
                 return;
             }
 
+            // Validate required fields
+            const firstName = formData.get('firstName').trim();
+            const lastName = formData.get('lastName').trim();
+            const email = formData.get('email').trim();
+            
+            if (!firstName || !lastName || !email) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
             // Simulate payment processing
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
@@ -1542,38 +1906,63 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
             submitBtn.disabled = true;
 
-            // Simulate API call
-            setTimeout(() => {
-                // In a real implementation, this would connect to payment gateway
-                // For demo purposes, we'll simulate success
+            // Prepare donation data
+            const donationData = {
+                amount: parseFloat(amount),
+                type: type,
+                paymentMethod: paymentMethod,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phone: formData.get('phone') || '',
+                date: new Date().toISOString()
+            };
 
-                // Store donation in localStorage
-                const donation = {
-                    id: 'don_' + Date.now(),
-                    amount: amount,
-                    type: type,
-                    paymentMethod: paymentMethod,
-                    date: new Date().toISOString(),
-                    firstName: formData.get('firstName'),
-                    email: formData.get('email')
-                };
+            // Save to Firebase with enhanced function
+            setTimeout(async () => {
+                try {
+                    // Save to Firebase with enhanced function
+                    const result = await saveDonationToFirebaseEnhanced(donationData);
+                    
+                    if (result.success) {
+                        console.log("Donation successful! ID:", result.donationId);
+                        
+                        // Update donation counter on the page
+                        updateDonationCounter();
+                        
+                        // Show success modal
+                        closeDonationModal();
+                        setTimeout(() => {
+                            openSuccessModal();
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                            
+                            // Reset form
+                            this.reset();
+                            donationAmountInput.value = 50;
+                            
+                        }, 500);
+                    } else {
+                        // Fallback to localStorage
+                        console.log("Using localStorage fallback:", result.message);
+                        saveDonationToLocalStorage(donationData);
+                        
+                        // Still show success to user
+                        closeDonationModal();
+                        setTimeout(() => {
+                            openSuccessModal();
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        }, 500);
+                    }
 
-                let donations = JSON.parse(localStorage.getItem('hopelink_donations') || '[]');
-                donations.push(donation);
-                localStorage.setItem('hopelink_donations', JSON.stringify(donations));
-
-                // Update donation counter
-                updateDonationCounter();
-
-                // Show success modal
-                closeDonationModal();
-                setTimeout(() => {
-                    openSuccessModal();
+                } catch (error) {
+                    console.error("Error processing donation:", error);
+                    alert("There was an error processing your donation. Please try again.");
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
-                }, 500);
-
-            }, 2000);
+                }
+            }, 1500); // Reduced timeout for better UX
         });
 
         // Show/hide card details based on payment method selection
@@ -1742,7 +2131,7 @@
                
                 Receipt ID: ${latestDonation.id}
                 Date: ${new Date(latestDonation.date).toLocaleDateString()}
-                Donor: ${latestDonation.firstName}
+                Donor: ${latestDonation.firstName} ${latestDonation.lastName}
                 Amount: $${latestDonation.amount}
                 Type: ${latestDonation.type === 'one-time' ? 'One-time' : 'Monthly'} Donation
                 Payment Method: ${latestDonation.paymentMethod}
@@ -1794,6 +2183,13 @@
                     if (!faqModal.classList.contains('hidden')) closeFAQModal();
                     if (!successModal.classList.contains('hidden')) closeSuccessModal();
                 }
+            });
+
+            // Setup donation button click handlers
+            document.querySelectorAll('.donate-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    openDonationModal('one-time');
+                });
             });
         }
 

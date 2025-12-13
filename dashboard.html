@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard - Community Hub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  
+  <style>
+    /* Responsive sidebar styles */
+    .sidebar-fixed {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: 14rem;
+      z-index: 40;
+      transition: transform 0.3s ease;
+    }
+    .main-content {
+      margin-left: 14rem;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+    }
+    @media (max-width: 768px) {
+      .sidebar-fixed {
+        transform: translateX(-100%);
+      }
+      .sidebar-fixed.mobile-visible {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 39;
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1f2937;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+    }
+  </style>
+</head>
+<body class="bg-black text-gray-200 select-none font-serif">
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner" class="fixed inset-0 bg-black flex items-center justify-center z-50">
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-900 rounded-full mb-4">
+        <i class="fas fa-spinner fa-spin text-2xl text-purple-400"></i>
+      </div>
+      <p class="text-gray-400">Loading dashboard...</p>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div id="dashboardContent" class="hidden">
+    <!-- Sidebar overlay for mobile -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <div class="flex">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="sidebar-fixed bg-gradient-to-b from-gray-900 to-black text-white flex flex-col shadow-xl border-r border-gray-800">
+        <div class="text-xl font-bold p-6 border-b border-gray-800 bg-gray-900">
+          <div class="flex items-center">
+            <i class="fas fa-hands-helping text-purple-400 mr-2"></i>
+            <span>Hope Link Mahama</span>
+          </div>
+          <div class="text-xs text-gray-400 mt-2 flex items-center" id="userInfo">
+            <i class="fas fa-user-circle mr-1"></i>
+            <span id="userEmail">Loading...</span>
+          </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <nav class="flex-1 p-5 space-y-3">
+          <!-- Logout Button -->
+          <a href="#" id="logoutBtn" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 text-red-200 bg-red-900/30">
+            <i class="fa-solid fa-right-from-bracket text-xl mr-3"></i>
+            <span class="font-medium">Logout</span>
+          </a>
+            
+          <a href="./mentadasboard.html" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 bg-gray-800/30">
+            <i class="fa-solid fa-brain text-blue-400 text-xl mr-3"></i>
+            <span class="font-medium">Mental Wellness</span>
+          </a>
+
+          <!-- Youth Empowerment -->
+          <a href="./Dashboard/youth_empowerment.html" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 bg-gray-800/30">
+            <i class="fa-solid fa-users text-green-400 text-xl mr-3"></i>
+            <span class="font-medium">Youth Empowerment</span>
+          </a>
+
+          <!-- Hunger Help -->
+          <a href="./Dashboard/hunger_help.html" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 bg-gray-800/30">
+            <i class="fa-solid fa-utensils text-yellow-400 text-xl mr-3"></i>
+            <span class="font-medium">Hunger Help</span>
+          </a>
+          
+          <!-- Career -->
+          <a href="/Dashboard/career.html" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 bg-gray-800/30">
+            <i class="fa-solid fa-briefcase text-orange-400 text-xl mr-2"></i>
+            <span class="font-medium">Career</span>
+          </a>
+                
+          <!-- Donation -->
+          <a href="/Dashboard/donation.html" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 bg-gray-800/30">
+            <i class="fas fa-hand-holding-heart mr-2 text-red-400 text-xl"></i> 
+            <span class="font-medium">Donation</span>
+          </a>
+          
+          <!-- Advertisement -->
+          <a href="./AdvertiseDashboard.html" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 bg-gray-800/30">
+            <i class="fa-solid fa-bullhorn text-teal-400 text-xl mr-3"></i>
+            <span class="font-medium">Advertisement</span>
+          </a>
+    
+          <a href="./Contactdashboard.html" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 bg-gray-800/30">
+            <i class="fas fa-envelope mr-2 text-indigo-400 text-xl"></i>
+            <span class="font-medium">Contact</span>
+          </a>
+
+          <!-- Success Stories -->
+          <a href="/Dashboard/success_stories.html" class="flex items-center p-3 rounded-xl hover:bg-gray-800 transition-all duration-200 bg-gray-800/30">
+            <i class="fas fa-trophy mr-2 text-yellow-300 text-xl"></i>
+            <span class="font-medium">Success Stories</span>
+          </a>
+        </nav>
+        
+        <div class="p-4 border-t border-gray-800 bg-gray-900/50">
+          <div class="text-sm text-gray-400 text-center">
+            <i class="fa-solid fa-shield-alt mr-2 text-green-400"></i>
+            Secure System
+          </div>
+        </div>
+      </aside>
+      
+      <!-- Main Content -->
+      <main class="main-content w-full">
+        <header class="bg-gray-900 shadow-lg border-b border-gray-800 sticky top-0 z-30">
+          <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+              <div class="flex items-center">
+                <!-- Sidebar toggle button for mobile -->
+                <button id="sidebar-toggle" class="md:hidden text-gray-400 hover:text-white focus:outline-none mr-4">
+                  <i class="fas fa-bars text-xl"></i>
+                </button>
+                <span class="text-2xl font-bold text-purple-400"> 
+                  <a href="/index.html" class="hover:text-purple-300">🤝 Hope Link</a> Mahama
+                </span>
+              </div>
+              
+              <button id="mobile-menu-button" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
+                <i class="fas fa-ellipsis-v text-xl"></i>
+              </button>
+              
+              <nav id="nav-links" class="hidden md:flex items-center space-x-6">
+                <a href="#Statistic" class="text-gray-300 hover:text-purple-400 transition duration-300">Statistics</a>
+                <a href="#successStories" class="text-gray-300 hover:text-purple-400 transition duration-300">Success Stories</a>
+                <a href="/Services/participants-Services.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Register Participants</a>
+                <a href="/Services/programs-Services.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Program Registration</a>
+              </nav>
+            </div>
+            
+            <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-800">
+              <div class="flex flex-col space-y-4">
+                <a href="#Statistic" class="text-gray-300 hover:text-purple-400">Statistics</a>
+                <a href="#successStories" class="text-gray-300 hover:text-purple-400">Success Stories</a>
+                <a href="/Services/participants-Services.html" class="text-gray-300 hover:text-purple-400">Register Participants</a>
+                <a href="/Services/programs-Services.html" class="text-gray-300 hover:text-purple-400">Program Registration</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section id="dashboard" class="mx-auto px-4 py-8">
+          <h1 class="text-3xl font-bold m-8 text-purple-400">Community Impact Dashboard</h1>
+
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 m-8">
+            <div class="stat-card bg-gray-900 rounded-xl shadow-lg p-6 text-center border border-gray-800">
+              <h2 class="text-gray-400 font-semibold">Total Participants</h2>
+              <p id="totalParticipants" class="text-4xl font-bold text-blue-400 mt-2">0</p>
+              <p class="text-sm text-gray-500 mt-1">Across all programs</p>
+            </div>
+            
+            <div class="bg-gray-900 rounded-2xl shadow-lg p-6 text-center border border-gray-800">
+              <h2 class="text-gray-400 font-semibold">Programs Active</h2>
+              <p id="totalPrograms" class="text-4xl font-bold text-green-400 mt-2">0</p>
+              <p class="text-sm text-gray-500 mt-1">Active initiatives</p>
+            </div>
+            
+            <div class="bg-gray-900 rounded-2xl shadow-lg p-6 text-center border border-gray-800">
+              <h2 class="text-gray-400 font-semibold">Youth Engaged</h2>
+              <p id="youthParticipants" class="text-4xl font-bold text-indigo-400 mt-2">0</p>
+              <p class="text-sm text-gray-500 mt-1"><span id="youthPercent">0%</span> of total</p>
+            </div>
+            
+            <div class="bg-gray-900 rounded-2xl shadow-lg p-6 text-center border border-gray-800">
+              <h2 class="text-gray-400 font-semibold">Success Stories</h2>
+              <p id="successStoriesCount" class="text-4xl font-bold text-yellow-400 mt-2">0</p>
+              <p class="text-sm text-gray-500 mt-1">Impactful transformations</p>
+            </div>
+          </div>
+
+          <!-- Success Stories Section -->
+          <div id="successStories" class="mt-12 m-8">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold text-yellow-300">✨ Success Stories</h2>
+              <a href="/Dashboard/success_stories.html" class="text-purple-400 hover:text-purple-300 transition duration-300">
+                View All <i class="fas fa-arrow-right ml-1"></i>
+              </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Success Story 1 -->
+              <div class="bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-800 hover:border-purple-500 transition duration-300">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+                    <i class="fas fa-graduation-cap text-yellow-300 text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-white">Career Transformation</h3>
+                    <p class="text-sm text-gray-400">From Jobless to Developer</p>
+                  </div>
+                </div>
+                <p class="text-gray-300 mb-4">
+                  "The career program helped me land my first tech job. Went from zero coding experience to junior developer in 6 months!"
+                </p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-user mr-2"></i>
+                  <span>Sarah M., 24</span>
+                  <span class="mx-2">•</span>
+                  <i class="fas fa-calendar mr-2"></i>
+                  <span>Nov 2023</span>
+                </div>
+              </div>
+              
+              <!-- Success Story 2 -->
+              <div class="bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-800 hover:border-purple-500 transition duration-300">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-green-900 rounded-full flex items-center justify-center mr-3">
+                    <i class="fas fa-heart text-green-300 text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-white">Mental Wellness Journey</h3>
+                    <p class="text-sm text-gray-400">Overcoming Depression</p>
+                  </div>
+                </div>
+                <p class="text-gray-300 mb-4">
+                  "The mental wellness program gave me tools to manage my anxiety. I've never felt more in control of my life and emotions."
+                </p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-user mr-2"></i>
+                  <span>James K., 29</span>
+                  <span class="mx-2">•</span>
+                  <i class="fas fa-calendar mr-2"></i>
+                  <span>Jan 2024</span>
+                </div>
+              </div>
+              
+              <!-- Success Story 3 -->
+              <div class="bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-800 hover:border-purple-500 transition duration-300">
+                <div class="flex items-center mb-4">
+                  <div class="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                    <i class="fas fa-utensils text-blue-300 text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-white">Community Food Program</h3>
+                    <p class="text-sm text-gray-400">Feeding 500+ Families</p>
+                  </div>
+                </div>
+                <p class="text-gray-300 mb-4">
+                  "Thanks to the Hunger Help initiative, we've established a community kitchen serving over 500 families weekly in our neighborhood."
+                </p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-users mr-2"></i>
+                  <span>Community Leaders</span>
+                  <span class="mx-2">•</span>
+                  <i class="fas fa-calendar mr-2"></i>
+                  <span>Mar 2024</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 m-8">
+            <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-800">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-white">Recent Participants</h2>
+                <span class="bg-blue-900 text-blue-300 text-sm px-3 py-1 rounded-full" id="recentParticipantsCount">0</span>
+              </div>
+              <div id="recentParticipants" class="space-y-3 max-h-80 overflow-y-auto">
+                <!-- Recent participants will be loaded here -->
+                <div class="text-center text-gray-500 py-8">
+                  <i class="fas fa-users text-4xl mb-2 opacity-50"></i>
+                  <p>No participants registered yet</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-800">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-white">Recent Programs</h2>
+                <span class="bg-green-900 text-green-300 text-sm px-3 py-1 rounded-full" id="recentProgramsCount">0</span>
+              </div>
+              <div id="recentPrograms" class="space-y-3 max-h-80 overflow-y-auto">
+                <!-- Recent programs will be loaded here -->
+                <div class="text-center text-gray-500 py-8">
+                  <i class="fas fa-calendar-check text-4xl mb-2 opacity-50"></i>
+                  <p>No programs registered yet</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div id="Statistic" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 m-8">
+            <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-800">
+              <h2 class="text-lg font-semibold mb-4 text-white">Participants by Age Group</h2>
+              <canvas id="ageGroupChart" height="250"></canvas>
+            </div>
+            
+            <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-800">
+              <h2 class="text-lg font-semibold mb-4 text-white">Program Distribution</h2>
+              <canvas id="programChart" height="250"></canvas>
+            </div>
+            
+            <div class="bg-gray-900 rounded-2xl shadow-lg p-6 lg:col-span-2 border border-gray-800">
+              <h2 class="text-lg font-semibold mb-4 text-white">Monthly Engagement Trends</h2>
+              <canvas id="trendChart" height="120"></canvas>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Dashboard Script -->
+  <script>
+    // Firebase Configuration - Using the new configuration you provided
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6srTpyl7YXpr4t3Xij0Lx7DqmHsbaCPs",
+      authDomain: "hopelink-mahama-d9cd4.firebaseapp.com",
+      databaseURL: "https://hopelink-mahama-d9cd4-default-rtdb.firebaseio.com",
+      projectId: "hopelink-mahama-d9cd4",
+      storageBucket: "hopelink-mahama-d9cd4.firebasestorage.app",
+      messagingSenderId: "769873156422",
+      appId: "1:769873156422:web:5d89b8c5695ce95bb6ad47",
+      measurementId: "G-8TQ2LYP809"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    // Chart instances
+    let ageGroupChart, programChart, trendChart;
+
+    // Authentication check
+    auth.onAuthStateChanged((user) => {
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const dashboardContent = document.getElementById('dashboardContent');
+      
+      if (user) {
+        // User is logged in
+        console.log('User authenticated:', user.email);
+        
+        // Show user email in sidebar
+        const userEmailElement = document.getElementById('userEmail');
+        if (userEmailElement) {
+          userEmailElement.textContent = user.email;
+        }
+        
+        // Hide loading spinner and show dashboard
+        setTimeout(() => {
+          loadingSpinner.classList.add('hidden');
+          dashboardContent.classList.remove('hidden');
+          initializeDashboard();
+        }, 500);
+        
+      } else {
+        // User is not logged in, redirect to login page
+        console.log('User not authenticated, redirecting to login...');
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Show confirmation dialog
+      if (confirm('Are you sure you want to logout?')) {
+        auth.signOut().then(() => {
+          console.log('User logged out');
+          // Redirect happens automatically via auth state listener
+        }).catch((error) => {
+          console.error('Logout error:', error);
+          alert('Logout failed. Please try again.');
+        });
+      }
+    });
+
+    // Dashboard Functions
+    class DashboardManager {
+      constructor() {
+        this.participantsRef = database.ref('participants');
+        this.programsRef = database.ref('programs');
+        this.successStoriesRef = database.ref('success_stories');
+        this.participants = [];
+        this.programs = [];
+        this.successStories = [];
+      }
+
+      // Load all data
+      async loadAllData() {
+        await this.loadParticipants();
+        await this.loadPrograms();
+        await this.loadSuccessStories();
+        this.updateDashboard();
+        this.setupRealTimeListeners();
+      }
+
+      // Load participants data
+      async loadParticipants() {
+        try {
+          const snapshot = await this.participantsRef.once('value');
+          const participantsData = snapshot.val();
+          
+          if (participantsData) {
+            this.participants = Object.entries(participantsData).map(([id, participant]) => ({
+              id,
+              ...participant
+            }));
+          } else {
+            this.participants = [];
+          }
+        } catch (error) {
+          console.error('Error loading participants:', error);
+          this.participants = [];
+        }
+      }
+
+      // Load programs data
+      async loadPrograms() {
+        try {
+          const snapshot = await this.programsRef.once('value');
+          const programsData = snapshot.val();
+          
+          if (programsData) {
+            this.programs = Object.entries(programsData).map(([id, program]) => ({
+              id,
+              ...program
+            }));
+          } else {
+            this.programs = [];
+          }
+        } catch (error) {
+          console.error('Error loading programs:', error);
+          this.programs = [];
+        }
+      }
+
+      // Load success stories data
+      async loadSuccessStories() {
+        try {
+          const snapshot = await this.successStoriesRef.once('value');
+          const storiesData = snapshot.val();
+          
+          if (storiesData) {
+            this.successStories = Object.entries(storiesData).map(([id, story]) => ({
+              id,
+              ...story
+            }));
+          } else {
+            this.successStories = [];
+          }
+        } catch (error) {
+          console.error('Error loading success stories:', error);
+          this.successStories = [];
+        }
+      }
+
+      // Setup real-time listeners
+      setupRealTimeListeners() {
+        // Real-time participant updates
+        this.participantsRef.on('value', (snapshot) => {
+          const participantsData = snapshot.val();
+          this.participants = participantsData ? Object.entries(participantsData).map(([id, participant]) => ({
+            id,
+            ...participant
+          })) : [];
+          this.updateDashboard();
+        });
+
+        // Real-time program updates
+        this.programsRef.on('value', (snapshot) => {
+          const programsData = snapshot.val();
+          this.programs = programsData ? Object.entries(programsData).map(([id, program]) => ({
+            id,
+            ...program
+          })) : [];
+          this.updateDashboard();
+        });
+      }
+
+      // Update dashboard with current data
+      updateDashboard() {
+        this.updateStatistics();
+        this.updateRecentActivity();
+        this.updateCharts();
+      }
+
+      // Update statistics cards
+      updateStatistics() {
+        const totalParticipants = this.participants.length;
+        const totalPrograms = this.programs.length;
+        const successStoriesCount = this.successStories.length;
+        
+        // Count youth participants (age 15-30)
+        const youthParticipants = this.participants.filter(p => {
+          const age = parseInt(p.age || p.Age || 0);
+          return age >= 15 && age <= 30;
+        }).length;
+        
+        const youthPercent = totalParticipants > 0 ? Math.round((youthParticipants / totalParticipants) * 100) : 0;
+
+        // Update DOM elements
+        document.getElementById('totalParticipants').textContent = totalParticipants;
+        document.getElementById('totalPrograms').textContent = totalPrograms;
+        document.getElementById('youthParticipants').textContent = youthParticipants;
+        document.getElementById('successStoriesCount').textContent = successStoriesCount;
+        document.getElementById('youthPercent').textContent = `${youthPercent}%`;
+      }
+
+      // Update recent activity sections
+      updateRecentActivity() {
+        this.updateRecentParticipants();
+        this.updateRecentPrograms();
+      }
+
+      updateRecentParticipants() {
+        const container = document.getElementById('recentParticipants');
+        const countElement = document.getElementById('recentParticipantsCount');
+        
+        const recentParticipants = [...this.participants]
+          .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+            const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+            return dateB - dateA;
+          })
+          .slice(0, 5);
+
+        countElement.textContent = recentParticipants.length;
+
+        if (recentParticipants.length === 0) {
+          container.innerHTML = `
+            <div class="text-center text-gray-500 py-8">
+              <i class="fas fa-users text-4xl mb-2 opacity-50"></i>
+              <p>No participants registered yet</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = recentParticipants.map(participant => {
+          const name = participant.name || participant.Name || 'Unknown';
+          const age = participant.age || participant.Age || 'Unknown';
+          const program = participant.program || participant.Program || 'Not specified';
+          const createdAt = participant.createdAt || 'N/A';
+          
+          return `
+          <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-200">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                <i class="fas fa-user text-blue-300"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-white">${name}</p>
+                <p class="text-sm text-gray-400">${age} years • ${program}</p>
+              </div>
+            </div>
+            <span class="text-xs text-gray-500">${this.formatDate(createdAt)}</span>
+          </div>
+        `}).join('');
+      }
+
+      updateRecentPrograms() {
+        const container = document.getElementById('recentPrograms');
+        const countElement = document.getElementById('recentProgramsCount');
+        
+        const recentPrograms = [...this.programs]
+          .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+            const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+            return dateB - dateA;
+          })
+          .slice(0, 5);
+
+        countElement.textContent = recentPrograms.length;
+
+        if (recentPrograms.length === 0) {
+          container.innerHTML = `
+            <div class="text-center text-gray-500 py-8">
+              <i class="fas fa-calendar-check text-4xl mb-2 opacity-50"></i>
+              <p>No programs registered yet</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = recentPrograms.map(program => {
+          const name = program.name || program.Name || 'Unknown';
+          const type = program.type || program.Type || 'General';
+          const participants = program.participants || program.Participants || 0;
+          const createdAt = program.createdAt || 'N/A';
+          
+          return `
+          <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-200">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-green-900 rounded-full flex items-center justify-center mr-3">
+                <i class="fas fa-calendar text-green-300"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-white">${name}</p>
+                <p class="text-sm text-gray-400">${type} • ${participants} participants</p>
+              </div>
+            </div>
+            <span class="text-xs text-gray-500">${this.formatDate(createdAt)}</span>
+          </div>
+        `}).join('');
+      }
+
+      // Update charts
+      updateCharts() {
+        this.updateAgeGroupChart();
+        this.updateProgramChart();
+        this.updateTrendChart();
+      }
+
+      updateAgeGroupChart() {
+        const ctx = document.getElementById('ageGroupChart').getContext('2d');
+        
+        if (ageGroupChart) {
+          ageGroupChart.destroy();
+        }
+
+        // Calculate age groups
+        const teens = this.participants.filter(p => {
+          const age = parseInt(p.age || p.Age || 0);
+          return age >= 13 && age <= 19;
+        }).length;
+        
+        const twenties = this.participants.filter(p => {
+          const age = parseInt(p.age || p.Age || 0);
+          return age >= 20 && age <= 29;
+        }).length;
+        
+        const thirties = this.participants.filter(p => {
+          const age = parseInt(p.age || p.Age || 0);
+          return age >= 30 && age <= 39;
+        }).length;
+        
+        const fortyPlus = this.participants.filter(p => {
+          const age = parseInt(p.age || p.Age || 0);
+          return age >= 40;
+        }).length;
+
+        ageGroupChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Teens (13-19)', 'Twenties (20-29)', 'Thirties (30-39)', '40+'],
+            datasets: [{
+              data: [teens, twenties, thirties, fortyPlus],
+              backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b'],
+              borderWidth: 2,
+              borderColor: '#111827'
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: '#d1d5db'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      updateProgramChart() {
+        const ctx = document.getElementById('programChart').getContext('2d');
+        
+        if (programChart) {
+          programChart.destroy();
+        }
+
+        // Count programs by type
+        const programTypes = {};
+        this.participants.forEach(participant => {
+          const program = participant.program || participant.Program || 'Other';
+          programTypes[program] = (programTypes[program] || 0) + 1;
+        });
+
+        const labels = Object.keys(programTypes);
+        const data = Object.values(programTypes);
+
+        programChart = new Chart(ctx, {
+          type: 'polarArea',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: [
+                'rgba(59, 130, 246, 0.7)',
+                'rgba(16, 185, 129, 0.7)',
+                'rgba(139, 92, 246, 0.7)',
+                'rgba(245, 158, 11, 0.7)',
+                'rgba(239, 68, 68, 0.7)',
+                'rgba(6, 182, 212, 0.7)'
+              ],
+              borderWidth: 2,
+              borderColor: '#111827'
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: '#d1d5db'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      updateTrendChart() {
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        
+        if (trendChart) {
+          trendChart.destroy();
+        }
+
+        const months = this.getLast6Months();
+        const participantTrends = this.getMonthlyData(this.participants, months);
+        const programTrends = this.getMonthlyData(this.programs, months);
+
+        trendChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: 'Participants',
+                data: participantTrends,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+              },
+              {
+                label: 'Programs',
+                data: programTrends,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  color: '#d1d5db'
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: '#374151'
+                },
+                ticks: {
+                  color: '#9ca3af'
+                }
+              },
+              x: {
+                grid: {
+                  color: '#374151'
+                },
+                ticks: {
+                  color: '#9ca3af'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Utility functions
+      getLast6Months() {
+        const months = [];
+        for (let i = 5; i >= 0; i--) {
+          const date = new Date();
+          date.setMonth(date.getMonth() - i);
+          months.push(date.toLocaleString('default', { month: 'short' }));
+        }
+        return months;
+      }
+
+      getMonthlyData(data, months) {
+        const currentYear = new Date().getFullYear();
+        return months.map(month => {
+          return data.filter(item => {
+            const itemDate = new Date(item.createdAt || 0);
+            return itemDate.getFullYear() === currentYear && 
+                   itemDate.toLocaleString('default', { month: 'short' }) === month;
+          }).length;
+        });
+      }
+
+      formatDate(dateString) {
+        if (!dateString || dateString === 'N/A') return 'N/A';
+        try {
+          const date = new Date(dateString);
+          return date.toLocaleDateString();
+        } catch (e) {
+          return 'N/A';
+        }
+      }
+    }
+
+    // Initialize dashboard
+    let dashboardManager;
+
+    function initializeDashboard() {
+      // Initialize dashboard manager
+      dashboardManager = new DashboardManager();
+      dashboardManager.loadAllData();
+
+      // Mobile menu functionality
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+
+      // Sidebar toggle functionality for mobile
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      
+      if (sidebarToggle && sidebar && sidebarOverlay) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('mobile-visible');
+          sidebarOverlay.classList.toggle('active');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+          sidebar.classList.remove('mobile-visible');
+          sidebarOverlay.classList.remove('active');
+        });
+
+        const sidebarLinks = sidebar.querySelectorAll('a');
+        sidebarLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            if (window.innerWidth < 768) {
+              sidebar.classList.remove('mobile-visible');
+              sidebarOverlay.classList.remove('active');
+            }
+          });
+        });
+      }
+    }
+  </script>
+</body>
+</html>

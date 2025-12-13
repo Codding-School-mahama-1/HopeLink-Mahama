@@ -1,0 +1,2761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HopeLink Mahama</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #3B82F6;
+            --primary-green: #10B981;
+            --primary-yellow: #FBBF24;
+            --primary-red: #EF4444;
+            --primary-purple: #8B5CF6;
+            --primary-pink: #F472B6;
+            --primary-teal: #14B8A6;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+        }
+        
+        /* Glass Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar-item {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            color: #cbd5e1;
+            cursor: pointer;
+            margin: 0.25rem 0;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-item.active {
+            background: linear-gradient(135deg, var(--primary-blue), #2563EB);
+            color: white;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* Main Content */
+        .content-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .data-table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+        }
+        
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        
+        .data-table tr {
+            transition: background 0.2s ease;
+        }
+        
+        .data-table tr:hover {
+            background: #f1f5f9;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .badge-pending {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+        }
+        
+        .badge-approved {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+        }
+        
+        .badge-rejected {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+        }
+        
+        .badge-active {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), #2563EB);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--primary-green), #059669);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--primary-red), #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 1.5rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            transition: all 0.3s;
+            font-size: 0.875rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Tabs */
+        .tab-nav {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .tab-btn:hover {
+            color: var(--primary-blue);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-blue);
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-blue);
+            border-radius: 2px;
+        }
+        
+        .tab-pane {
+            display: none;
+            animation: fadeInUp 0.4s ease-out;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Drag and Drop */
+        .draggable-item {
+            cursor: move;
+            transition: all 0.3s;
+            border: 2px dashed #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+        }
+        
+        .draggable-item:hover {
+            border-color: var(--primary-blue);
+            background: #f0f9ff;
+        }
+        
+        .draggable-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+        
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: var(--primary-blue);
+            background: #f0f9ff;
+            transform: scale(1.02);
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+            border-radius: 4px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Switch Toggle */
+        .switch {
+            position: relative;
+            width: 64px;
+            height: 32px;
+            background: #d1d5db;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .switch.active {
+            background: var(--primary-green);
+        }
+        
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .switch.active::after {
+            left: calc(100% - 30px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 40;
+            }
+            
+            .sidebar.active {
+                left: 0;
+                box-shadow: 20px 0 60px rgba(0, 0, 0, 0.3);
+            }
+            
+            .modal-content {
+                margin: 1rem;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e5e7eb;
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            color: white;
+            z-index: 9999;
+            transform: translateX(400px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast-success {
+            background: linear-gradient(135deg, var(--primary-green), #059669);
+        }
+        
+        .toast-error {
+            background: linear-gradient(135deg, var(--primary-red), #dc2626);
+        }
+        
+        .toast-warning {
+            background: linear-gradient(135deg, var(--primary-yellow), #d97706);
+        }
+        
+        /* Color Palette */
+        .color-palette {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.active {
+            border-color: #1e293b;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Preview Panel */
+        .preview-panel {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .preview-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-subtitle {
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+        
+        /* Image Upload */
+        .image-upload {
+            border: 2px dashed #cbd5e1;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .image-upload:hover {
+            border-color: var(--primary-blue);
+            background: #f0f9ff;
+        }
+        
+        .image-upload.drag-over {
+            border-color: var(--primary-blue);
+            background: #e0f2fe;
+            transform: scale(1.02);
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuBtn" class="fixed top-4 left-4 z-50 bg-white p-3 rounded-xl shadow-lg lg:hidden">
+        <i class="fas fa-bars text-xl text-gray-700"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar fixed left-0 top-0 bottom-0 w-64 p-6 z-40">
+        <!-- Logo -->
+        <div class="flex items-center mb-8">
+            <div class="bg-gradient-to-r from-blue-500 to-green-500 p-3 rounded-xl mr-3 shadow-lg">
+                <i class="fas fa-tachometer-alt text-white text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-lg text-white">HopeLink Dashboard</div>
+                <div class="text-xs text-green-300 font-semibold">Mental Wellness Admin</div>
+            </div>
+        </div>
+
+        <!-- User Profile -->
+        <div class="flex items-center mb-8 p-3 bg-white/10 rounded-xl backdrop-blur-sm">
+            <img id="adminAvatar" src="https://ui-avatars.com/api/?name=Admin&background=3B82F6&color=fff" 
+                 class="w-10 h-10 rounded-full border-2 border-blue-400">
+            <div class="ml-3">
+                <div id="adminName" class="font-semibold text-white">Administrator</div>
+                <div class="text-xs text-blue-200 flex items-center">
+                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                    <span id="adminRole">Super Admin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="space-y-1">
+            <div class="sidebar-item active" data-section="dashboard">
+                <i class="fas fa-home mr-3"></i>
+                <span>Dashboard Overview</span>
+            </div>
+            <div class="sidebar-item" data-section="hero-section">
+                <i class="fas fa-star mr-3"></i>
+                <span>Hero Section</span>
+            </div>
+            <div class="sidebar-item" data-section="services">
+                <i class="fas fa-hands-helping mr-3"></i>
+                <span>Services</span>
+                <span id="servicesCount" class="ml-auto bg-blue-500 text-white text-xs px-2 py-1 rounded-full">2</span>
+            </div>
+            <div class="sidebar-item" data-section="resources">
+                <i class="fas fa-book mr-3"></i>
+                <span>Resources</span>
+                <span id="resourcesCount" class="ml-auto bg-green-500 text-white text-xs px-2 py-1 rounded-full">3</span>
+            </div>
+            <div class="sidebar-item" data-section="testimonials">
+                <i class="fas fa-comments mr-3"></i>
+                <span>Testimonials</span>
+                <span id="testimonialsCount" class="ml-auto bg-purple-500 text-white text-xs px-2 py-1 rounded-full">2</span>
+            </div>
+            <div class="sidebar-item" data-section="emergency">
+                <i class="fas fa-phone-alt mr-3"></i>
+                <span>Emergency Contacts</span>
+            </div>
+            <div class="sidebar-item" data-section="users">
+                <i class="fas fa-users mr-3"></i>
+                <span>Users</span>
+                <span id="usersCount" class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">0</span>
+            </div>
+            <div class="sidebar-item" data-section="counseling">
+                <i class="fas fa-user-md mr-3"></i>
+                <span>Counseling</span>
+                <span id="counselingCount" class="ml-auto bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">0</span>
+            </div>
+            <div class="sidebar-item" data-section="donations">
+                <i class="fas fa-heart mr-3"></i>
+                <span>Donations</span>
+                <span id="donationsCount" class="ml-auto bg-pink-500 text-white text-xs px-2 py-1 rounded-full">0</span>
+            </div>
+            <div class="sidebar-item" data-section="settings">
+                <i class="fas fa-cog mr-3"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="absolute bottom-6 left-6 right-6">
+            <div class="text-xs text-gray-400 mb-3">
+                <div class="flex items-center">
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    <span id="lastSync">Last sync: Just now</span>
+                </div>
+            </div>
+            <button onclick="logout()" class="w-full flex items-center justify-center p-3 bg-red-500/20 text-red-300 hover:bg-red-500/30 rounded-xl transition-all">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-0 lg:ml-64 min-h-screen p-4 lg:p-8">
+        <!-- Header -->
+        <div class="glass rounded-2xl p-6 mb-8">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center">
+                <div>
+                    <h1 id="sectionTitle" class="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                        Dashboard Overview
+                    </h1>
+                    <p id="sectionDescription" class="text-gray-600 mt-2">
+                        Welcome to your mental wellness page management dashboard
+                    </p>
+                </div>
+                <div class="mt-4 lg:mt-0 flex items-center space-x-3">
+                    <div class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span id="currentTime">Loading...</span>
+                    </div>
+                    <button onclick="refreshAllData()" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                    <button onclick="openPreview()" class="btn btn-success">
+                        <i class="fas fa-eye"></i>
+                        Live Preview
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div id="statsSection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Stats will load dynamically -->
+        </div>
+
+        <!-- Content Area -->
+        <div id="contentArea">
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="space-y-8">
+                <!-- Recent Activity -->
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-gray-800">Recent Activity</h3>
+                            <button onclick="loadAllActivity()" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                                View All Activity
+                            </button>
+                        </div>
+                        <div id="activityList" class="space-y-4">
+                            <!-- Activity items load here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="content-card">
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="stat-icon bg-blue-100 text-blue-600">
+                                    <i class="fas fa-edit"></i>
+                                </div>
+                                <h4 class="ml-4 font-bold text-gray-800">Edit Page Content</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Update all sections of the mental wellness page</p>
+                            <button onclick="navigateToSection('hero-section')" class="btn btn-primary w-full justify-center">
+                                <i class="fas fa-pencil-alt"></i> Edit Content
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="stat-icon bg-green-100 text-green-600">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h4 class="ml-4 font-bold text-gray-800">View Analytics</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Track page performance and user engagement</p>
+                            <button onclick="showAnalytics()" class="btn btn-success w-full justify-center">
+                                <i class="fas fa-chart-bar"></i> View Analytics
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="stat-icon bg-purple-100 text-purple-600">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <h4 class="ml-4 font-bold text-gray-800">Notifications</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Manage alerts and system notifications</p>
+                            <button onclick="openNotifications()" class="btn bg-gradient-to-r from-purple-600 to-pink-600 text-white w-full justify-center">
+                                <i class="fas fa-cog"></i> Configure
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Preview -->
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-gray-800">Live Page Preview</h3>
+                            <button onclick="openPreview()" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt mr-2"></i> Open in New Tab
+                            </button>
+                        </div>
+                        <div class="preview-panel">
+                            <div class="aspect-video bg-gradient-to-r from-pink-100 to-green-100 rounded-xl flex items-center justify-center p-8 mb-4">
+                                <div class="text-center">
+                                    <h4 id="previewHeroTitle" class="preview-title">Mental Wellness & Emotional Support</h4>
+                                    <p id="previewHeroSubtitle" class="preview-subtitle">Healing hearts and minds through compassionate support...</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="bg-white p-4 rounded-xl text-center shadow">
+                                    <div id="previewStat1" class="text-2xl font-bold text-green-600">300</div>
+                                    <div class="text-sm text-gray-600">Members Supported</div>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl text-center shadow">
+                                    <div id="previewStat2" class="text-2xl font-bold text-blue-600">15</div>
+                                    <div class="text-sm text-gray-600">Trained Counselors</div>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl text-center shadow">
+                                    <div id="previewStat3" class="text-2xl font-bold text-purple-600">40</div>
+                                    <div class="text-sm text-gray-600">Support Groups</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Section Editor -->
+            <div id="hero-sectionSection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800">Hero Section Editor</h3>
+                                <p class="text-gray-600">Edit the main hero section of your mental wellness page</p>
+                            </div>
+                            <div class="mt-4 lg:mt-0 flex space-x-3">
+                                <button onclick="saveHeroSection()" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                                <button onclick="resetHeroSection()" class="btn bg-gray-600 text-white">
+                                    <i class="fas fa-undo"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-8">
+                            <!-- Hero Title & Subtitle -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="form-group">
+                                    <label class="form-label">Hero Title</label>
+                                    <input type="text" id="heroTitle" class="form-input" 
+                                           placeholder="Enter hero title" 
+                                           value="Mental Wellness & Emotional Support">
+                                    <div class="text-xs text-gray-500 mt-2">Main headline of your page</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Gradient Color</label>
+                                    <div class="color-palette">
+                                        <div class="color-option bg-gradient-to-r from-pink-500 to-green-500 active" 
+                                             data-gradient="from-pink-500 to-green-500"
+                                             onclick="selectGradient(this)"></div>
+                                        <div class="color-option bg-gradient-to-r from-blue-500 to-purple-500"
+                                             data-gradient="from-blue-500 to-purple-500"
+                                             onclick="selectGradient(this)"></div>
+                                        <div class="color-option bg-gradient-to-r from-green-500 to-blue-500"
+                                             data-gradient="from-green-500 to-blue-500"
+                                             onclick="selectGradient(this)"></div>
+                                        <div class="color-option bg-gradient-to-r from-yellow-500 to-red-500"
+                                             data-gradient="from-yellow-500 to-red-500"
+                                             onclick="selectGradient(this)"></div>
+                                        <div class="color-option bg-gradient-to-r from-purple-500 to-pink-500"
+                                             data-gradient="from-purple-500 to-pink-500"
+                                             onclick="selectGradient(this)"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Hero Subtitle</label>
+                                <textarea id="heroSubtitle" class="form-textarea" rows="3">
+Healing hearts and minds through compassionate support, counseling, and community connection in Mahama Camp.
+                                </textarea>
+                                <div class="text-xs text-gray-500 mt-2">Brief description of your mental wellness services</div>
+                            </div>
+
+                            <!-- Background Image -->
+                            <div class="form-group">
+                                <label class="form-label">Background Image</label>
+                                <div class="image-upload" onclick="document.getElementById('heroImageUpload').click()" 
+                                     ondragover="handleDragOver(event)" 
+                                     ondrop="handleImageDrop(event, 'heroBackground')">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                                    <p class="text-gray-600 mb-2">Drag & drop or click to upload</p>
+                                    <p class="text-sm text-gray-500">Recommended: 1920x1080px, JPG/PNG, Max 5MB</p>
+                                    <input type="file" id="heroImageUpload" class="hidden" accept="image/*" 
+                                           onchange="handleImageUpload(event, 'heroBackground')">
+                                </div>
+                                <div class="mt-4">
+                                    <input type="url" id="heroBackground" class="form-input" 
+                                           placeholder="Or enter image URL"
+                                           value="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80">
+                                </div>
+                                <div class="mt-4">
+                                    <img id="heroImagePreview" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                         class="image-preview">
+                                </div>
+                            </div>
+
+                            <!-- Statistics -->
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800 mb-4">Statistics</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Community Members Supported</label>
+                                        <div class="flex items-center space-x-3">
+                                            <button onclick="adjustStat('members', -1)" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="number" id="statMembers" class="form-input text-center text-xl font-bold" 
+                                                   value="300" min="0">
+                                            <button onclick="adjustStat('members', 1)" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Trained Counselors</label>
+                                        <div class="flex items-center space-x-3">
+                                            <button onclick="adjustStat('counselors', -1)" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="number" id="statCounselors" class="form-input text-center text-xl font-bold" 
+                                                   value="15" min="0">
+                                            <button onclick="adjustStat('counselors', 1)" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Support Groups</label>
+                                        <div class="flex items-center space-x-3">
+                                            <button onclick="adjustStat('groups', -1)" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="number" id="statGroups" class="form-input text-center text-xl font-bold" 
+                                                   value="40" min="0">
+                                            <button onclick="adjustStat('groups', 1)" class="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CTA Buttons -->
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800 mb-4">Call to Action Buttons</h4>
+                                <div class="space-y-4" id="ctaButtonsContainer">
+                                    <!-- CTA buttons will be loaded here -->
+                                </div>
+                                <button onclick="addCTAButton()" class="btn bg-gray-100 text-gray-700 mt-4">
+                                    <i class="fas fa-plus"></i> Add Button
+                                </button>
+                            </div>
+
+                            <!-- Preview -->
+                            <div class="preview-panel">
+                                <h4 class="text-lg font-bold text-gray-800 mb-4">Preview</h4>
+                                <div class="aspect-video rounded-xl overflow-hidden relative">
+                                    <div id="heroPreview" class="w-full h-full flex items-center justify-center p-8 text-white text-center">
+                                        <div>
+                                            <h2 id="previewTitle" class="text-4xl font-bold mb-4">Mental Wellness & Emotional Support</h2>
+                                            <p id="previewSubtitle" class="text-xl opacity-90 max-w-2xl mx-auto">
+                                                Healing hearts and minds through compassionate support, counseling, and community connection in Mahama Camp.
+                                            </p>
+                                            <div class="mt-8 flex justify-center space-x-4">
+                                                <button class="px-6 py-3 bg-white text-green-600 rounded-lg font-semibold">
+                                                    <i class="fas fa-hands-helping mr-2"></i>Get Support
+                                                </button>
+                                                <button class="px-6 py-3 bg-yellow-400 text-gray-800 rounded-lg font-semibold">
+                                                    <i class="fas fa-user-md mr-2"></i>Request Counseling
+                                                </button>
+                                            </div>
+                                            <div class="mt-12 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+                                                <div class="text-center">
+                                                    <div class="text-3xl font-bold">300</div>
+                                                    <div class="text-sm opacity-80">Community Members Supported</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-3xl font-bold">15</div>
+                                                    <div class="text-sm opacity-80">Trained Counselors</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-3xl font-bold">40</div>
+                                                    <div class="text-sm opacity-80">Support Groups</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Management -->
+            <div id="servicesSection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800">Services Management</h3>
+                                <p class="text-gray-600">Manage all mental wellness services and programs</p>
+                            </div>
+                            <div class="mt-4 lg:mt-0 flex space-x-3">
+                                <button onclick="saveAllServices()" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save All
+                                </button>
+                                <button onclick="addNewService()" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add Service
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6" id="servicesContainer">
+                            <!-- Services will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources Management -->
+            <div id="resourcesSection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800">Resources Management</h3>
+                                <p class="text-gray-600">Manage self-help guides, digital tools, and workshops</p>
+                            </div>
+                            <div class="mt-4 lg:mt-0 flex space-x-3">
+                                <button onclick="saveAllResources()" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save All
+                                </button>
+                                <button onclick="addNewResource()" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add Resource
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="tab-nav">
+                            <button class="tab-btn active" data-tab="guides">Self-Help Guides</button>
+                            <button class="tab-btn" data-tab="tools">Digital Tools</button>
+                            <button class="tab-btn" data-tab="workshops">Workshops</button>
+                        </div>
+
+                        <div class="tab-pane active" id="guidesTab">
+                            <div class="space-y-6" id="guidesContainer">
+                                <!-- Guides will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="toolsTab">
+                            <div class="space-y-6" id="toolsContainer">
+                                <!-- Tools will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="workshopsTab">
+                            <div class="space-y-6" id="workshopsContainer">
+                                <!-- Workshops will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonials Management -->
+            <div id="testimonialsSection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800">Testimonials Management</h3>
+                                <p class="text-gray-600">Manage success stories and testimonials</p>
+                            </div>
+                            <div class="mt-4 lg:mt-0 flex space-x-3">
+                                <button onclick="saveAllTestimonials()" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save All
+                                </button>
+                                <button onclick="addNewTestimonial()" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add Testimonial
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6" id="testimonialsContainer">
+                            <!-- Testimonials will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts Management -->
+            <div id="emergencySection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800">Emergency Contacts</h3>
+                                <p class="text-gray-600">Manage emergency contact information</p>
+                            </div>
+                            <button onclick="saveEmergencyContacts()" class="btn btn-success">
+                                <i class="fas fa-save"></i> Save Contacts
+                            </button>
+                        </div>
+
+                        <div class="space-y-8">
+                            <!-- Emergency Info -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="form-group">
+                                    <label class="form-label">Emergency Title</label>
+                                    <input type="text" id="emergencyTitle" class="form-input" 
+                                           value="Need Immediate Help?">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Emergency Message</label>
+                                    <input type="text" id="emergencyMessage" class="form-input" 
+                                           value="If you or someone you know is in crisis, we're here for you 24/7.">
+                                </div>
+                            </div>
+
+                            <!-- Contact Numbers -->
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800 mb-4">Emergency Contact Numbers</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Crisis Hotline</label>
+                                        <input type="text" id="crisisHotline" class="form-input" 
+                                               value="+250 789 123 456">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Medical Emergency</label>
+                                        <input type="text" id="medicalEmergency" class="form-input" 
+                                               value="+250 789 111 222">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Camp Security</label>
+                                        <input type="text" id="campSecurity" class="form-input" 
+                                               value="+250 789 333 444">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Community Support</label>
+                                        <input type="text" id="communitySupport" class="form-input" 
+                                               value="+250 789 555 666">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Contacts -->
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800 mb-4">Additional Contacts</h4>
+                                <div class="space-y-4" id="additionalContacts">
+                                    <!-- Additional contacts will be loaded here -->
+                                </div>
+                                <button onclick="addContact()" class="btn bg-gray-100 text-gray-700 mt-4">
+                                    <i class="fas fa-plus"></i> Add Contact
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management -->
+            <div id="usersSection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">User Management</h3>
+                                <p class="text-gray-600">Manage all registered users and permissions</p>
+                            </div>
+                            <div class="mt-4 lg:mt-0 flex space-x-3">
+                                <div class="relative">
+                                    <input type="text" id="userSearch" placeholder="Search users..." 
+                                           class="form-input pl-10" oninput="searchUsers()">
+                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                </div>
+                                <button onclick="openAddUserModal()" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add User
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-xl border border-gray-200">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Counseling Requests -->
+            <div id="counselingSection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Counseling Requests</h3>
+                                <p class="text-gray-600">Manage counseling requests from the website</p>
+                            </div>
+                            <div class="mt-4 lg:mt-0 flex space-x-3">
+                                <select id="counselingFilter" onchange="filterCounselingRequests()" class="form-input">
+                                    <option value="all">All Requests</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-xl border border-gray-200">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Age</th>
+                                        <th>Contact</th>
+                                        <th>Message</th>
+                                        <th>Status</th>
+                                        <th>Submitted</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="counselingTableBody">
+                                    <!-- Counseling requests will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donations Management -->
+            <div id="donationsSection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Donations Management</h3>
+                                <p class="text-gray-600">Track and manage all donations</p>
+                            </div>
+                            <div class="mt-4 lg:mt-0 flex space-x-3">
+                                <select id="donationFilter" onchange="filterDonations()" class="form-input">
+                                    <option value="all">All Donations</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="failed">Failed</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-xl border border-gray-200">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Donor</th>
+                                        <th>Email</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="donationsTableBody">
+                                    <!-- Donations will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div id="settingsSection" class="hidden">
+                <div class="content-card">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-8">Settings</h3>
+                        
+                        <div class="space-y-8">
+                            <!-- General Settings -->
+                            <div class="border-b pb-8">
+                                <h4 class="text-lg font-bold text-gray-800 mb-6">General Settings</h4>
+                                <div class="space-y-6">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-semibold text-gray-700">Site Maintenance</div>
+                                            <div class="text-sm text-gray-500">Put site in maintenance mode</div>
+                                        </div>
+                                        <div class="switch" onclick="toggleMaintenance()"></div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-semibold text-gray-700">Email Notifications</div>
+                                            <div class="text-sm text-gray-500">Receive email notifications</div>
+                                        </div>
+                                        <div class="switch active" onclick="toggleNotifications()"></div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-semibold text-gray-700">Auto-save Changes</div>
+                                            <div class="text-sm text-gray-500">Automatically save changes</div>
+                                        </div>
+                                        <div class="switch active" onclick="toggleAutoSave()"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email Settings -->
+                            <div class="border-b pb-8">
+                                <h4 class="text-lg font-bold text-gray-800 mb-6">Email Settings</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="form-group">
+                                        <label class="form-label">SMTP Host</label>
+                                        <input type="text" id="smtpHost" class="form-input" placeholder="smtp.gmail.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">SMTP Port</label>
+                                        <input type="number" id="smtpPort" class="form-input" placeholder="587">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" id="smtpEmail" class="form-input" placeholder="your-email@gmail.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Email Password</label>
+                                        <input type="password" id="smtpPassword" class="form-input" placeholder="••••••••">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Save Button -->
+                            <div class="flex justify-end">
+                                <button onclick="saveSettings()" class="btn btn-success px-8">
+                                    <i class="fas fa-save"></i> Save All Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800">Add New User</h3>
+                    <button onclick="closeAddUserModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="addUserForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="userFirstName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="userLastName" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="userEmail" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="userPassword" class="form-input" required>
+                        <div class="text-xs text-gray-500 mt-2">Minimum 8 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select id="userRole" class="form-input" required>
+                            <option value="user">User</option>
+                            <option value="counselor">Counselor</option>
+                            <option value="staff">Staff</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Profile Picture</label>
+                        <div class="image-upload" onclick="document.getElementById('userAvatarUpload').click()">
+                            <i class="fas fa-user-circle text-3xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-600 mb-2">Upload profile picture</p>
+                            <input type="file" id="userAvatarUpload" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-4 pt-6">
+                        <button type="button" onclick="closeAddUserModal()" 
+                                class="px-8 py-3 text-gray-600 hover:text-gray-800 font-medium bg-gray-100 hover:bg-gray-200 rounded-xl">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary px-8">
+                            <i class="fas fa-plus"></i> Create User
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Service Modal -->
+    <div id="editServiceModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800">Edit Service</h3>
+                    <button onclick="closeEditServiceModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="editServiceForm" class="space-y-6">
+                    <input type="hidden" id="serviceId">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Service Name</label>
+                        <input type="text" id="serviceName" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="serviceDescription" class="form-textarea" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Features (one per line)</label>
+                        <textarea id="serviceFeatures" class="form-textarea" rows="4" 
+                                  placeholder="Enter each feature on a new line"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="form-label">Icon</label>
+                            <select id="serviceIcon" class="form-input">
+                                <option value="fa-user-md">Doctor</option>
+                                <option value="fa-users">Group</option>
+                                <option value="fa-palette">Art</option>
+                                <option value="fa-mobile-alt">Digital</option>
+                                <option value="fa-child">Child</option>
+                                <option value="fa-brain">Brain</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Color</label>
+                            <div class="color-palette">
+                                <div class="color-option bg-green-500 active" data-color="green-500" onclick="selectColor(this, 'service')"></div>
+                                <div class="color-option bg-blue-500" data-color="blue-500" onclick="selectColor(this, 'service')"></div>
+                                <div class="color-option bg-purple-500" data-color="purple-500" onclick="selectColor(this, 'service')"></div>
+                                <div class="color-option bg-yellow-500" data-color="yellow-500" onclick="selectColor(this, 'service')"></div>
+                                <div class="color-option bg-pink-500" data-color="pink-500" onclick="selectColor(this, 'service')"></div>
+                                <div class="color-option bg-teal-500" data-color="teal-500" onclick="selectColor(this, 'service')"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Button Text</label>
+                        <input type="text" id="serviceButton" class="form-input" placeholder="e.g., Learn More">
+                    </div>
+
+                    <div class="flex justify-end space-x-4 pt-6">
+                        <button type="button" onclick="closeEditServiceModal()" 
+                                class="px-8 py-3 text-gray-600 hover:text-gray-800 font-medium bg-gray-100 hover:bg-gray-200 rounded-xl">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-success px-8">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+        import { 
+            getAuth, 
+            signOut,
+            onAuthStateChanged,
+            createUserWithEmailAndPassword,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+        
+        import { 
+            getFirestore,
+            doc,
+            setDoc,
+            getDoc,
+            updateDoc,
+            collection,
+            addDoc,
+            query,
+            where,
+            getDocs,
+            deleteDoc,
+            orderBy,
+            serverTimestamp,
+            onSnapshot
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6srTpyl7YXpr4t3Xij0Lx7DqmHsbaCPs",
+            authDomain: "hopelink-mahama-d9cd4.firebaseapp.com",
+            databaseURL: "https://hopelink-mahama-d9cd4-default-rtdb.firebaseio.com",
+            projectId: "hopelink-mahama-d9cd4",
+            storageBucket: "hopelink-mahama-d9cd4.firebasestorage.app",
+            messagingSenderId: "769873156422",
+            appId: "1:769873156422:web:5d89b8c5695ce95bb6ad47",
+            measurementId: "G-8TQ2LYP809"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseApp = app;
+
+        console.log("Firebase Dashboard Initialized");
+    </script>
+
+    <script>
+        // ==============================
+        // DASHBOARD STATE & CONFIGURATION
+        // ==============================
+
+        let currentUser = null;
+        let currentSection = 'dashboard';
+        let dashboardState = {
+            hero: {
+                title: "Mental Wellness & Emotional Support",
+                subtitle: "Healing hearts and minds through compassionate support, counseling, and community connection in Mahama Camp.",
+                background: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+                gradient: "from-pink-500 to-green-500",
+                stats: {
+                    members: 300,
+                    counselors: 15,
+                    groups: 40
+                },
+                ctaButtons: [
+                    { text: "Get Support", icon: "fa-hands-helping", color: "white", bgColor: "green-500" },
+                    { text: "Request Counseling", icon: "fa-user-md", color: "gray-800", bgColor: "yellow-400" },
+                    { text: "Resources", icon: "fa-book", color: "white", bgColor: "transparent", border: true }
+                ]
+            },
+            services: [
+                {
+                    id: 'individual-counseling',
+                    name: 'Individual Counseling',
+                    description: 'One-on-one sessions with trained counselors to address personal challenges, trauma, and emotional difficulties in a safe, confidential environment.',
+                    features: ['Trauma-focused therapy', 'Grief and loss counseling', 'Stress management techniques'],
+                    icon: 'fa-user-md',
+                    color: 'green-500',
+                    buttonText: 'Learn More'
+                },
+                {
+                    id: 'support-groups',
+                    name: 'Support Groups',
+                    description: 'Peer-led groups where community members can share experiences, find solidarity, and build resilience together.',
+                    features: ['Women\'s support circles', 'Youth resilience groups', 'Parent support networks'],
+                    icon: 'fa-users',
+                    color: 'green-500',
+                    buttonText: 'Find a Group'
+                },
+                {
+                    id: 'creative-therapy',
+                    name: 'Creative Therapy',
+                    description: 'Art, music, and writing for emotional expression and healing',
+                    icon: 'fa-palette',
+                    color: 'green-500',
+                    buttonText: 'Explore'
+                },
+                {
+                    id: 'digital-support',
+                    name: 'Digital Support',
+                    description: 'Anonymous online resources and virtual counseling options',
+                    icon: 'fa-mobile-alt',
+                    color: 'blue-500',
+                    buttonText: 'Access Tools'
+                },
+                {
+                    id: 'child-family',
+                    name: 'Child & Family',
+                    description: 'Specialized support for children and family units',
+                    icon: 'fa-child',
+                    color: 'yellow-500',
+                    buttonText: 'Learn More'
+                }
+            ],
+            resources: {
+                guides: [
+                    {
+                        id: 'self-help-guide',
+                        name: 'Self-Help Guides',
+                        description: 'Accessible materials on coping strategies, mindfulness, and emotional regulation techniques.',
+                        icon: 'fa-book-open',
+                        image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                        buttonText: 'Download Resources'
+                    }
+                ],
+                tools: [
+                    {
+                        id: 'digital-tools',
+                        name: 'Digital Tools',
+                        description: 'Mobile apps and online platforms for meditation, mood tracking, and crisis support.',
+                        icon: 'fa-mobile-alt',
+                        image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                        buttonText: 'Explore Tools'
+                    }
+                ],
+                workshops: [
+                    {
+                        id: 'community-workshops',
+                        name: 'Community Workshops',
+                        description: 'Regular sessions on mental health awareness, coping skills, and building resilience.',
+                        icon: 'fa-users',
+                        image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                        buttonText: 'View Schedule'
+                    }
+                ]
+            },
+            testimonials: [
+                {
+                    id: 'marie',
+                    name: 'Marie, 32',
+                    role: 'Mother & Support Group Member',
+                    quote: '"After losing my husband, I felt completely alone. The support group gave me a community that understood my pain. Now I can smile again and be strong for my children."',
+                    avatar: 'M',
+                    color: 'green-500'
+                },
+                {
+                    id: 'david',
+                    name: 'David, 19',
+                    role: 'Youth Counseling Participant',
+                    quote: '"I struggled with anxiety and nightmares for years. Through counseling, I learned techniques to manage my anxiety. Now I\'m studying again and planning for my future."',
+                    avatar: 'D',
+                    color: 'blue-500'
+                }
+            ],
+            emergency: {
+                title: 'Need Immediate Help?',
+                message: 'If you or someone you know is in crisis, we\'re here for you 24/7.',
+                contacts: {
+                    crisis: '+250 789 123 456',
+                    medical: '+250 789 111 222',
+                    security: '+250 789 333 444',
+                    mentalHealth: '+250 789 123 456',
+                    community: '+250 789 555 666'
+                },
+                additionalContacts: [
+                    { name: 'Emergency Counseling Center', value: 'HopeLink Main Office, Mahama Camp' },
+                    { name: 'Crisis Text Line', value: 'Text HELP to 741741' }
+                ]
+            },
+            users: [],
+            counselingRequests: [],
+            donations: [],
+            settings: {
+                maintenance: false,
+                notifications: true,
+                autoSave: true
+            }
+        };
+
+        // ==============================
+        // FIREBASE INTEGRATION FUNCTIONS
+        // ==============================
+
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadUsers(),
+                    loadCounselingRequests(),
+                    loadDonations(),
+                    loadContentFromFirebase()
+                ]);
+                
+                updateStatistics();
+                updateUI();
+                showToast('Dashboard data loaded successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showToast('Error loading data: ' + error.message, 'error');
+            }
+        }
+
+        async function loadContentFromFirebase() {
+            try {
+                const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js');
+                
+                // Load all content sections
+                const sections = ['hero', 'services', 'resources', 'testimonials', 'emergency'];
+                
+                for (const section of sections) {
+                    const docRef = doc(window.firebaseDb, "content", `mental_wellness_${section}`);
+                    const docSnap = await getDoc(docRef);
+                    
+                    if (docSnap.exists()) {
+                        dashboardState[section] = docSnap.data();
+                        console.log(`Loaded ${section} content from Firebase`);
+                    }
+                }
+                
+                updateContentUI();
+                
+            } catch (error) {
+                console.error('Error loading content:', error);
+            }
+        }
+
+        async function saveContentToFirebase(section, data) {
+            try {
+                const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js');
+                const docRef = doc(window.firebaseDb, "content", `mental_wellness_${section}`);
+                
+                await setDoc(docRef, {
+                    ...data,
+                    lastUpdated: new Date().toISOString(),
+                    updatedBy: currentUser?.uid || 'dashboard'
+                }, { merge: true });
+                
+                return true;
+            } catch (error) {
+                console.error(`Error saving ${section}:`, error);
+                return false;
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js');
+                const usersRef = collection(window.firebaseDb, "users");
+                const q = query(usersRef, orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                dashboardState.users = [];
+                querySnapshot.forEach((doc) => {
+                    dashboardState.users.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                document.getElementById('usersCount').textContent = dashboardState.users.length;
+                updateUsersTable();
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        async function loadCounselingRequests() {
+            try {
+                const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js');
+                const requestsRef = collection(window.firebaseDb, "counseling_requests");
+                const q = query(requestsRef, orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                dashboardState.counselingRequests = [];
+                querySnapshot.forEach((doc) => {
+                    dashboardState.counselingRequests.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                document.getElementById('counselingCount').textContent = dashboardState.counselingRequests.length;
+                updateCounselingTable();
+                
+            } catch (error) {
+                console.error('Error loading counseling requests:', error);
+            }
+        }
+
+        async function loadDonations() {
+            try {
+                const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js');
+                const donationsRef = collection(window.firebaseDb, "donations");
+                const q = query(donationsRef, orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                dashboardState.donations = [];
+                let totalAmount = 0;
+                
+                querySnapshot.forEach((doc) => {
+                    const donation = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    dashboardState.donations.push(donation);
+                    
+                    if (donation.amount && donation.status === 'completed') {
+                        totalAmount += parseFloat(donation.amount) || 0;
+                    }
+                });
+                
+                dashboardState.stats = dashboardState.stats || {};
+                dashboardState.stats.totalDonationAmount = totalAmount;
+                document.getElementById('donationsCount').textContent = dashboardState.donations.length;
+                updateDonationsTable();
+                
+            } catch (error) {
+                console.error('Error loading donations:', error);
+            }
+        }
+
+        // ==============================
+        // UI UPDATE FUNCTIONS
+        // ==============================
+
+        function updateStatistics() {
+            dashboardState.stats = dashboardState.stats || {};
+            dashboardState.stats.totalUsers = dashboardState.users.length;
+            dashboardState.stats.totalCounselingRequests = dashboardState.counselingRequests.length;
+            dashboardState.stats.totalDonations = dashboardState.donations.length;
+            dashboardState.stats.pendingRequests = dashboardState.counselingRequests.filter(r => r.status === 'pending').length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            dashboardState.stats.newUsersToday = dashboardState.users.filter(user => {
+                return user.createdAt && user.createdAt.startsWith(today);
+            }).length;
+
+            updateStatsCards();
+            updateActivityList();
+            updatePreview();
+        }
+
+        function updateStatsCards() {
+            const statsSection = document.getElementById('statsSection');
+            if (!statsSection) return;
+
+            statsSection.innerHTML = `
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold text-gray-800">${dashboardState.stats.totalUsers || 0}</div>
+                            <div class="text-sm text-gray-600">Total Users</div>
+                        </div>
+                        <div class="stat-icon bg-blue-100 text-blue-600">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm">
+                        <span class="text-green-600 font-medium">+${dashboardState.stats.newUsersToday || 0}</span>
+                        <span class="text-gray-600"> today</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold text-gray-800">${dashboardState.stats.totalCounselingRequests || 0}</div>
+                            <div class="text-sm text-gray-600">Counseling Requests</div>
+                        </div>
+                        <div class="stat-icon bg-green-100 text-green-600">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm">
+                        <span class="text-yellow-600 font-medium">${dashboardState.stats.pendingRequests || 0}</span>
+                        <span class="text-gray-600"> pending</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold text-gray-800">$${(dashboardState.stats.totalDonationAmount || 0).toFixed(2)}</div>
+                            <div class="text-sm text-gray-600">Total Donations</div>
+                        </div>
+                        <div class="stat-icon bg-red-100 text-red-600">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm">
+                        <span class="text-gray-600">${dashboardState.stats.totalDonations || 0} donations</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold text-gray-800">${dashboardState.hero?.stats?.members || 0}</div>
+                            <div class="text-sm text-gray-600">Members Supported</div>
+                        </div>
+                        <div class="stat-icon bg-purple-100 text-purple-600">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm">
+                        <span class="text-gray-600">Mental Wellness</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateActivityList() {
+            const activityList = document.getElementById('activityList');
+            if (!activityList) return;
+
+            const activities = [];
+            
+            // Add recent users
+            dashboardState.users.slice(0, 3).forEach(user => {
+                activities.push({
+                    type: 'user',
+                    text: `${user.displayName || user.email} registered`,
+                    time: user.createdAt,
+                    icon: 'fa-user-plus',
+                    color: 'text-blue-600'
+                });
+            });
+            
+            // Add recent counseling requests
+            dashboardState.counselingRequests.slice(0, 2).forEach(request => {
+                activities.push({
+                    type: 'counseling',
+                    text: `New counseling request from ${request.firstName} ${request.lastName}`,
+                    time: request.createdAt,
+                    icon: 'fa-user-md',
+                    color: 'text-green-600'
+                });
+            });
+            
+            // Add recent donations
+            dashboardState.donations.slice(0, 2).forEach(donation => {
+                activities.push({
+                    type: 'donation',
+                    text: `New donation of $${donation.amount} from ${donation.name}`,
+                    time: donation.createdAt,
+                    icon: 'fa-heart',
+                    color: 'text-red-600'
+                });
+            });
+
+            // Sort by time (newest first)
+            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+            activityList.innerHTML = activities.slice(0, 5).map(activity => `
+                <div class="flex items-center p-4 bg-white rounded-xl border border-gray-100 hover:bg-gray-50 transition">
+                    <div class="w-12 h-12 rounded-full ${activity.color} bg-opacity-10 flex items-center justify-center">
+                        <i class="${activity.icon} text-lg"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <div class="font-medium text-gray-800">${activity.text}</div>
+                        <div class="text-sm text-gray-500">${formatTimeAgo(activity.time)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateContentUI() {
+            // Update hero section
+            updateHeroUI();
+            
+            // Update services
+            updateServicesUI();
+            
+            // Update resources
+            updateResourcesUI();
+            
+            // Update testimonials
+            updateTestimonialsUI();
+            
+            // Update emergency contacts
+            updateEmergencyUI();
+            
+            // Update preview
+            updatePreview();
+        }
+
+        function updateHeroUI() {
+            if (!dashboardState.hero) return;
+            
+            // Update form inputs
+            document.getElementById('heroTitle').value = dashboardState.hero.title;
+            document.getElementById('heroSubtitle').value = dashboardState.hero.subtitle;
+            document.getElementById('heroBackground').value = dashboardState.hero.background;
+            document.getElementById('heroImagePreview').src = dashboardState.hero.background;
+            document.getElementById('statMembers').value = dashboardState.hero.stats.members;
+            document.getElementById('statCounselors').value = dashboardState.hero.stats.counselors;
+            document.getElementById('statGroups').value = dashboardState.hero.stats.groups;
+            
+            // Update gradient selection
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-gradient') === dashboardState.hero.gradient) {
+                    option.classList.add('active');
+                }
+            });
+            
+            // Update CTA buttons
+            updateCTAButtons();
+            
+            // Update hero preview
+            document.getElementById('previewTitle').textContent = dashboardState.hero.title;
+            document.getElementById('previewSubtitle').textContent = dashboardState.hero.subtitle;
+            document.getElementById('previewHeroTitle').textContent = dashboardState.hero.title;
+            document.getElementById('previewHeroSubtitle').textContent = dashboardState.hero.subtitle;
+            document.getElementById('previewStat1').textContent = dashboardState.hero.stats.members;
+            document.getElementById('previewStat2').textContent = dashboardState.hero.stats.counselors;
+            document.getElementById('previewStat3').textContent = dashboardState.hero.stats.groups;
+            
+            // Update hero preview background
+            const heroPreview = document.getElementById('heroPreview');
+            heroPreview.className = `w-full h-full flex items-center justify-center p-8 text-white text-center bg-gradient-to-r ${dashboardState.hero.gradient}`;
+        }
+
+        function updateCTAButtons() {
+            const container = document.getElementById('ctaButtonsContainer');
+            if (!container || !dashboardState.hero.ctaButtons) return;
+            
+            container.innerHTML = dashboardState.hero.ctaButtons.map((btn, index) => `
+                <div class="draggable-item" data-index="${index}">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-grip-vertical text-gray-400 mr-3 cursor-move"></i>
+                            <span class="font-medium">${btn.text}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editCTAButton(${index})" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center">
+                                <i class="fas fa-edit text-sm"></i>
+                            </button>
+                            <button onclick="removeCTAButton(${index})" class="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 text-sm">
+                        <div class="px-3 py-1 bg-gray-100 rounded-lg">
+                            <i class="fas ${btn.icon} mr-2"></i>
+                            ${btn.icon.replace('fa-', '')}
+                        </div>
+                        <div class="px-3 py-1 rounded-lg" style="background-color: var(--${btn.bgColor})">
+                            ${btn.bgColor}
+                        </div>
+                        ${btn.border ? '<span class="px-3 py-1 bg-gray-100 rounded-lg">With Border</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            initDragAndDrop();
+        }
+
+        function updateServicesUI() {
+            const container = document.getElementById('servicesContainer');
+            if (!container || !dashboardState.services) return;
+            
+            container.innerHTML = dashboardState.services.map((service, index) => `
+                <div class="draggable-item" data-id="${service.id}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-16 h-16 rounded-xl bg-${service.color} bg-opacity-10 flex items-center justify-center">
+                                <i class="fas ${service.icon} text-${service.color} text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-lg">${service.name}</h4>
+                                <p class="text-gray-600 mt-1">${service.description.substring(0, 100)}...</p>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    ${service.features.map(feature => `
+                                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+                                            <i class="fas fa-check-circle text-green-500 mr-1"></i>${feature}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editService('${service.id}')" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="deleteService('${service.id}')" class="btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('servicesCount').textContent = dashboardState.services.length;
+            initDragAndDrop();
+        }
+
+        function updateResourcesUI() {
+            // Update guides
+            const guidesContainer = document.getElementById('guidesContainer');
+            if (guidesContainer && dashboardState.resources.guides) {
+                guidesContainer.innerHTML = dashboardState.resources.guides.map(resource => `
+                    <div class="draggable-item" data-id="${resource.id}">
+                        <!-- Resource item structure -->
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('resourcesCount').textContent = 
+                (dashboardState.resources.guides?.length || 0) +
+                (dashboardState.resources.tools?.length || 0) +
+                (dashboardState.resources.workshops?.length || 0);
+        }
+
+        function updateTestimonialsUI() {
+            const container = document.getElementById('testimonialsContainer');
+            if (!container || !dashboardState.testimonials) return;
+            
+            container.innerHTML = dashboardState.testimonials.map((testimonial, index) => `
+                <div class="draggable-item" data-id="${testimonial.id}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-16 h-16 rounded-full bg-${testimonial.color} flex items-center justify-center text-white font-bold text-xl">
+                                ${testimonial.avatar}
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold text-gray-800">${testimonial.name}</h4>
+                                    <span class="text-sm text-gray-500">${testimonial.role}</span>
+                                </div>
+                                <p class="text-gray-600 italic">${testimonial.quote}</p>
+                                <div class="flex text-yellow-400 mt-2">
+                                    ${'<i class="fas fa-star"></i>'.repeat(5)}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editTestimonial('${testimonial.id}')" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="deleteTestimonial('${testimonial.id}')" class="btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('testimonialsCount').textContent = dashboardState.testimonials.length;
+            initDragAndDrop();
+        }
+
+        function updateEmergencyUI() {
+            if (!dashboardState.emergency) return;
+            
+            document.getElementById('emergencyTitle').value = dashboardState.emergency.title;
+            document.getElementById('emergencyMessage').value = dashboardState.emergency.message;
+            document.getElementById('crisisHotline').value = dashboardState.emergency.contacts.crisis;
+            document.getElementById('medicalEmergency').value = dashboardState.emergency.contacts.medical;
+            document.getElementById('campSecurity').value = dashboardState.emergency.contacts.security;
+            document.getElementById('communitySupport').value = dashboardState.emergency.contacts.community;
+            
+            // Update additional contacts
+            const container = document.getElementById('additionalContacts');
+            if (container && dashboardState.emergency.additionalContacts) {
+                container.innerHTML = dashboardState.emergency.additionalContacts.map((contact, index) => `
+                    <div class="flex items-center space-x-4">
+                        <input type="text" class="form-input" value="${contact.name}" 
+                               onchange="updateAdditionalContact(${index}, 'name', this.value)">
+                        <input type="text" class="form-input" value="${contact.value}" 
+                               onchange="updateAdditionalContact(${index}, 'value', this.value)">
+                        <button onclick="removeAdditionalContact(${index})" class="btn btn-danger">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function updatePreview() {
+            // Update dashboard preview
+            const stats = dashboardState.hero?.stats || {};
+            document.getElementById('previewStat1').textContent = stats.members || 0;
+            document.getElementById('previewStat2').textContent = stats.counselors || 0;
+            document.getElementById('previewStat3').textContent = stats.groups || 0;
+        }
+
+        // ==============================
+        // CONTENT MANAGEMENT FUNCTIONS
+        // ==============================
+
+        async function saveHeroSection() {
+            try {
+                dashboardState.hero = {
+                    title: document.getElementById('heroTitle').value,
+                    subtitle: document.getElementById('heroSubtitle').value,
+                    background: document.getElementById('heroBackground').value,
+                    gradient: document.querySelector('.color-option.active').getAttribute('data-gradient'),
+                    stats: {
+                        members: parseInt(document.getElementById('statMembers').value) || 0,
+                        counselors: parseInt(document.getElementById('statCounselors').value) || 0,
+                        groups: parseInt(document.getElementById('statGroups').value) || 0
+                    },
+                    ctaButtons: dashboardState.hero.ctaButtons
+                };
+                
+                const success = await saveContentToFirebase('hero', dashboardState.hero);
+                if (success) {
+                    updateHeroUI();
+                    showToast('Hero section saved successfully!', 'success');
+                } else {
+                    showToast('Error saving to Firebase', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error saving hero section:', error);
+                showToast('Error saving hero section', 'error');
+            }
+        }
+
+        function resetHeroSection() {
+            dashboardState.hero = {
+                title: "Mental Wellness & Emotional Support",
+                subtitle: "Healing hearts and minds through compassionate support, counseling, and community connection in Mahama Camp.",
+                background: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+                gradient: "from-pink-500 to-green-500",
+                stats: { members: 300, counselors: 15, groups: 40 },
+                ctaButtons: dashboardState.hero.ctaButtons
+            };
+            
+            updateHeroUI();
+            showToast('Hero section reset to defaults', 'info');
+        }
+
+        function addCTAButton() {
+            dashboardState.hero.ctaButtons.push({
+                text: 'New Button',
+                icon: 'fa-star',
+                color: 'white',
+                bgColor: 'blue-500',
+                border: false
+            });
+            
+            updateCTAButtons();
+            showToast('New CTA button added', 'success');
+        }
+
+        function editCTAButton(index) {
+            const button = dashboardState.hero.ctaButtons[index];
+            const newText = prompt('Enter button text:', button.text);
+            const newIcon = prompt('Enter icon (e.g., fa-heart):', button.icon);
+            
+            if (newText) button.text = newText;
+            if (newIcon) button.icon = newIcon;
+            
+            updateCTAButtons();
+            showToast('CTA button updated', 'success');
+        }
+
+        function removeCTAButton(index) {
+            if (confirm('Are you sure you want to remove this button?')) {
+                dashboardState.hero.ctaButtons.splice(index, 1);
+                updateCTAButtons();
+                showToast('CTA button removed', 'success');
+            }
+        }
+
+        async function saveAllServices() {
+            try {
+                const success = await saveContentToFirebase('services', dashboardState.services);
+                if (success) {
+                    showToast('All services saved successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Error saving services:', error);
+                showToast('Error saving services', 'error');
+            }
+        }
+
+        function addNewService() {
+            const newService = {
+                id: 'service-' + Date.now(),
+                name: 'New Service',
+                description: 'Service description here...',
+                features: ['Feature 1', 'Feature 2'],
+                icon: 'fa-star',
+                color: 'blue-500',
+                buttonText: 'Learn More'
+            };
+            
+            dashboardState.services.push(newService);
+            updateServicesUI();
+            showToast('New service added', 'success');
+        }
+
+        function editService(serviceId) {
+            const service = dashboardState.services.find(s => s.id === serviceId);
+            if (!service) return;
+            
+            document.getElementById('serviceId').value = service.id;
+            document.getElementById('serviceName').value = service.name;
+            document.getElementById('serviceDescription').value = service.description;
+            document.getElementById('serviceFeatures').value = service.features.join('\n');
+            document.getElementById('serviceIcon').value = service.icon;
+            document.getElementById('serviceButton').value = service.buttonText;
+            
+            // Select color
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-color') === service.color) {
+                    option.classList.add('active');
+                }
+            });
+            
+            document.getElementById('editServiceModal').classList.add('active');
+        }
+
+        function closeEditServiceModal() {
+            document.getElementById('editServiceModal').classList.remove('active');
+        }
+
+        function saveServiceChanges() {
+            const serviceId = document.getElementById('serviceId').value;
+            const service = dashboardState.services.find(s => s.id === serviceId);
+            
+            if (service) {
+                service.name = document.getElementById('serviceName').value;
+                service.description = document.getElementById('serviceDescription').value;
+                service.features = document.getElementById('serviceFeatures').value.split('\n').filter(f => f.trim());
+                service.icon = document.getElementById('serviceIcon').value;
+                service.color = document.querySelector('.color-option.active').getAttribute('data-color');
+                service.buttonText = document.getElementById('serviceButton').value;
+                
+                updateServicesUI();
+                closeEditServiceModal();
+                showToast('Service updated successfully!', 'success');
+            }
+        }
+
+        function deleteService(serviceId) {
+            if (confirm('Are you sure you want to delete this service?')) {
+                dashboardState.services = dashboardState.services.filter(s => s.id !== serviceId);
+                updateServicesUI();
+                showToast('Service deleted', 'success');
+            }
+        }
+
+        // Similar functions for resources, testimonials, emergency contacts...
+
+        // ==============================
+        // UTILITY FUNCTIONS
+        // ==============================
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+            
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} mr-3"></i>
+                        <span>${message}</span>
+                    </div>
+                    <button onclick="document.getElementById('${toastId}').remove()" class="ml-4 opacity-70 hover:opacity-100">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Show animation
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Auto remove
+            setTimeout(() => {
+                if (document.getElementById(toastId)) {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function formatTimeAgo(dateString) {
+            if (!dateString) return 'Just now';
+            
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffInSeconds = Math.floor((now - date) / 1000);
+                
+                if (diffInSeconds < 60) return 'Just now';
+                if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+                if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+                if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+                
+                return date.toLocaleDateString();
+            } catch (error) {
+                return dateString;
+            }
+        }
+
+        function selectGradient(element) {
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // Update preview
+            const heroPreview = document.getElementById('heroPreview');
+            heroPreview.className = `w-full h-full flex items-center justify-center p-8 text-white text-center bg-gradient-to-r ${element.getAttribute('data-gradient')}`;
+        }
+
+        function selectColor(element, type) {
+            const parent = element.closest('.color-palette');
+            parent.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        function adjustStat(stat, change) {
+            const input = document.getElementById(`stat${stat.charAt(0).toUpperCase() + stat.slice(1)}`);
+            let value = parseInt(input.value) || 0;
+            value = Math.max(0, value + change);
+            input.value = value;
+            
+            // Update preview
+            document.getElementById(`previewStat${stat === 'members' ? 1 : stat === 'counselors' ? 2 : 3}`).textContent = value;
+        }
+
+        function handleImageUpload(event, targetId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(targetId).value = e.target.result;
+                    document.getElementById(targetId + 'Preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleImageDrop(event, targetId) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImageUpload({ target: { files: [file] } }, targetId);
+            }
+        }
+
+        function initDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable-item');
+            const containers = document.querySelectorAll('.draggable-item').length ? 
+                [document.querySelector('#servicesContainer'), 
+                 document.querySelector('#testimonialsContainer')] : [];
+            
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', () => {
+                    draggable.classList.add('dragging');
+                });
+                
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('dragging');
+                });
+            });
+            
+            containers.forEach(container => {
+                if (!container) return;
+                
+                container.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElement(container, e.clientY);
+                    const draggable = document.querySelector('.dragging');
+                    
+                    if (afterElement == null) {
+                        container.appendChild(draggable);
+                    } else {
+                        container.insertBefore(draggable, afterElement);
+                    }
+                });
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.draggable-item:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // ==============================
+        // NAVIGATION FUNCTIONS
+        // ==============================
+
+        function navigateToSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="Section"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Remove active class from all sidebar items
+            document.querySelectorAll('.sidebar-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected section
+            const sectionEl = document.getElementById(section + 'Section');
+            if (sectionEl) {
+                sectionEl.classList.remove('hidden');
+            }
+            
+            // Add active class to selected sidebar item
+            const sidebarItem = document.querySelector(`.sidebar-item[data-section="${section}"]`);
+            if (sidebarItem) {
+                sidebarItem.classList.add('active');
+            }
+            
+            // Update current section
+            currentSection = section;
+            updateUITitles();
+            
+            // Close mobile sidebar
+            document.querySelector('.sidebar').classList.remove('active');
+        }
+
+        function updateUITitles() {
+            const titles = {
+                dashboard: 'Dashboard Overview',
+                'hero-section': 'Hero Section Editor',
+                services: 'Services Management',
+                resources: 'Resources Management',
+                testimonials: 'Testimonials Management',
+                emergency: 'Emergency Contacts',
+                users: 'User Management',
+                counseling: 'Counseling Requests',
+                donations: 'Donations Management',
+                settings: 'Settings'
+            };
+            
+            const descriptions = {
+                dashboard: 'Welcome to your mental wellness page management dashboard',
+                'hero-section': 'Edit the main hero section of your mental wellness page',
+                services: 'Manage all mental wellness services and programs',
+                resources: 'Manage self-help guides, digital tools, and workshops',
+                testimonials: 'Manage success stories and testimonials',
+                emergency: 'Manage emergency contact information',
+                users: 'Manage all registered users and permissions',
+                counseling: 'Manage counseling requests from the website',
+                donations: 'Track and manage all donations',
+                settings: 'Configure system settings and preferences'
+            };
+            
+            document.getElementById('sectionTitle').textContent = titles[currentSection] || 'Dashboard';
+            document.getElementById('sectionDescription').textContent = descriptions[currentSection] || '';
+        }
+
+        // ==============================
+        // INITIALIZATION
+        // ==============================
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication
+            const userJson = localStorage.getItem('currentUser');
+            if (userJson) {
+                currentUser = JSON.parse(userJson);
+                if (currentUser.role !== 'admin') {
+                    showToast('Limited access: Admin privileges required for full features', 'warning');
+                }
+            } else {
+                // Demo mode
+                currentUser = {
+                    uid: 'demo-admin',
+                    email: 'admin@hopelink.org',
+                    displayName: 'Demo Admin',
+                    role: 'admin',
+                    photoURL: 'https://ui-avatars.com/api/?name=Demo+Admin&background=3B82F6&color=fff'
+                };
+                showToast('Running in demo mode. Login for full features.', 'info');
+            }
+            
+            // Initialize sidebar navigation
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    navigateToSection(section);
+                });
+            });
+            
+            // Initialize mobile menu
+            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('active');
+            });
+            
+            // Initialize tabs
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab-btn').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-pane').forEach(pane => {
+                        pane.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    document.getElementById(tabName + 'Tab').classList.add('active');
+                });
+            });
+            
+            // Initialize forms
+            document.getElementById('addUserForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Handle user creation
+                showToast('User creation coming soon!', 'info');
+            });
+            
+            document.getElementById('editServiceForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveServiceChanges();
+            });
+            
+            // Load dashboard data
+            await loadDashboardData();
+            
+            // Update admin info
+            document.getElementById('adminName').textContent = currentUser.displayName || 'Administrator';
+            document.getElementById('adminAvatar').src = currentUser.photoURL || 
+                'https://ui-avatars.com/api/?name=Admin&background=3B82F6&color=fff';
+            
+            // Update time
+            updateTime();
+            setInterval(updateTime, 60000);
+            
+            // Auto-save interval
+            setInterval(() => {
+                if (dashboardState.settings.autoSave && currentSection !== 'dashboard') {
+                    autoSaveCurrentSection();
+                }
+            }, 30000);
+            
+            console.log('Dashboard initialized successfully');
+        });
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            document.getElementById('lastSync').textContent = `Last sync: ${formatTimeAgo(new Date().toISOString())}`;
+        }
+
+        function autoSaveCurrentSection() {
+            switch(currentSection) {
+                case 'hero-section':
+                    saveHeroSection();
+                    break;
+                case 'services':
+                    saveAllServices();
+                    break;
+                // Add other sections as needed
+            }
+        }
+
+        function refreshAllData() {
+            loadDashboardData();
+            showToast('Refreshing all data...', 'info');
+        }
+
+        function openPreview() {
+            window.open('mental-wellness.html', '_blank');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Make functions globally available
+        window.navigateToSection = navigateToSection;
+        window.refreshAllData = refreshAllData;
+        window.openPreview = openPreview;
+        window.logout = logout;
+        window.editService = editService;
+        window.closeEditServiceModal = closeEditServiceModal;
+        window.selectGradient = selectGradient;
+        window.selectColor = selectColor;
+        window.adjustStat = adjustStat;
+        window.handleImageUpload = handleImageUpload;
+        window.handleDragOver = handleDragOver;
+        window.handleImageDrop = handleImageDrop;
+    </script>
+</body>
+</html>
