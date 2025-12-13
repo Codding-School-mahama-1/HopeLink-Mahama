@@ -598,6 +598,50 @@
             height: auto;
             overflow: visible;
         }
+
+        /* Custom styles for expandable content boxes */
+        .news-card {
+            transition: all 0.3s ease;
+            max-height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .news-card.expanded {
+            max-height: 1000px;
+        }
+        
+        .read-more-btn {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, white, rgba(255,255,255,0.9));
+            padding: 20px 0 10px;
+            text-align: center;
+        }
+        
+        .event-card {
+            transition: all 0.3s ease;
+            max-height: 200px;
+            overflow: hidden;
+        }
+        
+        .event-card.expanded {
+            max-height: 1000px;
+        }
+        
+        .event-content {
+            overflow: hidden;
+        }
+        
+        .expand-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .expand-btn.expanded i {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans scroll-smooth">
@@ -874,48 +918,9 @@
                 <a href="#" class="text-primary-blue hover:text-blue-800 font-medium">View All</a>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Announcement 1 -->
-                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-5 rounded-r-lg">
-                    <div class="flex items-start">
-                        <div class="bg-yellow-100 p-2 rounded-lg">
-                            <i class="fas fa-exclamation-circle text-yellow-600"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="font-bold text-gray-800">Health Check-up Campaign</h3>
-                            <p class="text-gray-600 mt-2">Free medical check-ups available at the health center from Monday to Friday, 8 AM - 4 PM.</p>
-                            <span class="inline-block mt-3 text-sm text-yellow-700 font-medium">Posted: 2 days ago</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Announcement 2 -->
-                <div class="bg-blue-50 border-l-4 border-primary-blue p-5 rounded-r-lg">
-                    <div class="flex items-start">
-                        <div class="bg-blue-100 p-2 rounded-lg">
-                            <i class="fas fa-info-circle text-primary-blue"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="font-bold text-gray-800">Food Distribution Schedule</h3>
-                            <p class="text-gray-600 mt-2">New food distribution schedule effective from next week. Check the notice board for details.</p>
-                            <span class="inline-block mt-3 text-sm text-blue-700 font-medium">Posted: 1 week ago</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Announcement 3 -->
-                <div class="bg-green-50 border-l-4 border-primary-green p-5 rounded-r-lg">
-                    <div class="flex items-start">
-                        <div class="bg-green-100 p-2 rounded-lg">
-                            <i class="fas fa-calendar-check text-primary-green"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="font-bold text-gray-800">Education Program Registration</h3>
-                            <p class="text-gray-600 mt-2">Registration for adult literacy and vocational training programs is now open.</p>
-                            <span class="inline-block mt-3 text-sm text-green-700 font-medium">Posted: 3 days ago</span>
-                        </div>
-                    </div>
-                </div>
+            <!-- Announcements Container -->
+            <div id="announcements-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Announcements will be loaded dynamically from dashboard -->
             </div>
         </div>
     </section>
@@ -961,49 +966,7 @@
             
             <!-- News Feed -->
             <div id="newsFeed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Sample News Item 1 -->
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="font-bold text-gray-800 text-lg">Community Garden Success</h3>
-                            <span class="text-xs text-gray-500">2 hours ago</span>
-                        </div>
-                        <p class="text-gray-600 mb-4">Our community garden has produced its first harvest! Fresh vegetables are now available for families in need.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-primary-blue font-medium">By: John D.</span>
-                            <div class="flex space-x-2">
-                                <button class="text-gray-400 hover:text-primary-blue transition">
-                                    <i class="far fa-thumbs-up"></i>
-                                </button>
-                                <button class="text-gray-400 hover:text-red-500 transition">
-                                    <i class="far fa-comment"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sample News Item 2 -->
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="font-bold text-gray-800 text-lg">Youth Football Tournament</h3>
-                            <span class="text-xs text-gray-500">1 day ago</span>
-                        </div>
-                        <p class="text-gray-600 mb-4">The youth football tournament was a great success! Over 50 young people participated and showed amazing sportsmanship.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-primary-blue font-medium">By: Sarah M.</span>
-                            <div class="flex space-x-2">
-                                <button class="text-gray-400 hover:text-primary-blue transition">
-                                    <i class="far fa-thumbs-up"></i>
-                                </button>
-                                <button class="text-gray-400 hover:text-red-500 transition">
-                                    <i class="far fa-comment"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- News will be loaded dynamically from dashboard -->
             </div>
         </div>
     </section>
@@ -1016,94 +979,8 @@
                 <a href="#" class="text-primary-blue hover:text-blue-800 font-medium">View Calendar</a>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Event 1 -->
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-                    <div class="bg-primary-blue text-white p-4">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold">15</div>
-                            <div class="text-sm">OCT</div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-gray-800">Community Meeting</h3>
-                        <p class="text-gray-600 text-sm mt-2">Monthly community gathering to discuss camp issues and solutions.</p>
-                        <div class="flex items-center mt-4 text-gray-500">
-                            <i class="fas fa-clock mr-2"></i>
-                            <span class="text-sm">10:00 AM - 12:00 PM</span>
-                        </div>
-                        <div class="flex items-center mt-2 text-gray-500">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            <span class="text-sm">Community Hall</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Event 2 -->
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-                    <div class="bg-primary-green text-white p-4">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold">18</div>
-                            <div class="text-sm">OCT</div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-gray-800">Youth Sports Day</h3>
-                        <p class="text-gray-600 text-sm mt-2">Football and volleyball tournaments for youth aged 12-18.</p>
-                        <div class="flex items-center mt-4 text-gray-500">
-                            <i class="fas fa-clock mr-2"></i>
-                            <span class="text-sm">2:00 PM - 5:00 PM</span>
-                        </div>
-                        <div class="flex items-center mt-2 text-gray-500">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            <span class="text-sm">Sports Field</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Event 3 -->
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-                    <div class="bg-purple-600 text-white p-4">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold">22</div>
-                            <div class="text-sm">OCT</div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-gray-800">Women's Skill Workshop</h3>
-                        <p class="text-gray-600 text-sm mt-2">Handicraft and sewing skills training session for women.</p>
-                        <div class="flex items-center mt-4 text-gray-500">
-                            <i class="fas fa-clock mr-2"></i>
-                            <span class="text-sm">9:00 AM - 1:00 PM</span>
-                        </div>
-                        <div class="flex items-center mt-2 text-gray-500">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            <span class="text-sm">Vocational Center</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Event 4 -->
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-                    <div class="bg-red-600 text-white p-4">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold">25</div>
-                            <div class="text-sm">OCT</div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-gray-800">Health & Hygiene Session</h3>
-                        <p class="text-gray-600 text-sm mt-2">Educational session on maintaining hygiene and preventing diseases.</p>
-                        <div class="flex items-center mt-4 text-gray-500">
-                            <i class="fas fa-clock mr-2"></i>
-                            <span class="text-sm">3:00 PM - 4:30 PM</span>
-                        </div>
-                        <div class="flex items-center mt-2 text-gray-500">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            <span class="text-sm">Health Center</span>
-                        </div>
-                    </div>
-                </div>
+            <div id="events-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Events will be loaded dynamically from dashboard -->
             </div>
         </div>
     </section>
@@ -1516,6 +1393,221 @@
             localStorage.setItem('hopelink_users', JSON.stringify([]));
         }
 
+        // ========== DASHBOARD DATA SYNC ==========
+        function loadDashboardData() {
+            try {
+                // Load announcements from dashboard
+                const announcements = JSON.parse(localStorage.getItem('hopelink_announcements') || '[]');
+                const news = JSON.parse(localStorage.getItem('hopelink_news') || '[]');
+                const events = JSON.parse(localStorage.getItem('hopelink_events') || '[]');
+                
+                // Update announcements section
+                const announcementsContainer = document.getElementById('announcements-container');
+                if (announcementsContainer) {
+                    announcementsContainer.innerHTML = announcements.map(ann => `
+                        <div class="bg-${ann.priority === 'high' ? 'yellow' : ann.priority === 'medium' ? 'blue' : 'green'}-50 border-l-4 border-${ann.priority === 'high' ? 'yellow' : ann.priority === 'medium' ? 'primary-blue' : 'primary-green'}-500 p-5 rounded-r-lg">
+                            <div class="flex items-start">
+                                <div class="bg-${ann.priority === 'high' ? 'yellow' : ann.priority === 'medium' ? 'blue' : 'green'}-100 p-2 rounded-lg">
+                                    <i class="fas fa-${ann.priority === 'high' ? 'exclamation-circle' : 'info-circle'} text-${ann.priority === 'high' ? 'yellow' : ann.priority === 'medium' ? 'primary-blue' : 'primary-green'}-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="font-bold text-gray-800">${ann.title}</h3>
+                                    <p class="text-gray-600 mt-2">${ann.content}</p>
+                                    <span class="inline-block mt-3 text-sm text-${ann.priority === 'high' ? 'yellow' : ann.priority === 'medium' ? 'blue' : 'green'}-700 font-medium">
+                                        Posted: ${formatDate(ann.date)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    if (announcements.length === 0) {
+                        announcementsContainer.innerHTML = `
+                            <div class="col-span-3 text-center py-8">
+                                <i class="fas fa-bullhorn text-3xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-500">No announcements yet</p>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Update news section with expandable cards
+                const newsFeed = document.getElementById('newsFeed');
+                if (newsFeed) {
+                    const publishedNews = news.filter(item => item.status === 'published').slice(0, 6);
+                    
+                    newsFeed.innerHTML = publishedNews.map((item, index) => {
+                        const isLongContent = item.content.length > 150;
+                        const truncatedContent = isLongContent ? item.content.substring(0, 150) + '...' : item.content;
+                        
+                        return `
+                            <div class="news-card bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 ${isLongContent ? 'has-read-more' : ''}" id="news-card-${index}">
+                                <div class="p-5">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <h3 class="font-bold text-gray-800 text-lg">${item.title}</h3>
+                                        <span class="text-xs text-gray-500">${formatDate(item.date)}</span>
+                                    </div>
+                                    <p class="text-gray-600 mb-4 news-content">${truncatedContent}</p>
+                                    
+                                    ${isLongContent ? `
+                                        <div class="read-more-btn">
+                                            <button onclick="toggleNewsExpand(${index})" class="expand-btn text-primary-blue hover:text-blue-700 font-medium text-sm flex items-center">
+                                                Read More <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                                            </button>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    <div class="flex justify-between items-center mt-6">
+                                        <span class="text-sm text-primary-blue font-medium">By: ${item.author}</span>
+                                        <div class="flex space-x-2">
+                                            <button class="text-gray-400 hover:text-primary-blue transition">
+                                                <i class="far fa-thumbs-up"></i>
+                                            </button>
+                                            <button class="text-gray-400 hover:text-red-500 transition">
+                                                <i class="far fa-comment"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    if (publishedNews.length === 0) {
+                        newsFeed.innerHTML = `
+                            <div class="col-span-3 text-center py-8">
+                                <i class="fas fa-newspaper text-3xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-500">No news articles yet</p>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Update events section with expandable cards
+                const eventsContainer = document.getElementById('events-container');
+                if (eventsContainer) {
+                    eventsContainer.innerHTML = events.slice(0, 4).map((event, index) => {
+                        const eventDate = new Date(event.date);
+                        const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                        const colors = ['primary-blue', 'primary-green', 'purple-600', 'red-600'];
+                        const color = colors[events.indexOf(event) % colors.length];
+                        const isLongDescription = event.description.length > 60;
+                        const truncatedDescription = isLongDescription ? event.description.substring(0, 60) + '...' : event.description;
+                        
+                        return `
+                            <div class="event-card bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200" id="event-card-${index}">
+                                <div class="bg-${color} text-white p-4">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">${eventDate.getDate()}</div>
+                                        <div class="text-sm">${monthNames[eventDate.getMonth()]}</div>
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-gray-800">${event.name}</h3>
+                                    <p class="text-gray-600 text-sm mt-2 event-content">${truncatedDescription}</p>
+                                    
+                                    ${isLongDescription ? `
+                                        <button onclick="toggleEventExpand(${index})" class="expand-btn mt-2 text-primary-blue hover:text-blue-700 text-xs font-medium flex items-center">
+                                            Read More <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                                        </button>
+                                    ` : ''}
+                                    
+                                    <div class="flex items-center mt-4 text-gray-500">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        <span class="text-sm">${event.time}</span>
+                                    </div>
+                                    <div class="flex items-center mt-2 text-gray-500">
+                                        <i class="fas fa-map-marker-alt mr-2"></i>
+                                        <span class="text-sm">${event.location}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    if (events.length === 0) {
+                        eventsContainer.innerHTML = `
+                            <div class="col-span-4 text-center py-8">
+                                <i class="fas fa-calendar-alt text-3xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-500">No upcoming events</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+                
+                if (diffInHours < 24) {
+                    return `${diffInHours} hours ago`;
+                } else if (diffInHours < 48) {
+                    return 'Yesterday';
+                } else {
+                    return date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                }
+            } catch (e) {
+                return 'Recently';
+            }
+        }
+
+        // ========== EXPANDABLE CONTENT FUNCTIONS ==========
+        function toggleNewsExpand(index) {
+            const newsCard = document.getElementById(`news-card-${index}`);
+            const newsContent = newsCard.querySelector('.news-content');
+            const expandBtn = newsCard.querySelector('.expand-btn');
+            
+            if (newsCard.classList.contains('expanded')) {
+                newsCard.classList.remove('expanded');
+                expandBtn.innerHTML = 'Read More <i class="fas fa-chevron-down ml-1 text-xs"></i>';
+                expandBtn.classList.remove('expanded');
+            } else {
+                newsCard.classList.add('expanded');
+                
+                // Load full content
+                const news = JSON.parse(localStorage.getItem('hopelink_news') || '[]');
+                const publishedNews = news.filter(item => item.status === 'published');
+                if (publishedNews[index]) {
+                    newsContent.textContent = publishedNews[index].content;
+                }
+                
+                expandBtn.innerHTML = 'Read Less <i class="fas fa-chevron-up ml-1 text-xs"></i>';
+                expandBtn.classList.add('expanded');
+            }
+        }
+
+        function toggleEventExpand(index) {
+            const eventCard = document.getElementById(`event-card-${index}`);
+            const eventContent = eventCard.querySelector('.event-content');
+            const expandBtn = eventCard.querySelector('.expand-btn');
+            
+            if (eventCard.classList.contains('expanded')) {
+                eventCard.classList.remove('expanded');
+                expandBtn.innerHTML = 'Read More <i class="fas fa-chevron-down ml-1 text-xs"></i>';
+                expandBtn.classList.remove('expanded');
+            } else {
+                eventCard.classList.add('expanded');
+                
+                // Load full description
+                const events = JSON.parse(localStorage.getItem('hopelink_events') || '[]');
+                if (events[index]) {
+                    eventContent.textContent = events[index].description;
+                }
+                
+                expandBtn.innerHTML = 'Read Less <i class="fas fa-chevron-up ml-1 text-xs"></i>';
+                expandBtn.classList.add('expanded');
+            }
+        }
+
         // ========== USER MANAGEMENT FUNCTIONS ==========
         function getAllLocalUsers() {
             return JSON.parse(localStorage.getItem('hopelink_users') || '[]');
@@ -1802,6 +1894,12 @@
             // Initialize authentication
             checkLoginStatus();
             checkForAuthRedirect();
+            
+            // Load dashboard data
+            loadDashboardData();
+            
+            // Refresh dashboard data every 30 seconds
+            setInterval(loadDashboardData, 30000);
             
             // Toggle user dropdown
             const userMenuBtn = document.getElementById('user-menu-btn');
@@ -2092,39 +2190,26 @@
                     const author = document.getElementById('newsAuthor').value;
                     const content = document.getElementById('newsContent').value;
                     
-                    // Create new news item
-                    const newsItem = document.createElement('div');
-                    newsItem.className = 'bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200';
-                    newsItem.innerHTML = `
-                        <div class="p-5">
-                            <div class="flex justify-between items-start mb-3">
-                                <h3 class="font-bold text-gray-800 text-lg">${title}</h3>
-                                <span class="text-xs text-gray-500">Just now</span>
-                            </div>
-                            <p class="text-gray-600 mb-4">${content}</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-primary-blue font-medium">By: ${author}</span>
-                                <div class="flex space-x-2">
-                                    <button class="text-gray-400 hover:text-primary-blue transition">
-                                        <i class="far fa-thumbs-up"></i>
-                                    </button>
-                                    <button class="text-gray-400 hover:text-red-500 transition">
-                                        <i class="far fa-comment"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Add to news feed
-                    document.getElementById('newsFeed').prepend(newsItem);
+                    // Create new news submission
+                    const submissions = JSON.parse(localStorage.getItem('hopelink_submissions') || '[]');
+                    const newSubmission = {
+                        id: 'sub_' + Date.now(),
+                        title: title,
+                        content: content,
+                        author: author,
+                        type: 'news',
+                        status: 'pending',
+                        date: new Date().toISOString()
+                    };
+                    submissions.push(newSubmission);
+                    localStorage.setItem('hopelink_submissions', JSON.stringify(submissions));
                     
                     // Reset and hide form
                     communityNewsForm.reset();
                     newsForm.classList.add('hidden');
                     
                     // Show success message
-                    showNotification('News submitted successfully!', 'success');
+                    showNotification('News submitted for review! An admin will review it shortly.', 'success');
                 });
             }
 

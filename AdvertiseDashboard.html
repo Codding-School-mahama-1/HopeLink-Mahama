@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Mahama Refugee Camp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            width: 260px;
+            transition: all 0.3s;
+        }
+        .content-area {
+            margin-left: 260px;
+            transition: all 0.3s;
+        }
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        .sidebar.collapsed + .content-area {
+            margin-left: 80px;
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-item {
+            transition: all 0.3s ease;
+        }
+        .sidebar-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3B82F6;
+            padding-left: 1.5rem;
+        }
+        .sidebar-item.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-left: 4px solid #3B82F6;
+            color: #3B82F6;
+        }
+        .table-row:hover {
+            background: #f8fafc;
+        }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        .badge-approved {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .badge-rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div class="sidebar fixed h-screen bg-white shadow-lg z-40">
+        <!-- Logo -->
+        <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="bg-gradient-to-r from-blue-500 to-green-500 p-2 rounded-lg mr-3">
+                    <i class="fas fa-tachometer-alt text-white"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-gray-800 text-lg">HopeLink</div>
+                    <div class="text-xs text-green-500 font-semibold">Admin Dashboard</div>
+                </div>
+            </div>
+            <button id="toggleSidebar" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- User Profile -->
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center space-x-3">
+                <img id="admin-avatar" src="https://ui-avatars.com/api/?name=Admin&background=blue" 
+                     class="w-12 h-12 rounded-full border-2 border-blue-500">
+                <div class="flex-1">
+                    <div id="admin-name" class="font-semibold text-gray-800">Administrator</div>
+                    <div class="text-xs text-gray-500">Super Admin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="p-4">
+            <div class="space-y-2">
+                <a href="#" data-section="overview" class="sidebar-item active flex items-center space-x-3 p-3 rounded-lg text-gray-700">
+                    <i class="fas fa-chart-bar w-6"></i>
+                    <span>Overview</span>
+                </a>
+                
+                <a href="#" data-section="news" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-700">
+                    <i class="fas fa-newspaper w-6"></i>
+                    <span>News & Articles</span>
+                    <span class="ml-auto bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full" id="news-count">0</span>
+                </a>
+                
+                <a href="#" data-section="announcements" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-700">
+                    <i class="fas fa-bullhorn w-6"></i>
+                    <span>Announcements</span>
+                </a>
+                
+                <a href="#" data-section="events" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-700">
+                    <i class="fas fa-calendar-alt w-6"></i>
+                    <span>Events</span>
+                </a>
+                
+                <a href="#" data-section="submissions" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-700">
+                    <i class="fas fa-inbox w-6"></i>
+                    <span>Submissions</span>
+                    <span class="ml-auto bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full" id="pending-count">0</span>
+                </a>
+                
+                <a href="#" data-section="users" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-700">
+                    <i class="fas fa-users w-6"></i>
+                    <span>Users</span>
+                </a>
+                
+                <a href="#" data-section="settings" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-700">
+                    <i class="fas fa-cog w-6"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Logout -->
+        <div class="absolute bottom-0 w-full p-4 border-t border-gray-200">
+            <button onclick="logout()" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 w-full">
+                <i class="fas fa-sign-out-alt w-6"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-area min-h-screen">
+        <!-- Top Bar -->
+        <header class="bg-white shadow-sm px-8 py-4 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800" id="page-title">Dashboard Overview</h1>
+                <p class="text-gray-600" id="page-description">Welcome back! Here's what's happening today.</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notifications-btn" class="relative p-2 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <button id="user-menu-btn" class="flex items-center space-x-3">
+                        <img id="top-admin-avatar" src="https://ui-avatars.com/api/?name=Admin&background=blue" 
+                             class="w-8 h-8 rounded-full border-2 border-blue-500">
+                        <i class="fas fa-chevron-down text-gray-400"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Sections -->
+        <main class="p-8">
+            <!-- Overview Section -->
+            <section id="overview-section" class="space-y-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Submissions</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="total-submissions">0</h3>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-inbox text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-green-600 text-sm font-medium">
+                                <i class="fas fa-arrow-up mr-1"></i>12% from last month
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Pending Review</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="pending-review">0</h3>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-red-600 text-sm font-medium">
+                                <i class="fas fa-exclamation-circle mr-1"></i>Requires attention
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Published News</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="published-news">0</h3>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-green-600 text-sm font-medium">
+                                <i class="fas fa-arrow-up mr-1"></i>8% from last month
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Users</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="total-users">0</h3>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <i class="fas fa-users text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-green-600 text-sm font-medium">
+                                <i class="fas fa-arrow-up mr-1"></i>5% from last month
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Submissions -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">Recent Submissions</h2>
+                        <p class="text-gray-600">Latest content submitted by users</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                                        <th class="pb-3 font-medium">Title</th>
+                                        <th class="pb-3 font-medium">Author</th>
+                                        <th class="pb-3 font-medium">Type</th>
+                                        <th class="pb-3 font-medium">Status</th>
+                                        <th class="pb-3 font-medium">Date</th>
+                                        <th class="pb-3 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-submissions-table" class="text-sm">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <a href="#" data-section="submissions" class="text-blue-600 hover:text-blue-800 font-medium">
+                                View all submissions →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- News & Articles Section -->
+            <section id="news-section" class="space-y-6 hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">News Articles</h2>
+                            <p class="text-gray-600">Manage community news and articles</p>
+                        </div>
+                        <button onclick="openNewsEditor()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add News
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                                        <th class="pb-3 font-medium">Title</th>
+                                        <th class="pb-3 font-medium">Category</th>
+                                        <th class="pb-3 font-medium">Views</th>
+                                        <th class="pb-3 font-medium">Likes</th>
+                                        <th class="pb-3 font-medium">Status</th>
+                                        <th class="pb-3 font-medium">Date</th>
+                                        <th class="pb-3 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="news-table">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Submissions Section -->
+            <section id="submissions-section" class="space-y-6 hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">User Submissions</h2>
+                        <p class="text-gray-600">Review and manage content submitted by users</p>
+                    </div>
+                    <div class="p-6">
+                        <!-- Filter Tabs -->
+                        <div class="flex space-x-4 mb-6">
+                            <button data-filter="all" class="submission-filter px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium">
+                                All Submissions
+                            </button>
+                            <button data-filter="pending" class="submission-filter px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                                Pending Review
+                            </button>
+                            <button data-filter="approved" class="submission-filter px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                                Approved
+                            </button>
+                            <button data-filter="rejected" class="submission-filter px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                                Rejected
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                                        <th class="pb-3 font-medium">Title/Content</th>
+                                        <th class="pb-3 font-medium">Submitted By</th>
+                                        <th class="pb-3 font-medium">Type</th>
+                                        <th class="pb-3 font-medium">Status</th>
+                                        <th class="pb-3 font-medium">Date</th>
+                                        <th class="pb-3 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="submissions-table">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Announcements Section -->
+            <section id="announcements-section" class="space-y-6 hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">Camp Announcements</h2>
+                            <p class="text-gray-600">Important announcements for the camp community</p>
+                        </div>
+                        <button onclick="openAnnouncementEditor()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
+                            <i class="fas fa-plus mr-2"></i> New Announcement
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div id="announcements-list" class="space-y-4">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events Section -->
+            <section id="events-section" class="space-y-6 hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">Camp Events</h2>
+                            <p class="text-gray-600">Manage upcoming events and activities</p>
+                        </div>
+                        <button onclick="openEventEditor()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add Event
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div id="events-list" class="space-y-4">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users-section" class="space-y-6 hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">Registered Users</h2>
+                        <p class="text-gray-600">Manage user accounts and permissions</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-gray-500 text-sm border-b border-gray-200">
+                                        <th class="pb-3 font-medium">User</th>
+                                        <th class="pb-3 font-medium">Email</th>
+                                        <th class="pb-3 font-medium">Role</th>
+                                        <th class="pb-3 font-medium">Status</th>
+                                        <th class="pb-3 font-medium">Joined</th>
+                                        <th class="pb-3 font-medium">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" class="space-y-6 hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">Dashboard Settings</h2>
+                        <p class="text-gray-600">Configure dashboard preferences</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-800 mb-4">General Settings</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-medium text-gray-700">Email Notifications</p>
+                                            <p class="text-sm text-gray-500">Receive email alerts for new submissions</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-medium text-gray-700">Auto-approve trusted users</p>
+                                            <p class="text-sm text-gray-500">Automatically approve submissions from trusted users</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-800 mb-4">Content Moderation</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Default Submission Status</label>
+                                        <select class="w-full md:w-64 p-2 border border-gray-300 rounded-lg">
+                                            <option value="pending">Pending Review</option>
+                                            <option value="approved">Auto-approve</option>
+                                            <option value="rejected">Auto-reject</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Maximum Submission Length</label>
+                                        <input type="number" value="1000" class="w-full md:w-64 p-2 border border-gray-300 rounded-lg">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4">
+                                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                                    Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    
+    <!-- News Editor Modal -->
+    <div id="news-editor-modal" class="modal">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Edit News Article</h3>
+                    <button onclick="closeModal('news-editor-modal')" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="news-form" class="space-y-4">
+                    <input type="hidden" id="news-id">
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Title</label>
+                        <input type="text" id="news-title" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Category</label>
+                        <select id="news-category" class="w-full p-3 border border-gray-300 rounded-lg">
+                            <option value="general">General</option>
+                            <option value="events">Events</option>
+                            <option value="announcements">Announcements</option>
+                            <option value="success-stories">Success Stories</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Content</label>
+                        <textarea id="news-content" rows="6" class="w-full p-3 border border-gray-300 rounded-lg" required></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Status</label>
+                        <select id="news-status" class="w-full p-3 border border-gray-300 rounded-lg">
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 pt-6">
+                        <button type="button" onclick="closeModal('news-editor-modal')" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            Save Article
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission Review Modal -->
+    <div id="submission-review-modal" class="modal">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Review Submission</h3>
+                    <button onclick="closeModal('submission-review-modal')" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div id="submission-content" class="mb-6 p-4 bg-gray-50 rounded-lg">
+                    <!-- Submission content will be loaded here -->
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Status</label>
+                        <select id="submission-status" class="w-full p-3 border border-gray-300 rounded-lg">
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approve</option>
+                            <option value="rejected">Reject</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Admin Notes (Optional)</label>
+                        <textarea id="admin-notes" rows="3" class="w-full p-3 border border-gray-300 rounded-lg" 
+                                  placeholder="Add notes about this submission..."></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 pt-6">
+                        <button type="button" onclick="closeModal('submission-review-modal')" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button onclick="saveSubmissionReview()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            Save Review
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Editor Modal -->
+    <div id="announcement-editor-modal" class="modal">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Edit Announcement</h3>
+                    <button onclick="closeModal('announcement-editor-modal')" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="announcement-form" class="space-y-4">
+                    <input type="hidden" id="announcement-id">
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Title</label>
+                        <input type="text" id="announcement-title" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Content</label>
+                        <textarea id="announcement-content" rows="4" class="w-full p-3 border border-gray-300 rounded-lg" required></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Priority</label>
+                        <select id="announcement-priority" class="w-full p-3 border border-gray-300 rounded-lg">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Expiry Date</label>
+                        <input type="date" id="announcement-expiry" class="w-full p-3 border border-gray-300 rounded-lg">
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 pt-6">
+                        <button type="button" onclick="closeModal('announcement-editor-modal')" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            Save Announcement
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Editor Modal -->
+    <div id="event-editor-modal" class="modal">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Edit Event</h3>
+                    <button onclick="closeModal('event-editor-modal')" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="event-form" class="space-y-4">
+                    <input type="hidden" id="event-id">
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Event Name</label>
+                        <input type="text" id="event-name" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Description</label>
+                        <textarea id="event-description" rows="4" class="w-full p-3 border border-gray-300 rounded-lg" required></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Date</label>
+                            <input type="date" id="event-date" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Time</label>
+                            <input type="time" id="event-time" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Location</label>
+                        <input type="text" id="event-location" class="w-full p-3 border border-gray-300 rounded-lg" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2">Category</label>
+                        <select id="event-category" class="w-full p-3 border border-gray-300 rounded-lg">
+                            <option value="community">Community</option>
+                            <option value="education">Education</option>
+                            <option value="health">Health</option>
+                            <option value="sports">Sports</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 pt-6">
+                        <button type="button" onclick="closeModal('event-editor-modal')" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            Save Event
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6srTpyl7YXpr4t3Xij0Lx7DqmHsbaCPs",
+            authDomain: "hopelink-mahama-d9cd4.firebaseapp.com",
+            databaseURL: "https://hopelink-mahama-d9cd4-default-rtdb.firebaseio.com",
+            projectId: "hopelink-mahama-d9cd4",
+            storageBucket: "hopelink-mahama-d9cd4.firebasestorage.app",
+            messagingSenderId: "769873156422",
+            appId: "1:769873156422:web:5d89b8c5695ce95bb6ad47",
+            measurementId: "G-8TQ2LYP809"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        // Make Firebase available globally
+        window.firebaseApp = app;
+        window.firebaseAnalytics = analytics;
+        
+        console.log("Firebase initialized successfully");
+    </script>
+
+    <script>
+        // ========== GLOBAL STATE ==========
+        let currentSubmissionId = null;
+        let submissions = JSON.parse(localStorage.getItem('hopelink_submissions') || '[]');
+        let news = JSON.parse(localStorage.getItem('hopelink_news') || '[]');
+        let announcements = JSON.parse(localStorage.getItem('hopelink_announcements') || '[]');
+        let events = JSON.parse(localStorage.getItem('hopelink_events') || '[]');
+        let users = JSON.parse(localStorage.getItem('hopelink_users') || '[]');
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is admin - MODIFIED TO ALLOW DIRECT ACCESS
+            const userJson = sessionStorage.getItem('currentUser');
+            
+            // Try to load user data if available
+            if (userJson) {
+                try {
+                    const user = JSON.parse(userJson);
+                    document.getElementById('admin-name').textContent = user.name || 'Administrator';
+                    document.getElementById('top-admin-avatar').src = user.photoURL || 
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Admin')}&background=blue`;
+                    document.getElementById('admin-avatar').src = user.photoURL || 
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Admin')}&background=blue`;
+                } catch (e) {
+                    // If error parsing, use default
+                    console.log('Using default user info');
+                }
+            }
+
+            // Load data
+            loadDashboardData();
+            setupEventListeners();
+        });
+
+        // ========== DATA MANAGEMENT ==========
+        function loadDashboardData() {
+            updateStats();
+            loadRecentSubmissions();
+            loadNews();
+            loadAnnouncements();
+            loadEvents();
+            loadUsers();
+        }
+
+        function updateStats() {
+            const pending = submissions.filter(s => s.status === 'pending').length;
+            const publishedNews = news.filter(n => n.status === 'published').length;
+            
+            document.getElementById('total-submissions').textContent = submissions.length;
+            document.getElementById('pending-review').textContent = pending;
+            document.getElementById('published-news').textContent = publishedNews;
+            document.getElementById('total-users').textContent = users.length;
+            
+            document.getElementById('news-count').textContent = news.length;
+            document.getElementById('pending-count').textContent = pending;
+        }
+
+        function loadRecentSubmissions() {
+            const table = document.getElementById('recent-submissions-table');
+            const recentSubmissions = submissions.slice(0, 5);
+            
+            table.innerHTML = recentSubmissions.map(sub => `
+                <tr class="table-row border-b border-gray-100">
+                    <td class="py-4">
+                        <div class="font-medium text-gray-800">${sub.title || 'No title'}</div>
+                        <div class="text-xs text-gray-500 truncate max-w-xs">${sub.content.substring(0, 50)}...</div>
+                    </td>
+                    <td class="py-4">${sub.author || 'Anonymous'}</td>
+                    <td class="py-4">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">${sub.type}</span>
+                    </td>
+                    <td class="py-4">
+                        <span class="badge badge-${sub.status}">${sub.status}</span>
+                    </td>
+                    <td class="py-4 text-gray-600">${formatDate(sub.date)}</td>
+                    <td class="py-4">
+                        <button onclick="reviewSubmission('${sub.id}')" class="text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            if (recentSubmissions.length === 0) {
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-3xl mb-2"></i>
+                            <p>No submissions yet</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function loadNews() {
+            const table = document.getElementById('news-table');
+            table.innerHTML = news.map(item => `
+                <tr class="table-row border-b border-gray-100">
+                    <td class="py-4">
+                        <div class="font-medium text-gray-800">${item.title}</div>
+                    </td>
+                    <td class="py-4">
+                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${item.category}</span>
+                    </td>
+                    <td class="py-4">${item.views || 0}</td>
+                    <td class="py-4">${item.likes || 0}</td>
+                    <td class="py-4">
+                        <span class="px-2 py-1 ${getStatusColor(item.status)} rounded text-xs">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td class="py-4 text-gray-600">${formatDate(item.date)}</td>
+                    <td class="py-4">
+                        <div class="flex space-x-2">
+                            <button onclick="editNews('${item.id}')" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteNews('${item.id}')" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            if (news.length === 0) {
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-gray-500">
+                            <i class="fas fa-newspaper text-3xl mb-2"></i>
+                            <p>No news articles yet</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function loadAnnouncements() {
+            const container = document.getElementById('announcements-list');
+            container.innerHTML = announcements.map(ann => `
+                <div class="p-4 border border-gray-200 rounded-lg">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-gray-800">${ann.title}</h4>
+                        <div class="flex space-x-2">
+                            <button onclick="editAnnouncement('${ann.id}')" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteAnnouncement('${ann.id}')" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-3">${ann.content}</p>
+                    <div class="flex justify-between text-sm text-gray-500">
+                        <span>Priority: <span class="font-medium ${getPriorityColor(ann.priority)}">${ann.priority}</span></span>
+                        <span>Expires: ${ann.expiry ? formatDate(ann.expiry) : 'Never'}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            if (announcements.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-bullhorn text-3xl mb-2"></i>
+                        <p>No announcements yet</p>
+                    </div>
+                `;
+            }
+        }
+
+        function loadEvents() {
+            const container = document.getElementById('events-list');
+            container.innerHTML = events.map(event => `
+                <div class="p-4 border border-gray-200 rounded-lg">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold text-gray-800">${event.name}</h4>
+                            <p class="text-gray-600 text-sm">${event.description.substring(0, 100)}...</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editEvent('${event.id}')" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteEvent('${event.id}')" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 text-sm text-gray-600 mt-3">
+                        <div>
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            ${formatDate(event.date)}
+                        </div>
+                        <div>
+                            <i class="fas fa-clock mr-2"></i>
+                            ${event.time}
+                        </div>
+                        <div>
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            ${event.location}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            if (events.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-calendar-alt text-3xl mb-2"></i>
+                        <p>No events scheduled yet</p>
+                    </div>
+                `;
+            }
+        }
+
+        function loadUsers() {
+            const table = document.getElementById('users-table');
+            table.innerHTML = users.map(user => `
+                <tr class="table-row border-b border-gray-100">
+                    <td class="py-4">
+                        <div class="flex items-center space-x-3">
+                            <img src="${user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email)}&background=random`}" 
+                                 class="w-8 h-8 rounded-full">
+                            <div>
+                                <div class="font-medium text-gray-800">${user.name || 'No name'}</div>
+                                <div class="text-xs text-gray-500">ID: ${user.id.substring(0, 8)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4">${user.email}</td>
+                    <td class="py-4">
+                        <span class="px-2 py-1 ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'} rounded text-xs">
+                            ${user.role}
+                        </span>
+                    </td>
+                    <td class="py-4">
+                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Active</span>
+                    </td>
+                    <td class="py-4 text-gray-600">${formatDate(user.createdAt)}</td>
+                    <td class="py-4">
+                        <div class="flex space-x-2">
+                            <button onclick="editUser('${user.id}')" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-800" ${user.role === 'admin' ? 'disabled' : ''}>
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            if (users.length === 0) {
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-gray-500">
+                            <i class="fas fa-users text-3xl mb-2"></i>
+                            <p>No users yet</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // ========== SUBMISSION MANAGEMENT ==========
+        function reviewSubmission(submissionId) {
+            currentSubmissionId = submissionId;
+            const submission = submissions.find(s => s.id === submissionId);
+            
+            if (submission) {
+                document.getElementById('submission-content').innerHTML = `
+                    <h4 class="font-bold text-gray-800 mb-2">${submission.title || 'No title'}</h4>
+                    <p class="text-gray-700 mb-4">${submission.content}</p>
+                    <div class="text-sm text-gray-500">
+                        <p><strong>Submitted by:</strong> ${submission.author}</p>
+                        <p><strong>Type:</strong> ${submission.type}</p>
+                        <p><strong>Date:</strong> ${formatDate(submission.date)}</p>
+                    </div>
+                `;
+                
+                document.getElementById('submission-status').value = submission.status;
+                document.getElementById('admin-notes').value = submission.adminNotes || '';
+                
+                openModal('submission-review-modal');
+            }
+        }
+
+        function saveSubmissionReview() {
+            const status = document.getElementById('submission-status').value;
+            const adminNotes = document.getElementById('admin-notes').value;
+            
+            const index = submissions.findIndex(s => s.id === currentSubmissionId);
+            if (index !== -1) {
+                submissions[index].status = status;
+                submissions[index].adminNotes = adminNotes;
+                submissions[index].reviewedAt = new Date().toISOString();
+                const userJson = sessionStorage.getItem('currentUser');
+                if (userJson) {
+                    try {
+                        const user = JSON.parse(userJson);
+                        submissions[index].reviewedBy = user.name;
+                    } catch (e) {
+                        submissions[index].reviewedBy = 'Admin';
+                    }
+                } else {
+                    submissions[index].reviewedBy = 'Admin';
+                }
+                
+                localStorage.setItem('hopelink_submissions', JSON.stringify(submissions));
+                showNotification('Submission review saved!', 'success');
+                
+                closeModal('submission-review-modal');
+                loadDashboardData();
+                
+                // If approved, add to news
+                if (status === 'approved') {
+                    const submission = submissions[index];
+                    const newNews = {
+                        id: 'news_' + Date.now(),
+                        title: submission.title,
+                        content: submission.content,
+                        category: 'user-submitted',
+                        author: submission.author,
+                        status: 'published',
+                        date: new Date().toISOString(),
+                        views: 0,
+                        likes: 0
+                    };
+                    news.push(newNews);
+                    localStorage.setItem('hopelink_news', JSON.stringify(news));
+                }
+            }
+        }
+
+        // ========== NEWS MANAGEMENT ==========
+        function openNewsEditor(newsId = null) {
+            if (newsId) {
+                const newsItem = news.find(n => n.id === newsId);
+                if (newsItem) {
+                    document.getElementById('news-id').value = newsItem.id;
+                    document.getElementById('news-title').value = newsItem.title;
+                    document.getElementById('news-category').value = newsItem.category;
+                    document.getElementById('news-content').value = newsItem.content;
+                    document.getElementById('news-status').value = newsItem.status;
+                }
+            } else {
+                document.getElementById('news-form').reset();
+                document.getElementById('news-id').value = '';
+            }
+            openModal('news-editor-modal');
+        }
+
+        function saveNews() {
+            const id = document.getElementById('news-id').value;
+            const title = document.getElementById('news-title').value;
+            const category = document.getElementById('news-category').value;
+            const content = document.getElementById('news-content').value;
+            const status = document.getElementById('news-status').value;
+            
+            if (id) {
+                // Update existing news
+                const index = news.findIndex(n => n.id === id);
+                if (index !== -1) {
+                    news[index] = {
+                        ...news[index],
+                        title,
+                        category,
+                        content,
+                        status,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+            } else {
+                // Create new news
+                const newNews = {
+                    id: 'news_' + Date.now(),
+                    title,
+                    category,
+                    content,
+                    status,
+                    date: new Date().toISOString(),
+                    author: 'Admin',
+                    views: 0,
+                    likes: 0
+                };
+                news.push(newNews);
+            }
+            
+            localStorage.setItem('hopelink_news', JSON.stringify(news));
+            showNotification('News article saved!', 'success');
+            closeModal('news-editor-modal');
+            loadDashboardData();
+        }
+
+        function deleteNews(newsId) {
+            if (confirm('Are you sure you want to delete this news article?')) {
+                news = news.filter(n => n.id !== newsId);
+                localStorage.setItem('hopelink_news', JSON.stringify(news));
+                showNotification('News article deleted!', 'success');
+                loadDashboardData();
+            }
+        }
+
+        // ========== ANNOUNCEMENTS MANAGEMENT ==========
+        function openAnnouncementEditor(announcementId = null) {
+            if (announcementId) {
+                const announcement = announcements.find(a => a.id === announcementId);
+                if (announcement) {
+                    document.getElementById('announcement-id').value = announcement.id;
+                    document.getElementById('announcement-title').value = announcement.title;
+                    document.getElementById('announcement-content').value = announcement.content;
+                    document.getElementById('announcement-priority').value = announcement.priority;
+                    document.getElementById('announcement-expiry').value = announcement.expiry || '';
+                }
+            } else {
+                document.getElementById('announcement-form').reset();
+                document.getElementById('announcement-id').value = '';
+            }
+            openModal('announcement-editor-modal');
+        }
+
+        function saveAnnouncement() {
+            const id = document.getElementById('announcement-id').value;
+            const title = document.getElementById('announcement-title').value;
+            const content = document.getElementById('announcement-content').value;
+            const priority = document.getElementById('announcement-priority').value;
+            const expiry = document.getElementById('announcement-expiry').value;
+            
+            if (id) {
+                // Update existing announcement
+                const index = announcements.findIndex(a => a.id === id);
+                if (index !== -1) {
+                    announcements[index] = {
+                        ...announcements[index],
+                        title,
+                        content,
+                        priority,
+                        expiry: expiry || null,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+            } else {
+                // Create new announcement
+                const newAnnouncement = {
+                    id: 'ann_' + Date.now(),
+                    title,
+                    content,
+                    priority,
+                    expiry: expiry || null,
+                    date: new Date().toISOString(),
+                    author: 'Admin'
+                };
+                announcements.push(newAnnouncement);
+            }
+            
+            localStorage.setItem('hopelink_announcements', JSON.stringify(announcements));
+            showNotification('Announcement saved!', 'success');
+            closeModal('announcement-editor-modal');
+            loadDashboardData();
+        }
+
+        function deleteAnnouncement(announcementId) {
+            if (confirm('Are you sure you want to delete this announcement?')) {
+                announcements = announcements.filter(a => a.id !== announcementId);
+                localStorage.setItem('hopelink_announcements', JSON.stringify(announcements));
+                showNotification('Announcement deleted!', 'success');
+                loadDashboardData();
+            }
+        }
+
+        // ========== EVENTS MANAGEMENT ==========
+        function openEventEditor(eventId = null) {
+            if (eventId) {
+                const event = events.find(e => e.id === eventId);
+                if (event) {
+                    document.getElementById('event-id').value = event.id;
+                    document.getElementById('event-name').value = event.name;
+                    document.getElementById('event-description').value = event.description;
+                    document.getElementById('event-date').value = event.date;
+                    document.getElementById('event-time').value = event.time;
+                    document.getElementById('event-location').value = event.location;
+                    document.getElementById('event-category').value = event.category;
+                }
+            } else {
+                document.getElementById('event-form').reset();
+                document.getElementById('event-id').value = '';
+            }
+            openModal('event-editor-modal');
+        }
+
+        function saveEvent() {
+            const id = document.getElementById('event-id').value;
+            const name = document.getElementById('event-name').value;
+            const description = document.getElementById('event-description').value;
+            const date = document.getElementById('event-date').value;
+            const time = document.getElementById('event-time').value;
+            const location = document.getElementById('event-location').value;
+            const category = document.getElementById('event-category').value;
+            
+            if (id) {
+                // Update existing event
+                const index = events.findIndex(e => e.id === id);
+                if (index !== -1) {
+                    events[index] = {
+                        ...events[index],
+                        name,
+                        description,
+                        date,
+                        time,
+                        location,
+                        category,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+            } else {
+                // Create new event
+                const newEvent = {
+                    id: 'event_' + Date.now(),
+                    name,
+                    description,
+                    date,
+                    time,
+                    location,
+                    category,
+                    createdBy: 'Admin',
+                    createdAt: new Date().toISOString()
+                };
+                events.push(newEvent);
+            }
+            
+            localStorage.setItem('hopelink_events', JSON.stringify(events));
+            showNotification('Event saved!', 'success');
+            closeModal('event-editor-modal');
+            loadDashboardData();
+        }
+
+        function deleteEvent(eventId) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                events = events.filter(e => e.id !== eventId);
+                localStorage.setItem('hopelink_events', JSON.stringify(events));
+                showNotification('Event deleted!', 'success');
+                loadDashboardData();
+            }
+        }
+
+        // ========== HELPER FUNCTIONS ==========
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'published': return 'bg-green-100 text-green-700';
+                case 'draft': return 'bg-yellow-100 text-yellow-700';
+                case 'archived': return 'bg-gray-100 text-gray-700';
+                default: return 'bg-gray-100 text-gray-700';
+            }
+        }
+
+        function getPriorityColor(priority) {
+            switch(priority) {
+                case 'high': return 'text-red-600';
+                case 'medium': return 'text-yellow-600';
+                case 'low': return 'text-green-600';
+                default: return 'text-gray-600';
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 animate-slide-in ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            // Instead of redirecting, just reload the page
+            location.reload();
+        }
+
+        // ========== EVENT LISTENERS ==========
+        function setupEventListeners() {
+            // Sidebar toggle
+            document.getElementById('toggleSidebar').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('collapsed');
+            });
+
+            // Navigation
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active state
+                    document.querySelectorAll('.sidebar-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show correct section
+                    const section = this.getAttribute('data-section');
+                    showSection(section);
+                });
+            });
+
+            // Form submissions
+            document.getElementById('news-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveNews();
+            });
+
+            document.getElementById('announcement-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveAnnouncement();
+            });
+
+            document.getElementById('event-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveEvent();
+            });
+
+            // Submission filters
+            document.querySelectorAll('.submission-filter').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active filter
+                    document.querySelectorAll('.submission-filter').forEach(btn => {
+                        btn.classList.remove('bg-blue-100', 'text-blue-700');
+                        btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+                    });
+                    this.classList.remove('text-gray-600', 'hover:bg-gray-100');
+                    this.classList.add('bg-blue-100', 'text-blue-700');
+                    
+                    // Filter submissions (would implement in a real scenario)
+                    const filter = this.getAttribute('data-filter');
+                    console.log('Filter by:', filter);
+                });
+            });
+
+            // Close modals when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal(this.id);
+                    }
+                });
+            });
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('main > section').forEach(sec => {
+                sec.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(`${section}-section`).classList.remove('hidden');
+            
+            // Update page title
+            const titles = {
+                'overview': 'Dashboard Overview',
+                'news': 'News & Articles',
+                'announcements': 'Camp Announcements',
+                'events': 'Camp Events',
+                'submissions': 'User Submissions',
+                'users': 'User Management',
+                'settings': 'Dashboard Settings'
+            };
+            
+            const descriptions = {
+                'overview': 'Welcome back! Here\'s what\'s happening today.',
+                'news': 'Manage community news and articles',
+                'announcements': 'Important announcements for the camp community',
+                'events': 'Manage upcoming events and activities',
+                'submissions': 'Review and manage content submitted by users',
+                'users': 'Manage user accounts and permissions',
+                'settings': 'Configure dashboard preferences'
+            };
+            
+            document.getElementById('page-title').textContent = titles[section];
+            document.getElementById('page-description').textContent = descriptions[section];
+        }
+
+        // ========== DUMMY DATA INITIALIZATION ==========
+        // Initialize with sample data if empty
+        if (submissions.length === 0) {
+            submissions = [
+                {
+                    id: 'sub_1',
+                    title: 'Community Garden Update',
+                    content: 'Our community garden has produced its first harvest! Fresh vegetables are now available for families in need.',
+                    author: 'John D.',
+                    type: 'news',
+                    status: 'pending',
+                    date: new Date().toISOString()
+                },
+                {
+                    id: 'sub_2',
+                    title: 'Youth Football Tournament Results',
+                    content: 'The youth football tournament was a great success! Over 50 young people participated and showed amazing sportsmanship.',
+                    author: 'Sarah M.',
+                    type: 'news',
+                    status: 'approved',
+                    date: new Date(Date.now() - 86400000).toISOString()
+                }
+            ];
+            localStorage.setItem('hopelink_submissions', JSON.stringify(submissions));
+        }
+
+        if (news.length === 0) {
+            news = [
+                {
+                    id: 'news_1',
+                    title: 'New Education Program Launched',
+                    content: 'We are excited to announce the launch of our new adult literacy program...',
+                    category: 'announcements',
+                    status: 'published',
+                    date: new Date().toISOString(),
+                    author: 'Admin',
+                    views: 45,
+                    likes: 12
+                }
+            ];
+            localStorage.setItem('hopelink_news', JSON.stringify(news));
+        }
+
+        if (announcements.length === 0) {
+            announcements = [
+                {
+                    id: 'ann_1',
+                    title: 'Health Check-up Campaign',
+                    content: 'Free medical check-ups available at the health center from Monday to Friday, 8 AM - 4 PM.',
+                    priority: 'high',
+                    date: new Date().toISOString(),
+                    author: 'Camp Management'
+                }
+            ];
+            localStorage.setItem('hopelink_announcements', JSON.stringify(announcements));
+        }
+
+        if (events.length === 0) {
+            events = [
+                {
+                    id: 'event_1',
+                    name: 'Community Meeting',
+                    description: 'Monthly community gathering to discuss camp issues and solutions.',
+                    date: '2024-10-15',
+                    time: '10:00',
+                    location: 'Community Hall',
+                    category: 'community',
+                    createdBy: 'Admin'
+                }
+            ];
+            localStorage.setItem('hopelink_events', JSON.stringify(events));
+        }
+    </script>
+</body>
+</html>
