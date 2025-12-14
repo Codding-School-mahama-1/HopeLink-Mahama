@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin Login - Hope Link Mahama</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+        }
+        
+        .login-card {
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .input-field {
+            background: rgba(31, 41, 55, 0.9);
+            border: 1px solid rgba(107, 114, 128, 0.5);
+        }
+        
+        .input-field:focus {
+            border-color: #8b5cf6;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            font-weight: 600;
+        }
+        
+        .btn-admin:hover {
+            background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+        }
+    </style>
+</head>
+<body class="text-gray-200 font-sans">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="login-card rounded-xl w-full max-w-sm">
+            <!-- Header -->
+            <div class="p-6 text-center border-b border-gray-800">
+                <h1 class="text-xl font-bold text-white">
+                    Hope Link Mahama
+                </h1>
+                <p class="text-sm text-gray-400 mt-1">Admin Login</p>
+                <p class="text-xs text-yellow-500 mt-2">Testing Mode</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="p-6">
+                <!-- Status Message -->
+                <div id="statusMessage" class="bg-blue-900/50 border border-blue-700 rounded p-3 mb-4 hidden">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-blue-300 mr-2"></i>
+                        <span id="statusText" class="text-blue-300 text-sm"></span>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="bg-red-900/70 border border-red-700 rounded p-3 mb-4 hidden">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-300 mr-2"></i>
+                        <span id="errorText" class="text-red-300 text-sm"></span>
+                    </div>
+                </div>
+
+                <form id="adminLoginForm">
+                    <!-- Email Field -->
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">
+                            Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            required 
+                            class="input-field w-full px-3 py-2 rounded text-white"
+                            placeholder="test@example.com"
+                            value="test@hopelink.com"
+                        >
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="mb-6">
+                        <label for="password" class="block text-sm font-medium text-gray-300 mb-1">
+                            Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            required 
+                            class="input-field w-full px-3 py-2 rounded text-white"
+                            placeholder="••••••••"
+                            value="Test123456"
+                        >
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="loginButton"
+                        class="btn-admin w-full py-2 rounded text-white flex items-center justify-center"
+                    >
+                        <span>Login</span>
+                        <i id="loadingSpinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                    </button>
+                </form>
+
+                <!-- Test Credentials -->
+                <div class="mt-4 p-3 bg-gray-900/50 rounded border border-gray-700">
+                    <p class="text-xs text-gray-400 mb-2">Need test credentials?</p>
+                    <button id="createTestUser" class="text-xs text-purple-400 hover:text-purple-300">
+                        <i class="fas fa-user-plus mr-1"></i> Create Test User
+                    </button>
+                    <button id="debugAuth" class="text-xs text-yellow-400 hover:text-yellow-300 ml-4">
+                        <i class="fas fa-bug mr-1"></i> Debug Auth
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====================
+        // FIREBASE CONFIGURATION
+        // ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6srTpyl7YXpr4t3Xij0Lx7DqmHsbaCPs",
+            authDomain: "hopelink-mahama-d9cd4.firebaseapp.com",
+            databaseURL: "https://hopelink-mahama-d9cd4-default-rtdb.firebaseio.com",
+            projectId: "hopelink-mahama-d9cd4",
+            storageBucket: "hopelink-mahama-d9cd4.firebasestorage.app",
+            messagingSenderId: "769873156422",
+            appId: "1:769873156422:web:5d89b8c5695ce95bb6ad47",
+            measurementId: "G-8TQ2LYP809"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // DOM Elements
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.getElementById('loginButton');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const statusMessage = document.getElementById('statusMessage');
+        const statusText = document.getElementById('statusText');
+        const createTestUserBtn = document.getElementById('createTestUser');
+        const debugAuthBtn = document.getElementById('debugAuth');
+
+        // Show/Hide Messages
+        function showStatus(message) {
+            statusText.textContent = message;
+            statusMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            statusMessage.classList.add('hidden');
+        }
+
+        function hideMessages() {
+            errorMessage.classList.add('hidden');
+            statusMessage.classList.add('hidden');
+        }
+
+        // Set Loading State
+        function setLoading(isLoading) {
+            loginButton.disabled = isLoading;
+            loadingSpinner.classList.toggle('hidden', !isLoading);
+            loginButton.querySelector('span').textContent = isLoading ? 'Logging in...' : 'Login';
+        }
+
+        // Handle Login
+        adminLoginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            console.log('=== LOGIN ATTEMPT ===');
+            console.log('Email:', email);
+            console.log('Password length:', password.length);
+            
+            // Validation
+            if (!email || !password) {
+                showError('Please enter email and password');
+                return;
+            }
+
+            setLoading(true);
+            hideMessages();
+
+            try {
+                console.log('Attempting Firebase authentication...');
+                
+                // Try to login
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                console.log('✅ Login successful!');
+                console.log('User ID:', user.uid);
+                console.log('User Email:', user.email);
+                console.log('User Email Verified:', user.emailVerified);
+                
+                showStatus('Login successful! Redirecting...');
+                
+                // Check if user exists in database
+                checkUserInDatabase(user.uid, user.email);
+                
+            } catch (error) {
+                console.error('❌ Login error:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
+                console.error('Full error object:', JSON.stringify(error));
+                
+                // User-friendly error messages
+                let errorMsg = 'Login failed: ';
+                
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        errorMsg = 'Invalid email address format.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMsg = 'This account has been disabled.';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMsg = 'No account found with this email. Click "Create Test User" to create one.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMsg = 'Incorrect password. Try "Test123456" or click "Create Test User".';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMsg = 'Too many failed attempts. Try again later.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMsg = 'Network error. Check your connection.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMsg = 'Email/password login is not enabled in Firebase Console.';
+                        break;
+                    case 'auth/invalid-login-credentials':
+                        errorMsg = 'Invalid credentials. The account might not exist. Click "Create Test User" to create it.';
+                        break;
+                    default:
+                        errorMsg += error.message;
+                }
+                
+                showError(errorMsg);
+                setLoading(false);
+            }
+        });
+
+        // Create Test User Button
+        createTestUserBtn.addEventListener('click', async function() {
+            const testEmail = 'test@hopelink.com';
+            const testPassword = 'Test123456';
+            
+            emailInput.value = testEmail;
+            passwordInput.value = testPassword;
+            
+            showStatus('Creating test user...');
+            setLoading(true);
+            
+            try {
+                // Try to create user
+                console.log('Attempting to create user:', testEmail);
+                const userCredential = await auth.createUserWithEmailAndPassword(testEmail, testPassword);
+                const user = userCredential.user;
+                
+                console.log('✅ Test user created successfully!');
+                console.log('User ID:', user.uid);
+                console.log('User Email:', user.email);
+                
+                showStatus(`✅ Test user created! You can now login with: ${testEmail} / ${testPassword}`);
+                
+                // Auto-login after creation
+                setTimeout(() => {
+                    adminLoginForm.dispatchEvent(new Event('submit'));
+                }, 1500);
+                
+            } catch (error) {
+                console.error('❌ Error creating test user:', error);
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    showStatus('✅ Test user already exists. You can login with it.');
+                    // Auto-fill and attempt login
+                    setTimeout(() => {
+                        adminLoginForm.dispatchEvent(new Event('submit'));
+                    }, 1000);
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    showError('⚠️ Email/password sign-up is disabled in Firebase Console. Please enable it in: Authentication → Sign-in method → Email/Password');
+                } else {
+                    showError(`Failed to create test user: ${error.message} (Code: ${error.code})`);
+                }
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Debug Auth Button
+        debugAuthBtn.addEventListener('click', function() {
+            console.log('=== DEBUG AUTHENTICATION ===');
+            console.log('Firebase App:', firebase.app().name);
+            console.log('Firebase Project ID:', firebaseConfig.projectId);
+            console.log('Current Auth Domain:', firebaseConfig.authDomain);
+            
+            // Check current user
+            const currentUser = auth.currentUser;
+            console.log('Current User:', currentUser);
+            
+            // Show debug info
+            showStatus('Debug: Check browser console (F12) for authentication details.');
+        });
+
+        // Check if user exists in database (optional)
+        function checkUserInDatabase(uid, email) {
+            console.log('Checking user in database:', uid, email);
+            // You can add database checks here if needed
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 1000);
+        }
+
+        // Check if already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('User already logged in:', user.email);
+                console.log('User UID:', user.uid);
+                window.location.href = "dashboard.html";
+            } else {
+                console.log('No user logged in');
+            }
+        });
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            emailInput.focus();
+            console.log('Firebase initialized. Project ID:', firebaseConfig.projectId);
+            console.log('Auth Domain:', firebaseConfig.authDomain);
+            
+            // Check Firebase auth status
+            showStatus('Firebase initialized. Ready for login.');
+            
+            // Auto-attempt test credentials after 1 second
+            setTimeout(() => {
+                console.log('Auto-filling test credentials...');
+                // Don't auto-submit, just fill
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

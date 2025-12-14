@@ -11,6 +11,29 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCb6Rg6XHq2lQ7K1wQ9Z8X4V2pLmN1oPqR3",
+            authDomain: "hopelink-mahama.firebaseapp.com",
+            projectId: "hopelink-mahama",
+            storageBucket: "hopelink-mahama.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890abcdef",
+            measurementId: "G-ABCDEF1234"
+        };
+        
+        // Initialize Firebase
+        let firebaseInitialized = false;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            firebaseInitialized = true;
+            console.log("Firebase initialized successfully");
+        } catch (error) {
+            console.log("Firebase initialization error (falling back to local storage):", error.message);
+        }
+        
         tailwind.config = {
             theme: {
                 extend: {
@@ -1281,7 +1304,7 @@
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Quick answers to common questions</p>
             </div>
 
-            <div class="max-w-3xl mx-auto space-y-4">
+            <div class="max-w-3xl mx-auto space-y-4" id="faq-container">
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in border border-gray-200">
                     <button class="faq-question w-full text-left p-6 flex justify-between items-center hover:bg-gray-50 transition duration-300">
                         <h3 class="text-lg font-semibold text-gray-800">How can I get immediate help for food assistance?</h3>
@@ -1363,7 +1386,7 @@
                         </p>
                         <p class="flex items-center">
                             <i class="fas fa-envelope mr-3"></i>
-                            hopelink.mahama@gmail.com
+                            hopelinkmahama@gmail.com
                         </p>
                     </div>
                 </div>
@@ -1860,36 +1883,265 @@
         let currentUploadedImage = null;
         let map = null;
 
-        // Initialize localStorage for demo users (fallback)
-        if (!localStorage.getItem('hopelink_users')) {
-            localStorage.setItem('hopelink_users', JSON.stringify([]));
+        // Firebase Authentication Functions
+        function isFirebaseAvailable() {
+            return firebaseInitialized && typeof firebase !== 'undefined' && firebase.auth;
         }
 
-        // Get all users from localStorage (demo fallback)
-        function getAllLocalUsers() {
-            return JSON.parse(localStorage.getItem('hopelink_users') || '[]');
-        }
+        // ==============================
+        // DASHBOARD SYNC FUNCTIONS - FIXED VERSION
+        // ==============================
 
-        // Get user by email from localStorage (demo fallback)
-        function getLocalUserByEmail(email) {
-            const users = getAllLocalUsers();
-            return users.find(u => u.email === email);
-        }
-
-        // Update user in localStorage (demo fallback)
-        function updateLocalUser(userId, updates) {
-            const users = getAllLocalUsers();
-            const index = users.findIndex(u => u.id === userId);
-            if (index !== -1) {
-                users[index] = { ...users[index], ...updates };
-                localStorage.setItem('hopelink_users', JSON.stringify(users));
+        // Save contact message to Firebase or localStorage - WORKING VERSION
+        async function saveContactMessage(messageData) {
+            try {
+                // Always save to localStorage first (reliable)
+                const messages = JSON.parse(localStorage.getItem('hopelink_messages') || '[]');
                 
-                // Update current user in session
-                if (currentUser && currentUser.id === userId) {
-                    currentUser = users[index];
-                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUI();
+                // Create a unique ID for the message
+                const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                const messageWithId = {
+                    ...messageData,
+                    id: messageId,
+                    status: 'unread',
+                    createdAt: new Date().toISOString(),
+                    read: false,
+                    responded: false,
+                    archived: false,
+                    // Add additional fields for dashboard
+                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                    timestamp: Date.now(),
+                    source: 'contact_page'
+                };
+                
+                messages.push(messageWithId);
+                localStorage.setItem('hopelink_messages', JSON.stringify(messages));
+                
+                console.log("✓ Message saved to localStorage with ID:", messageId);
+                
+                // Try Firebase if available (optional)
+                if (isFirebaseAvailable()) {
+                    try {
+                        const messagesRef = firebase.firestore().collection("contactMessages");
+                        await messagesRef.add({
+                            ...messageWithId,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log("✓ Message also saved to Firebase");
+                    } catch (firebaseError) {
+                        console.log("ℹ Firebase save optional - continuing with localStorage");
+                    }
                 }
+                
+                // Update dashboard stats
+                updateDashboardStats();
+                
+                return { success: true, messageId: messageId };
+            } catch (error) {
+                console.error("✗ Error saving message:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Update dashboard statistics
+        function updateDashboardStats() {
+            try {
+                // Get current stats
+                const stats = JSON.parse(localStorage.getItem('hopelink_dashboard_stats') || '{}');
+                
+                // Initialize if not exists
+                if (!stats.totalMessages) stats.totalMessages = 0;
+                if (!stats.unreadMessages) stats.unreadMessages = 0;
+                if (!stats.todayMessages) stats.todayMessages = 0;
+                if (!stats.lastUpdated) stats.lastUpdated = new Date().toISOString();
+                
+                // Update stats
+                stats.totalMessages++;
+                stats.unreadMessages++;
+                
+                // Check if message is from today
+                const today = new Date().toLocaleDateString();
+                const messages = JSON.parse(localStorage.getItem('hopelink_messages') || '[]');
+                const todayCount = messages.filter(msg => {
+                    const msgDate = new Date(msg.createdAt || msg.timestamp).toLocaleDateString();
+                    return msgDate === today;
+                }).length;
+                
+                stats.todayMessages = todayCount;
+                stats.lastUpdated = new Date().toISOString();
+                
+                // Save updated stats
+                localStorage.setItem('hopelink_dashboard_stats', JSON.stringify(stats));
+                console.log("✓ Dashboard stats updated:", stats);
+                
+            } catch (error) {
+                console.error("✗ Error updating dashboard stats:", error);
+            }
+        }
+
+        // Get user IP address (optional)
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                return 'unknown';
+            }
+        }
+
+        // Load dynamic content from Firebase/localStorage
+        async function loadDynamicContent() {
+            try {
+                let settings = {};
+                
+                // Try Firebase first
+                if (isFirebaseAvailable()) {
+                    const settingsRef = firebase.firestore().collection("settings").doc('contactPage');
+                    const doc = await settingsRef.get();
+                    if (doc.exists) {
+                        settings = doc.data();
+                    }
+                } else {
+                    // Fallback to localStorage
+                    settings = JSON.parse(localStorage.getItem('hopelink_settings') || '{}');
+                }
+                
+                // Update contact information if available
+                if (settings.phoneNumbers) {
+                    const phoneContainer = document.querySelector('[data-content="phones"]');
+                    if (phoneContainer) {
+                        phoneContainer.innerHTML = settings.phoneNumbers.split('\n').map(line => 
+                            `<p class="text-gray-600">${line}</p>`
+                        ).join('');
+                    }
+                }
+                
+                if (settings.emailAddresses) {
+                    const emailContainer = document.querySelector('[data-content="emails"]');
+                    if (emailContainer) {
+                        emailContainer.innerHTML = settings.emailAddresses.split('\n').map(line => 
+                            `<p class="text-gray-600">${line}</p>`
+                        ).join('');
+                    }
+                }
+                
+                if (settings.officeHours) {
+                    const hoursContainer = document.querySelector('[data-content="hours"]');
+                    if (hoursContainer) {
+                        hoursContainer.innerHTML = settings.officeHours.split('\n').map(line => 
+                            `<p class="text-gray-600">${line}</p>`
+                        ).join('');
+                    }
+                }
+                
+                // Update emergency contacts
+                if (settings.emergencyContacts) {
+                    if (settings.emergencyContacts.danger) {
+                        const dangerBtn = document.querySelector('[data-emergency="danger"]');
+                        if (dangerBtn) {
+                            dangerBtn.textContent = `Call Emergency: ${settings.emergencyContacts.danger}`;
+                            dangerBtn.onclick = () => callEmergency(settings.emergencyContacts.danger);
+                        }
+                    }
+                    
+                    if (settings.emergencyContacts.mental) {
+                        const mentalBtn = document.querySelector('[data-emergency="mental"]');
+                        if (mentalBtn) {
+                            mentalBtn.textContent = `Crisis Support: ${settings.emergencyContacts.mental}`;
+                            mentalBtn.onclick = () => callEmergency(settings.emergencyContacts.mental);
+                        }
+                    }
+                    
+                    if (settings.emergencyContacts.women) {
+                        const womenBtn = document.querySelector('[data-emergency="women"]');
+                        if (womenBtn) {
+                            womenBtn.textContent = `GBV Hotline: ${settings.emergencyContacts.women}`;
+                            womenBtn.onclick = () => callEmergency(settings.emergencyContacts.women);
+                        }
+                    }
+                    
+                    if (settings.emergencyContacts.children) {
+                        const childrenBtn = document.querySelector('[data-emergency="children"]');
+                        if (childrenBtn) {
+                            childrenBtn.textContent = `Child Safety: ${settings.emergencyContacts.children}`;
+                            childrenBtn.onclick = () => callEmergency(settings.emergencyContacts.children);
+                        }
+                    }
+                }
+                
+                // Load FAQs
+                await loadFAQsForPage();
+                
+            } catch (error) {
+                console.error("Error loading dynamic content:", error);
+            }
+        }
+
+        // Load FAQs for the contact page
+        async function loadFAQsForPage() {
+            try {
+                let faqs = [];
+                
+                // Try Firebase first
+                if (isFirebaseAvailable()) {
+                    const faqsRef = firebase.firestore().collection("faqs");
+                    const snapshot = await faqsRef.where('active', '==', true).orderBy('order').get();
+                    faqs = snapshot.docs.map(doc => doc.data());
+                } else {
+                    // Fallback to localStorage
+                    const allFAQs = JSON.parse(localStorage.getItem('hopelink_faqs') || '[]');
+                    faqs = allFAQs.filter(faq => faq.active !== false);
+                }
+                
+                // Update FAQ section if it exists
+                const faqContainer = document.getElementById('faq-container');
+                if (faqContainer && faqs.length > 0) {
+                    // Clear existing FAQs (keeping the first one as template)
+                    const existingFAQs = document.querySelectorAll('.faq-question');
+                    const template = existingFAQs[0].parentElement;
+                    
+                    // Clear all FAQs
+                    faqContainer.innerHTML = '';
+                    
+                    // Add new FAQs
+                    faqs.forEach((faq, index) => {
+                        const newFAQ = template.cloneNode(true);
+                        const question = newFAQ.querySelector('.faq-question h3');
+                        const answer = newFAQ.querySelector('.faq-answer p');
+                        if (question) question.textContent = faq.question;
+                        if (answer) answer.textContent = faq.answer;
+                        
+                        // Reset state
+                        newFAQ.querySelector('.faq-answer').classList.add('hidden');
+                        const icon = newFAQ.querySelector('.faq-question i');
+                        icon.classList.remove('fa-chevron-up');
+                        icon.classList.add('fa-chevron-down');
+                        
+                        faqContainer.appendChild(newFAQ);
+                    });
+                    
+                    // Reattach event listeners
+                    document.querySelectorAll('.faq-question').forEach(question => {
+                        question.addEventListener('click', function() {
+                            const answer = this.nextElementSibling;
+                            const icon = this.querySelector('i');
+                            
+                            answer.classList.toggle('hidden');
+                            
+                            if (icon.classList.contains('fa-chevron-down')) {
+                                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                            } else {
+                                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                            }
+                        });
+                    });
+                }
+                
+            } catch (error) {
+                console.error("Error loading FAQs:", error);
             }
         }
 
@@ -1903,15 +2155,24 @@
             const messageEl = document.getElementById('notificationMessage');
             
             notification.className = 'notification';
-            notification.classList.add(type);
-            icon.className = type === 'success' ? 'fas fa-check-circle mr-2' :
-                           type === 'error' ? 'fas fa-exclamation-circle mr-2' :
-                           'fas fa-info-circle mr-2';
+            if (type === 'success') {
+                notification.classList.add('success');
+                icon.className = 'fas fa-check-circle mr-2';
+            } else if (type === 'error') {
+                notification.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle mr-2';
+            } else {
+                notification.classList.add('success'); // default to success
+                icon.className = 'fas fa-info-circle mr-2';
+            }
             
             messageEl.textContent = message;
             notification.classList.add('show');
             
-            setTimeout(hideNotification, 5000);
+            // Hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
         }
 
         function hideNotification() {
@@ -2619,6 +2880,22 @@
                 dropzone.addEventListener('drop', handleDrop);
             }
             
+            // Firebase auth state listener
+            if (isFirebaseAvailable()) {
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log("Firebase auth state changed: User signed in", user.email);
+                        checkLoginStatus();
+                    } else {
+                        console.log("Firebase auth state changed: User signed out");
+                        // User is signed out
+                        sessionStorage.removeItem('currentUser');
+                        currentUser = null;
+                        showAuthSection();
+                    }
+                });
+            }
+            
             // Mobile menu toggle
             const mobileMenuButton = document.getElementById('mobileMenuButton');
             const mobileMenu = document.getElementById('mobileMenu');
@@ -2732,19 +3009,19 @@
                 }
             });
             
-            // Contact form validation
+            // FIXED Contact form validation and submission - WORKING VERSION
             const contactForm = document.getElementById('contactForm');
             if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
+                contactForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
                     // Get form data
-                    const firstName = document.getElementById('firstName').value;
-                    const lastName = document.getElementById('lastName').value;
-                    const email = document.getElementById('email').value;
-                    const phone = document.getElementById('phone').value;
+                    const firstName = document.getElementById('firstName').value.trim();
+                    const lastName = document.getElementById('lastName').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const phone = document.getElementById('phone').value.trim();
                     const subject = document.getElementById('subject').value;
-                    const message = document.getElementById('message').value;
+                    const message = document.getElementById('message').value.trim();
                     
                     // Validate form
                     let isValid = true;
@@ -2810,13 +3087,37 @@
                         document.getElementById('successModalMessage').textContent = `Thank you ${firstName} for contacting us. We'll get back to you within 24 hours at ${email}.`;
                         openModal('successModal');
                         
-                        // Reset form
-                        document.getElementById('contactForm').reset();
+                        // Save the message to dashboard system
+                        const result = await saveContactMessage(messageData);
                         
-                        // Reset button state
+                        if (result.success) {
+                            // Show success message
+                            showNotification(`Thank you ${firstName}! Your message has been sent successfully. We'll respond within 24 hours.`, 'success');
+                            
+                            // Show success modal
+                            document.getElementById('successModalTitle').textContent = 'Message Sent Successfully!';
+                            document.getElementById('successModalMessage').textContent = `Thank you ${firstName} for contacting us. We'll get back to you within 24 hours at ${email}.`;
+                            openModal('successModal');
+                            
+                            // Reset form
+                            contactForm.reset();
+                            
+                            // Log success to console
+                            console.log('✓ Message saved successfully!');
+                            console.log('✓ Message ID:', result.messageId);
+                            console.log('✓ Message will appear in dashboard');
+                        } else {
+                            showNotification('Failed to send message. Please try again.', 'error');
+                            console.error('✗ Failed to save message:', result.error);
+                        }
+                    } catch (error) {
+                        console.error("Error sending message:", error);
+                        showNotification('An error occurred. Please try again.', 'error');
+                    } finally {
+                        // Reset button state - FIX: This ensures button always resets
                         submitButton.innerHTML = originalText;
                         submitButton.disabled = false;
-                    }, 2000);
+                    }
                 });
             }
 

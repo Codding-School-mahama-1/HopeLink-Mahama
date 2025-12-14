@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HopeLink Mahama - Donation Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase Integration -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getDatabase, ref, onValue, update, remove, set } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6srTpyl7YXpr4t3Xij0Lx7DqmHsbaCPs",
+            authDomain: "hopelink-mahama-d9cd4.firebaseapp.com",
+            databaseURL: "https://hopelink-mahama-d9cd4-default-rtdb.firebaseio.com",
+            projectId: "hopelink-mahama-d9cd4",
+            storageBucket: "hopelink-mahama-d9cd4.firebasestorage.app",
+            messagingSenderId: "769873156422",
+            appId: "1:769873156422:web:5d89b8c5695ce95bb6ad47",
+            measurementId: "G-8TQ2LYP809"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Make Firebase functions available globally
+        window.firebaseApp = app;
+        window.firebaseDatabase = database;
+        window.firebaseRef = ref;
+        window.firebaseOnValue = onValue;
+        window.firebaseUpdate = update;
+        window.firebaseRemove = remove;
+        window.firebaseSet = set;
+        
+        console.log("Firebase Dashboard initialized!");
+    </script>
+
+    <style>
+        /* Custom Styles */
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-mini {
+            width: 70px;
+        }
+        
+        .sidebar-full {
+            width: 260px;
+        }
+        
+        .main-content {
+            transition: all 0.3s ease;
+        }
+        
+        .main-content-full {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+        
+        .main-content-mini {
+            margin-left: 70px;
+            width: calc(100% - 70px);
+        }
+        
+        .stats-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .donation-row:hover {
+            background-color: #f8fafc;
+        }
+        
+        .chart-container {
+            height: 300px;
+        }
+        
+        /* Status badges */
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-completed {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-failed {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #10B981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar sidebar-full fixed top-0 left-0 h-screen bg-white shadow-lg z-40">
+        <!-- Logo -->
+        <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-blue-500 to-green-500 p-2 rounded-lg">
+                    <i class="fas fa-hands-helping text-white text-lg"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-gray-800">HopeLink Dashboard</div>
+                    <div class="text-xs text-green-600 font-semibold">Admin Panel</div>
+                </div>
+            </div>
+            <button id="toggleSidebar" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="py-4">
+            <nav class="space-y-1">
+                <a href="#" id="dashboardTab" class="nav-item flex items-center px-6 py-3 text-green-600 bg-green-50 border-l-4 border-green-500">
+                    <i class="fas fa-tachometer-alt w-6"></i>
+                    <span class="ml-3">Dashboard</span>
+                </a>
+                <a href="#" id="donationsTab" class="nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                    <i class="fas fa-donate w-6"></i>
+                    <span class="ml-3">Donations</span>
+                </a>
+                <a href="#" id="statsTab" class="nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                    <i class="fas fa-chart-bar w-6"></i>
+                    <span class="ml-3">Statistics</span>
+                </a>
+                <a href="#" id="settingsTab" class="nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                    <i class="fas fa-cog w-6"></i>
+                    <span class="ml-3">Settings</span>
+                </a>
+                <a href="#" id="campaignTab" class="nav-item flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                    <i class="fas fa-bullhorn w-6"></i>
+                    <span class="ml-3">Campaigns</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- User Profile -->
+        <div class="absolute bottom-0 w-full p-4 border-t border-gray-200">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center text-white font-bold">
+                    A
+                </div>
+                <div>
+                    <div class="font-semibold text-gray-800">Admin User</div>
+                    <div class="text-xs text-gray-500">Super Admin</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div id="mainContent" class="main-content main-content-full min-h-screen">
+        <!-- Top Bar -->
+        <div class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-800" id="pageTitle">Dashboard Overview</h1>
+                    <p class="text-gray-600 text-sm">Welcome to HopeLink Mahama Donation Management</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-bell text-gray-500 text-lg cursor-pointer"></i>
+                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </div>
+                    <div class="relative">
+                        <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button onclick="exportData()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+                        <i class="fas fa-download mr-2"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="p-6">
+            <!-- Loading State -->
+            <div id="loadingState" class="flex flex-col items-center justify-center py-12">
+                <div class="spinner"></div>
+                <p class="mt-4 text-gray-600">Loading dashboard data...</p>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div id="dashboardContent" class="hidden">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stats-card bg-white p-6 rounded-xl shadow-sm fade-in">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Donations</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">$<span id="totalDonations">0</span></p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-lg">
+                                <i class="fas fa-donate text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-600 text-sm font-semibold">
+                            <i class="fas fa-arrow-up mr-1"></i> 12% from last month
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card bg-white p-6 rounded-xl shadow-sm fade-in" style="animation-delay: 0.1s">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Donors</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2" id="totalDonors">0</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-lg">
+                                <i class="fas fa-users text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-600 text-sm font-semibold">
+                            <i class="fas fa-arrow-up mr-1"></i> 8% from last month
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card bg-white p-6 rounded-xl shadow-sm fade-in" style="animation-delay: 0.2s">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">Monthly Average</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">$<span id="monthlyAverage">0</span></p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-lg">
+                                <i class="fas fa-calendar-alt text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-600 text-sm font-semibold">
+                            <i class="fas fa-arrow-up mr-1"></i> 15% from last month
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card bg-white p-6 rounded-xl shadow-sm fade-in" style="animation-delay: 0.3s">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">Campaign Progress</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2" id="campaignProgress">0%</p>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-lg">
+                                <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-green-600 text-sm font-semibold">
+                            <i class="fas fa-arrow-up mr-1"></i> 5% from last week
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts and Donations Table -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Donation Chart -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-lg font-semibold text-gray-800">Donation Trends</h2>
+                                <select id="chartPeriod" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    <option value="7">Last 7 days</option>
+                                    <option value="30" selected>Last 30 days</option>
+                                    <option value="90">Last 3 months</option>
+                                    <option value="365">Last year</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="donationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Donations -->
+                    <div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm h-full">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-lg font-semibold text-gray-800">Recent Donations</h2>
+                                <a href="#" onclick="showDonations()" class="text-green-600 hover:text-green-700 text-sm font-semibold">
+                                    View All
+                                </a>
+                            </div>
+                            <div id="recentDonations" class="space-y-4 max-h-96 overflow-y-auto">
+                                <!-- Recent donations will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Campaign Goals -->
+                <div class="mt-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-6">Campaign Goals</h2>
+                        <div id="campaignGoals" class="space-y-4">
+                            <!-- Campaign goals will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Donations Management Content -->
+            <div id="donationsContent" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800">Donation Management</h2>
+                                <p class="text-gray-600 text-sm">Manage and update all donations</p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <select id="donationFilter" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    <option value="all">All Donations</option>
+                                    <option value="one-time">One-time</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                                <button onclick="refreshDonations()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="donationsTable" class="bg-white divide-y divide-gray-200">
+                                <!-- Donations will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="px-6 py-4 border-t border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-600">
+                                Showing <span id="donationCount">0</span> donations
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="prevPage" class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <span class="px-3 py-1">Page <span id="currentPage">1</span></span>
+                                <button id="nextPage" class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistics Content -->
+            <div id="statsContent" class="hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-6">Donation Sources</h2>
+                        <div class="chart-container">
+                            <canvas id="sourceChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-6">Monthly Overview</h2>
+                        <div class="chart-container">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <h2 class="text-lg font-semibold text-gray-800 mb-6">Donor Analytics</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gray-800" id="avgDonation">$0</div>
+                                    <div class="text-gray-600 text-sm">Average Donation</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gray-800" id="topDonation">$0</div>
+                                    <div class="text-gray-600 text-sm">Top Donation</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gray-800" id="recurringRate">0%</div>
+                                    <div class="text-gray-600 text-sm">Recurring Donors</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Content -->
+            <div id="settingsContent" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">Dashboard Settings</h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Campaign Goals Settings -->
+                            <div class="lg:col-span-2">
+                                <h3 class="text-md font-semibold text-gray-800 mb-4">Campaign Goals</h3>
+                                <div id="campaignSettings" class="space-y-4">
+                                    <!-- Campaign goals settings will be loaded here -->
+                                </div>
+                                <button onclick="addCampaign()" class="mt-4 text-green-600 hover:text-green-700 font-semibold">
+                                    <i class="fas fa-plus mr-2"></i>Add New Campaign
+                                </button>
+                            </div>
+                            
+                            <!-- Display Settings -->
+                            <div>
+                                <h3 class="text-md font-semibold text-gray-800 mb-4">Display Settings</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-medium text-gray-700">Show Live Counter</div>
+                                            <div class="text-sm text-gray-500">Display live donation counter on website</div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="liveCounterToggle" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-medium text-gray-700">Auto-refresh Data</div>
+                                            <div class="text-sm text-gray-500">Automatically refresh dashboard data</div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="autoRefreshToggle" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Notification Settings -->
+                            <div>
+                                <h3 class="text-md font-semibold text-gray-800 mb-4">Notifications</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-medium text-gray-700">Email Notifications</div>
+                                            <div class="text-sm text-gray-500">Receive email for new donations</div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="emailNotifications" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-medium text-gray-700">Dashboard Alerts</div>
+                                            <div class="text-sm text-gray-500">Show alerts for large donations</div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="dashboardAlerts" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <button onclick="saveSettings()" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                                Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Campaigns Content -->
+            <div id="campaignContent" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800">Campaign Management</h2>
+                                <p class="text-gray-600 text-sm">Create and manage fundraising campaigns</p>
+                            </div>
+                            <button onclick="createNewCampaign()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-plus mr-2"></i>New Campaign
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div id="campaignsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Campaign cards will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Donation Modal -->
+    <div id="editDonationModal" class="fixed inset-0 z-50 hidden" aria-modal="true" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative mx-auto mt-8 mb-8 max-w-lg p-6 rounded-xl bg-white shadow-lg max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Edit Donation</h3>
+                <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700 p-2">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="editDonationForm" class="space-y-4">
+                <input type="hidden" id="editDonationId">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">First Name</label>
+                        <input type="text" id="editFirstName" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Last Name</label>
+                        <input type="text" id="editLastName" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Email</label>
+                    <input type="email" id="editEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Amount ($)</label>
+                    <input type="number" id="editAmount" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Donation Type</label>
+                        <select id="editType" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option value="one-time">One-time</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Status</label>
+                        <select id="editStatus" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Payment Method</label>
+                    <select id="editPaymentMethod" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="mobile">Mobile Money</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Notes</label>
+                    <textarea id="editNotes" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                </div>
+                
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                        Update Donation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Campaign Modal -->
+    <div id="campaignModal" class="fixed inset-0 z-50 hidden" aria-modal="true" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative mx-auto mt-8 mb-8 max-w-lg p-6 rounded-xl bg-white shadow-lg max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between mb-6">
+                <h3 id="campaignModalTitle" class="text-2xl font-bold text-gray-800">Create Campaign</h3>
+                <button onclick="closeCampaignModal()" class="text-gray-500 hover:text-gray-700 p-2">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="campaignForm" class="space-y-4">
+                <input type="hidden" id="campaignId">
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Campaign Name</label>
+                    <input type="text" id="campaignName" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Description</label>
+                    <textarea id="campaignDescription" rows="3" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Goal Amount ($)</label>
+                        <input type="number" id="campaignGoal" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Current Amount ($)</label>
+                        <input type="number" id="campaignCurrent" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Color Theme</label>
+                    <div class="flex space-x-3">
+                        <label class="flex items-center">
+                            <input type="radio" name="campaignColor" value="green" class="mr-2" checked>
+                            <span class="w-6 h-6 bg-green-500 rounded-full"></span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="campaignColor" value="blue" class="mr-2">
+                            <span class="w-6 h-6 bg-blue-500 rounded-full"></span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="campaignColor" value="yellow" class="mr-2">
+                            <span class="w-6 h-6 bg-yellow-500 rounded-full"></span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="campaignColor" value="purple" class="mr-2">
+                            <span class="w-6 h-6 bg-purple-500 rounded-full"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Active Status</label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="campaignActive" class="mr-3" checked>
+                        <span>Active Campaign</span>
+                    </label>
+                </div>
+                
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                        Save Campaign
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        /* ========= GLOBAL VARIABLES ========= */
+        let allDonations = [];
+        let campaigns = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let charts = {};
+        let settings = {};
+        
+        /* ========= DOM ELEMENTS ========= */
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const pageTitle = document.getElementById('pageTitle');
+        
+        // Content sections
+        const loadingState = document.getElementById('loadingState');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const donationsContent = document.getElementById('donationsContent');
+        const statsContent = document.getElementById('statsContent');
+        const settingsContent = document.getElementById('settingsContent');
+        const campaignContent = document.getElementById('campaignContent');
+        
+        // Navigation tabs
+        const dashboardTab = document.getElementById('dashboardTab');
+        const donationsTab = document.getElementById('donationsTab');
+        const statsTab = document.getElementById('statsTab');
+        const settingsTab = document.getElementById('settingsTab');
+        const campaignTab = document.getElementById('campaignTab');
+        
+        // Edit modal
+        const editDonationModal = document.getElementById('editDonationModal');
+        const editDonationForm = document.getElementById('editDonationForm');
+        
+        // Campaign modal
+        const campaignModal = document.getElementById('campaignModal');
+        const campaignForm = document.getElementById('campaignForm');
+        
+        /* ========= INITIALIZATION ========= */
+        document.addEventListener('DOMContentLoaded', async () => {
+            initNavigation();
+            await loadAllData();
+            initCharts();
+            setupEventListeners();
+            showDashboard();
+        });
+        
+        /* ========= NAVIGATION ========= */
+        function initNavigation() {
+            // Sidebar toggle
+            toggleSidebar.addEventListener('click', () => {
+                sidebar.classList.toggle('sidebar-mini');
+                sidebar.classList.toggle('sidebar-full');
+                mainContent.classList.toggle('main-content-mini');
+                mainContent.classList.toggle('main-content-full');
+            });
+            
+            // Navigation tabs
+            dashboardTab.addEventListener('click', (e) => {
+                e.preventDefault();
+                showDashboard();
+            });
+            
+            donationsTab.addEventListener('click', (e) => {
+                e.preventDefault();
+                showDonations();
+            });
+            
+            statsTab.addEventListener('click', (e) => {
+                e.preventDefault();
+                showStatistics();
+            });
+            
+            settingsTab.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSettings();
+            });
+            
+            campaignTab.addEventListener('click', (e) => {
+                e.preventDefault();
+                showCampaigns();
+            });
+        }
+        
+        function setActiveTab(tab) {
+            // Remove active class from all tabs
+            [dashboardTab, donationsTab, statsTab, settingsTab, campaignTab].forEach(t => {
+                t.className = t.className.replace('text-green-600 bg-green-50 border-l-4 border-green-500', 'text-gray-600 hover:bg-gray-50 hover:text-gray-900');
+                t.classList.remove('border-l-4', 'border-green-500', 'bg-green-50', 'text-green-600');
+                t.classList.add('text-gray-600', 'hover:bg-gray-50', 'hover:text-gray-900');
+            });
+            
+            // Add active class to current tab
+            tab.classList.remove('text-gray-600', 'hover:bg-gray-50', 'hover:text-gray-900');
+            tab.classList.add('text-green-600', 'bg-green-50', 'border-l-4', 'border-green-500');
+        }
+        
+        /* ========= CONTENT SECTIONS ========= */
+        function showDashboard() {
+            setActiveTab(dashboardTab);
+            pageTitle.textContent = 'Dashboard Overview';
+            hideAllContent();
+            dashboardContent.classList.remove('hidden');
+            updateDashboardStats();
+            renderRecentDonations();
+            renderCampaignGoals();
+        }
+        
+        function showDonations() {
+            setActiveTab(donationsTab);
+            pageTitle.textContent = 'Donation Management';
+            hideAllContent();
+            donationsContent.classList.remove('hidden');
+            renderDonationsTable();
+        }
+        
+        function showStatistics() {
+            setActiveTab(statsTab);
+            pageTitle.textContent = 'Statistics & Analytics';
+            hideAllContent();
+            statsContent.classList.remove('hidden');
+            updateCharts();
+        }
+        
+        function showSettings() {
+            setActiveTab(settingsTab);
+            pageTitle.textContent = 'Dashboard Settings';
+            hideAllContent();
+            settingsContent.classList.remove('hidden');
+            loadSettings();
+        }
+        
+        function showCampaigns() {
+            setActiveTab(campaignTab);
+            pageTitle.textContent = 'Campaign Management';
+            hideAllContent();
+            campaignContent.classList.remove('hidden');
+            renderCampaignsList();
+        }
+        
+        function hideAllContent() {
+            [dashboardContent, donationsContent, statsContent, settingsContent, campaignContent].forEach(content => {
+                content.classList.add('hidden');
+            });
+        }
+        
+        /* ========= FIREBASE DATA LOADING ========= */
+        async function loadAllData() {
+            try {
+                await Promise.all([
+                    loadDonations(),
+                    loadCampaigns(),
+                    loadSettingsData()
+                ]);
+                
+                // Hide loading state
+                loadingState.classList.add('hidden');
+                dashboardContent.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error loading data:', error);
+                loadingState.innerHTML = `
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
+                        <p class="text-gray-600">Failed to load data. Please check your connection.</p>
+                        <button onclick="loadAllData()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        async function loadDonations() {
+            return new Promise((resolve, reject) => {
+                if (!window.firebaseDatabase || !window.firebaseRef || !window.firebaseOnValue) {
+                    reject('Firebase not initialized');
+                    return;
+                }
+                
+                const donationsRef = window.firebaseRef(window.firebaseDatabase, 'donations');
+                window.firebaseOnValue(donationsRef, (snapshot) => {
+                    allDonations = [];
+                    const data = snapshot.val();
+                    
+                    if (data) {
+                        Object.keys(data).forEach(key => {
+                            allDonations.push({
+                                id: key,
+                                ...data[key]
+                            });
+                        });
+                        
+                        // Sort by date (newest first)
+                        allDonations.sort((a, b) => new Date(b.date || b.timestamp) - new Date(a.date || a.timestamp));
+                    }
+                    
+                    console.log('Loaded donations:', allDonations.length);
+                    resolve();
+                }, (error) => {
+                    console.error('Error loading donations:', error);
+                    reject(error);
+                });
+            });
+        }
+        
+        async function loadCampaigns() {
+            return new Promise((resolve, reject) => {
+                const campaignsRef = window.firebaseRef(window.firebaseDatabase, 'campaigns');
+                window.firebaseOnValue(campaignsRef, (snapshot) => {
+                    campaigns = [];
+                    const data = snapshot.val();
+                    
+                    if (data) {
+                        Object.keys(data).forEach(key => {
+                            campaigns.push({
+                                id: key,
+                                ...data[key]
+                            });
+                        });
+                    } else {
+                        // Create default campaigns if none exist
+                        createDefaultCampaigns();
+                    }
+                    
+                    console.log('Loaded campaigns:', campaigns.length);
+                    resolve();
+                }, (error) => {
+                    console.error('Error loading campaigns:', error);
+                    reject(error);
+                });
+            });
+        }
+        
+        async function loadSettingsData() {
+            return new Promise((resolve, reject) => {
+                const settingsRef = window.firebaseRef(window.firebaseDatabase, 'settings');
+                window.firebaseOnValue(settingsRef, (snapshot) => {
+                    settings = snapshot.val() || {};
+                    console.log('Loaded settings:', settings);
+                    resolve();
+                }, (error) => {
+                    console.error('Error loading settings:', error);
+                    settings = {};
+                    resolve();
+                });
+            });
+        }
+        
+        /* ========= DASHBOARD STATS ========= */
+        function updateDashboardStats() {
+            if (allDonations.length === 0) return;
+            
+            // Total donations
+            const totalAmount = allDonations.reduce((sum, donation) => sum + (parseFloat(donation.amount) || 0), 0);
+            document.getElementById('totalDonations').textContent = totalAmount.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            
+            // Total donors
+            const uniqueDonors = new Set(allDonations.map(d => d.email)).size;
+            document.getElementById('totalDonors').textContent = uniqueDonors.toLocaleString();
+            
+            // Monthly average
+            const monthlyDonations = allDonations.filter(d => d.type === 'monthly');
+            const monthlyTotal = monthlyDonations.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
+            const avgMonthly = monthlyTotal / Math.max(monthlyDonations.length, 1);
+            document.getElementById('monthlyAverage').textContent = avgMonthly.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            
+            // Campaign progress
+            if (campaigns.length > 0) {
+                const activeCampaign = campaigns.find(c => c.active) || campaigns[0];
+                const progress = Math.min(Math.round((activeCampaign.current / activeCampaign.goal) * 100), 100);
+                document.getElementById('campaignProgress').textContent = `${progress}%`;
+            }
+        }
+        
+        /* ========= DONATIONS TABLE ========= */
+        function renderDonationsTable(filter = 'all') {
+            const tableBody = document.getElementById('donationsTable');
+            const donationCount = document.getElementById('donationCount');
+            const currentPageSpan = document.getElementById('currentPage');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            
+            // Filter donations
+            let filteredDonations = [...allDonations];
+            if (filter !== 'all') {
+                if (filter === 'one-time' || filter === 'monthly') {
+                    filteredDonations = allDonations.filter(d => d.type === filter);
+                } else {
+                    filteredDonations = allDonations.filter(d => d.status === filter);
+                }
+            }
+            
+            // Calculate pagination
+            const totalPages = Math.ceil(filteredDonations.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageDonations = filteredDonations.slice(startIndex, endIndex);
+            
+            // Update pagination controls
+            donationCount.textContent = filteredDonations.length;
+            currentPageSpan.textContent = currentPage;
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            // Clear table
+            tableBody.innerHTML = '';
+            
+            if (pageDonations.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-3xl mb-2"></i>
+                            <p>No donations found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Render donations
+            pageDonations.forEach(donation => {
+                const row = document.createElement('tr');
+                row.className = 'donation-row fade-in';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center text-white font-bold">
+                                ${donation.firstName ? donation.firstName.charAt(0).toUpperCase() : 'D'}
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">
+                                    ${donation.firstName || ''} ${donation.lastName || ''}
+                                </div>
+                                <div class="text-sm text-gray-500">${donation.email || ''}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold text-gray-900">$${parseFloat(donation.amount).toLocaleString()}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            donation.type === 'monthly' 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : 'bg-green-100 text-green-800'
+                        }">
+                            ${donation.type === 'monthly' ? 'Monthly' : 'One-time'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${formatDate(donation.date || donation.timestamp)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full status-${donation.status || 'completed'}">
+                            ${(donation.status || 'completed').charAt(0).toUpperCase() + (donation.status || 'completed').slice(1)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${formatPaymentMethod(donation.paymentMethod)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editDonation('${donation.id}')" class="text-green-600 hover:text-green-900 mr-3">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteDonation('${donation.id}')" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Add pagination event listeners
+            prevBtn.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderDonationsTable(filter);
+                }
+            };
+            
+            nextBtn.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderDonationsTable(filter);
+                }
+            };
+        }
+        
+        /* ========= RECENT DONATIONS ========= */
+        function renderRecentDonations() {
+            const container = document.getElementById('recentDonations');
+            const recent = allDonations.slice(0, 5);
+            
+            if (recent.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-4">
+                        <i class="fas fa-inbox text-2xl mb-2"></i>
+                        <p>No recent donations</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = recent.map(donation => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center text-white font-bold">
+                            ${donation.firstName ? donation.firstName.charAt(0).toUpperCase() : 'D'}
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800">${donation.firstName || ''} ${donation.lastName || ''}</div>
+                            <div class="text-sm text-gray-500">${formatDate(donation.date || donation.timestamp)}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-gray-800">$${parseFloat(donation.amount).toLocaleString()}</div>
+                        <div class="text-xs ${donation.type === 'monthly' ? 'text-blue-600' : 'text-green-600'}">
+                            ${donation.type === 'monthly' ? 'Monthly' : 'One-time'}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        /* ========= CAMPAIGN MANAGEMENT ========= */
+        function createDefaultCampaigns() {
+            const defaultCampaigns = [
+                {
+                    name: 'Emergency Food Fund',
+                    description: 'Provides immediate food assistance to 200 families',
+                    goal: 10000,
+                    current: 8450,
+                    color: 'green',
+                    active: true
+                },
+                {
+                    name: 'Youth Education Program',
+                    description: 'Supports digital skills training for 50 youth',
+                    goal: 20000,
+                    current: 15200,
+                    color: 'blue',
+                    active: true
+                },
+                {
+                    name: 'Community Health Initiative',
+                    description: 'Funds mental wellness support and basic healthcare',
+                    goal: 8000,
+                    current: 5800,
+                    color: 'yellow',
+                    active: true
+                }
+            ];
+            
+            defaultCampaigns.forEach(async (campaign, index) => {
+                await saveCampaignToFirebase(campaign);
+            });
+        }
+        
+        function renderCampaignGoals() {
+            const container = document.getElementById('campaignGoals');
+            
+            if (campaigns.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-4">
+                        <i class="fas fa-bullhorn text-2xl mb-2"></i>
+                        <p>No active campaigns</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = campaigns.map(campaign => {
+                const progress = Math.min((campaign.current / campaign.goal) * 100, 100);
+                const colorClass = {
+                    green: 'bg-green-500',
+                    blue: 'bg-blue-500',
+                    yellow: 'bg-yellow-500',
+                    purple: 'bg-purple-500'
+                }[campaign.color] || 'bg-green-500';
+                
+                return `
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="font-medium text-gray-800">${campaign.name}</span>
+                            <span class="font-semibold">$${campaign.current.toLocaleString()} / $${campaign.goal.toLocaleString()}</span>
+                        </div>
+                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full ${colorClass} rounded-full transition-all duration-500" 
+                                 style="width: ${progress}%"></div>
+                        </div>
+                        <p class="text-sm text-gray-600">${campaign.description}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function renderCampaignsList() {
+            const container = document.getElementById('campaignsList');
+            
+            if (campaigns.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-3 text-center py-12">
+                        <i class="fas fa-bullhorn text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">No Campaigns Yet</h3>
+                        <p class="text-gray-600 mb-6">Create your first fundraising campaign</p>
+                        <button onclick="createNewCampaign()" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                            Create Campaign
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = campaigns.map(campaign => {
+                const progress = Math.min((campaign.current / campaign.goal) * 100, 100);
+                const colorClass = {
+                    green: 'bg-green-100 text-green-800 border-green-200',
+                    blue: 'bg-blue-100 text-blue-800 border-blue-200',
+                    yellow: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                    purple: 'bg-purple-100 text-purple-800 border-purple-200'
+                }[campaign.color] || 'bg-green-100 text-green-800 border-green-200';
+                
+                return `
+                    <div class="border rounded-xl p-5 transition-all duration-300 hover:shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-semibold text-gray-800 text-lg">${campaign.name}</h3>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full ${colorClass}">
+                                    ${campaign.active ? 'Active' : 'Inactive'}
+                                </span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="editCampaign('${campaign.id}')" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteCampaign('${campaign.id}')" class="text-gray-500 hover:text-red-600">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">${campaign.description}</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">Progress</span>
+                                <span class="font-semibold">${progress.toFixed(1)}%</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full ${colorClass.replace('100', '500').replace('text-', 'bg-').split(' ')[0]} rounded-full" 
+                                     style="width: ${progress}%"></div>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">$${campaign.current.toLocaleString()} raised</span>
+                                <span class="text-gray-500">Goal: $${campaign.goal.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                            <button onclick="updateCampaignProgress('${campaign.id}')" class="text-green-600 hover:text-green-700 text-sm font-semibold">
+                                Update Progress
+                            </button>
+                            <button onclick="toggleCampaignActive('${campaign.id}')" class="text-gray-600 hover:text-gray-800 text-sm">
+                                ${campaign.active ? 'Deactivate' : 'Activate'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function createNewCampaign() {
+            document.getElementById('campaignModalTitle').textContent = 'Create Campaign';
+            document.getElementById('campaignId').value = '';
+            document.getElementById('campaignName').value = '';
+            document.getElementById('campaignDescription').value = '';
+            document.getElementById('campaignGoal').value = '';
+            document.getElementById('campaignCurrent').value = '';
+            document.querySelector('input[name="campaignColor"][value="green"]').checked = true;
+            document.getElementById('campaignActive').checked = true;
+            
+            campaignModal.classList.remove('hidden');
+            campaignModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function editCampaign(campaignId) {
+            const campaign = campaigns.find(c => c.id === campaignId);
+            if (!campaign) return;
+            
+            document.getElementById('campaignModalTitle').textContent = 'Edit Campaign';
+            document.getElementById('campaignId').value = campaign.id;
+            document.getElementById('campaignName').value = campaign.name;
+            document.getElementById('campaignDescription').value = campaign.description;
+            document.getElementById('campaignGoal').value = campaign.goal;
+            document.getElementById('campaignCurrent').value = campaign.current;
+            document.querySelector(`input[name="campaignColor"][value="${campaign.color || 'green'}"]`).checked = true;
+            document.getElementById('campaignActive').checked = campaign.active !== false;
+            
+            campaignModal.classList.remove('hidden');
+            campaignModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        async function saveCampaignToFirebase(campaignData) {
+            try {
+                const campaignsRef = window.firebaseRef(window.firebaseDatabase, 'campaigns');
+                
+                if (campaignData.id) {
+                    // Update existing campaign
+                    const campaignRef = window.firebaseRef(window.firebaseDatabase, `campaigns/${campaignData.id}`);
+                    await window.firebaseUpdate(campaignRef, {
+                        name: campaignData.name,
+                        description: campaignData.description,
+                        goal: parseFloat(campaignData.goal),
+                        current: parseFloat(campaignData.current),
+                        color: campaignData.color,
+                        active: campaignData.active,
+                        updated: Date.now()
+                    });
+                } else {
+                    // Create new campaign
+                    const newCampaignRef = window.firebasePush(campaignsRef);
+                    await window.firebaseSet(newCampaignRef, {
+                        name: campaignData.name,
+                        description: campaignData.description,
+                        goal: parseFloat(campaignData.goal),
+                        current: parseFloat(campaignData.current),
+                        color: campaignData.color,
+                        active: campaignData.active !== false,
+                        created: Date.now(),
+                        updated: Date.now()
+                    });
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Error saving campaign:', error);
+                return false;
+            }
+        }
+        
+        /* ========= SETTINGS ========= */
+        function loadSettings() {
+            // Load campaign settings
+            const campaignSettings = document.getElementById('campaignSettings');
+            campaignSettings.innerHTML = campaigns.map(campaign => `
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <div class="font-medium text-gray-800">${campaign.name}</div>
+                            <div class="text-sm text-gray-500">${campaign.description}</div>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-semibold rounded ${
+                            campaign.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }">
+                            ${campaign.active ? 'Active' : 'Inactive'}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-1">Goal Amount</label>
+                            <input type="number" value="${campaign.goal}" 
+                                   onchange="updateCampaignSetting('${campaign.id}', 'goal', this.value)"
+                                   class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-1">Current Amount</label>
+                            <input type="number" value="${campaign.current}"
+                                   onchange="updateCampaignSetting('${campaign.id}', 'current', this.value)"
+                                   class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Load other settings
+            document.getElementById('liveCounterToggle').checked = settings.liveCounter !== false;
+            document.getElementById('autoRefreshToggle').checked = settings.autoRefresh !== false;
+            document.getElementById('emailNotifications').checked = settings.emailNotifications !== false;
+            document.getElementById('dashboardAlerts').checked = settings.dashboardAlerts !== false;
+        }
+        
+        async function updateCampaignSetting(campaignId, field, value) {
+            const campaignRef = window.firebaseRef(window.firebaseDatabase, `campaigns/${campaignId}`);
+            await window.firebaseUpdate(campaignRef, {
+                [field]: parseFloat(value),
+                updated: Date.now()
+            });
+        }
+        
+        async function saveSettings() {
+            const settingsRef = window.firebaseRef(window.firebaseDatabase, 'settings');
+            const newSettings = {
+                liveCounter: document.getElementById('liveCounterToggle').checked,
+                autoRefresh: document.getElementById('autoRefreshToggle').checked,
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                dashboardAlerts: document.getElementById('dashboardAlerts').checked,
+                updated: Date.now()
+            };
+            
+            await window.firebaseSet(settingsRef, newSettings);
+            
+            // Show success message
+            showNotification('Settings saved successfully!', 'success');
+        }
+        
+        /* ========= EDIT DONATION ========= */
+        function editDonation(donationId) {
+            const donation = allDonations.find(d => d.id === donationId);
+            if (!donation) return;
+            
+            document.getElementById('editDonationId').value = donation.id;
+            document.getElementById('editFirstName').value = donation.firstName || '';
+            document.getElementById('editLastName').value = donation.lastName || '';
+            document.getElementById('editEmail').value = donation.email || '';
+            document.getElementById('editAmount').value = donation.amount || '';
+            document.getElementById('editType').value = donation.type || 'one-time';
+            document.getElementById('editStatus').value = donation.status || 'completed';
+            document.getElementById('editPaymentMethod').value = donation.paymentMethod || 'card';
+            document.getElementById('editNotes').value = donation.notes || '';
+            
+            editDonationModal.classList.remove('hidden');
+            editDonationModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        async function updateDonation(donationData) {
+            try {
+                const donationRef = window.firebaseRef(window.firebaseDatabase, `donations/${donationData.id}`);
+                await window.firebaseUpdate(donationRef, {
+                    firstName: donationData.firstName,
+                    lastName: donationData.lastName,
+                    email: donationData.email,
+                    amount: parseFloat(donationData.amount),
+                    type: donationData.type,
+                    status: donationData.status,
+                    paymentMethod: donationData.paymentMethod,
+                    notes: donationData.notes,
+                    updated: Date.now()
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Error updating donation:', error);
+                return false;
+            }
+        }
+        
+        async function deleteDonation(donationId) {
+            if (!confirm('Are you sure you want to delete this donation?')) return;
+            
+            try {
+                const donationRef = window.firebaseRef(window.firebaseDatabase, `donations/${donationId}`);
+                await window.firebaseRemove(donationRef);
+                showNotification('Donation deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting donation:', error);
+                showNotification('Failed to delete donation', 'error');
+            }
+        }
+        
+        /* ========= CHARTS ========= */
+        function initCharts() {
+            // Donation Trend Chart
+            const donationCtx = document.getElementById('donationChart').getContext('2d');
+            charts.donation = new Chart(donationCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Donations ($)',
+                        data: [],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Source Chart
+            const sourceCtx = document.getElementById('sourceChart').getContext('2d');
+            charts.source = new Chart(sourceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Card', 'PayPal', 'Bank', 'Mobile'],
+                    datasets: [{
+                        data: [40, 30, 20, 10],
+                        backgroundColor: [
+                            '#3B82F6',
+                            '#F59E0B',
+                            '#10B981',
+                            '#8B5CF6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Monthly Chart
+            const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+            charts.monthly = new Chart(monthlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Monthly Donations',
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        backgroundColor: '#10B981'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + (value / 1000) + 'k';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateCharts() {
+            if (allDonations.length === 0) return;
+            
+            // Update donation trend chart
+            const period = parseInt(document.getElementById('chartPeriod').value) || 30;
+            const trendData = getDonationTrendData(period);
+            charts.donation.data.labels = trendData.labels;
+            charts.donation.data.datasets[0].data = trendData.data;
+            charts.donation.update();
+            
+            // Update source chart
+            const sourceData = getPaymentSourceData();
+            charts.source.data.datasets[0].data = sourceData;
+            charts.source.update();
+            
+            // Update analytics
+            updateAnalytics();
+        }
+        
+        function getDonationTrendData(days = 30) {
+            const today = new Date();
+            const data = [];
+            const labels = [];
+            
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                const dayDonations = allDonations.filter(d => {
+                    const donationDate = new Date(d.date || d.timestamp);
+                    return donationDate.toISOString().split('T')[0] === dateStr;
+                });
+                
+                const total = dayDonations.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
+                data.push(total);
+                
+                // Format label
+                if (days <= 7) {
+                    labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                } else if (days <= 30) {
+                    labels.push(date.getDate());
+                } else {
+                    labels.push(date.toLocaleDateString('en-US', { month: 'short' }));
+                }
+            }
+            
+            return { labels, data };
+        }
+        
+        function getPaymentSourceData() {
+            const sources = {
+                card: 0,
+                paypal: 0,
+                bank: 0,
+                mobile: 0
+            };
+            
+            allDonations.forEach(donation => {
+                const method = donation.paymentMethod || 'card';
+                if (sources.hasOwnProperty(method)) {
+                    sources[method] += parseFloat(donation.amount) || 0;
+                } else {
+                    sources.card += parseFloat(donation.amount) || 0;
+                }
+            });
+            
+            // Convert to percentages
+            const total = Object.values(sources).reduce((a, b) => a + b, 0);
+            if (total === 0) return [25, 25, 25, 25];
+            
+            return [
+                Math.round((sources.card / total) * 100),
+                Math.round((sources.paypal / total) * 100),
+                Math.round((sources.bank / total) * 100),
+                Math.round((sources.mobile / total) * 100)
+            ];
+        }
+        
+        function updateAnalytics() {
+            if (allDonations.length === 0) return;
+            
+            // Average donation
+            const total = allDonations.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
+            const avg = total / allDonations.length;
+            document.getElementById('avgDonation').textContent = '$' + avg.toFixed(0);
+            
+            // Top donation
+            const max = Math.max(...allDonations.map(d => parseFloat(d.amount) || 0));
+            document.getElementById('topDonation').textContent = '$' + max.toFixed(0);
+            
+            // Recurring rate
+            const monthlyDonors = allDonations.filter(d => d.type === 'monthly').length;
+            const rate = (monthlyDonors / allDonations.length) * 100;
+            document.getElementById('recurringRate').textContent = rate.toFixed(0) + '%';
+        }
+        
+        /* ========= UTILITY FUNCTIONS ========= */
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'Invalid date';
+            
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        
+        function formatPaymentMethod(method) {
+            const methods = {
+                card: 'Credit Card',
+                paypal: 'PayPal',
+                bank: 'Bank Transfer',
+                mobile: 'Mobile Money'
+            };
+            
+            return methods[method] || 'Credit Card';
+        }
+        
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        function refreshDonations() {
+            loadDonations().then(() => {
+                if (donationsContent.classList.contains('hidden')) {
+                    updateDashboardStats();
+                    renderRecentDonations();
+                } else {
+                    renderDonationsTable(document.getElementById('donationFilter').value);
+                }
+                showNotification('Data refreshed successfully!', 'success');
+            }).catch(error => {
+                showNotification('Failed to refresh data', 'error');
+            });
+        }
+        
+        function exportData() {
+            // Create CSV content
+            let csv = 'Donation ID,First Name,Last Name,Email,Amount,Type,Date,Status,Payment Method\n';
+            
+            allDonations.forEach(donation => {
+                csv += `"${donation.id}","${donation.firstName || ''}","${donation.lastName || ''}","${donation.email || ''}",`;
+                csv += `"${donation.amount}","${donation.type}","${formatDate(donation.date || donation.timestamp)}",`;
+                csv += `"${donation.status || 'completed'}","${formatPaymentMethod(donation.paymentMethod)}"\n`;
+            });
+            
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `hopelink-donations-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Data exported successfully!', 'success');
+        }
+        
+        function closeEditModal() {
+            editDonationModal.classList.add('hidden');
+            editDonationModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function closeCampaignModal() {
+            campaignModal.classList.add('hidden');
+            campaignModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = 'auto';
+        }
+        
+        /* ========= EVENT LISTENERS ========= */
+        function setupEventListeners() {
+            // Edit donation form
+            editDonationForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const donationData = {
+                    id: document.getElementById('editDonationId').value,
+                    firstName: document.getElementById('editFirstName').value,
+                    lastName: document.getElementById('editLastName').value,
+                    email: document.getElementById('editEmail').value,
+                    amount: document.getElementById('editAmount').value,
+                    type: document.getElementById('editType').value,
+                    status: document.getElementById('editStatus').value,
+                    paymentMethod: document.getElementById('editPaymentMethod').value,
+                    notes: document.getElementById('editNotes').value
+                };
+                
+                const success = await updateDonation(donationData);
+                if (success) {
+                    closeEditModal();
+                    showNotification('Donation updated successfully!', 'success');
+                    refreshDonations();
+                } else {
+                    showNotification('Failed to update donation', 'error');
+                }
+            });
+            
+            // Campaign form
+            campaignForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const campaignData = {
+                    id: document.getElementById('campaignId').value,
+                    name: document.getElementById('campaignName').value,
+                    description: document.getElementById('campaignDescription').value,
+                    goal: document.getElementById('campaignGoal').value,
+                    current: document.getElementById('campaignCurrent').value,
+                    color: document.querySelector('input[name="campaignColor"]:checked').value,
+                    active: document.getElementById('campaignActive').checked
+                };
+                
+                const success = await saveCampaignToFirebase(campaignData);
+                if (success) {
+                    closeCampaignModal();
+                    showNotification('Campaign saved successfully!', 'success');
+                    showCampaigns();
+                } else {
+                    showNotification('Failed to save campaign', 'error');
+                }
+            });
+            
+            // Donation filter
+            document.getElementById('donationFilter').addEventListener('change', (e) => {
+                currentPage = 1;
+                renderDonationsTable(e.target.value);
+            });
+            
+            // Chart period
+            document.getElementById('chartPeriod').addEventListener('change', updateCharts);
+            
+            // Add campaign button
+            document.getElementById('addCampaign')?.addEventListener('click', addCampaign);
+        }
+        
+        function addCampaign() {
+            createNewCampaign();
+        }
+        
+        // Utility functions for campaigns
+        async function updateCampaignProgress(campaignId) {
+            const campaign = campaigns.find(c => c.id === campaignId);
+            if (!campaign) return;
+            
+            const newAmount = prompt(`Enter new current amount for ${campaign.name}:`, campaign.current);
+            if (newAmount === null) return;
+            
+            const amount = parseFloat(newAmount);
+            if (isNaN(amount) || amount < 0) {
+                showNotification('Invalid amount entered', 'error');
+                return;
+            }
+            
+            const campaignRef = window.firebaseRef(window.firebaseDatabase, `campaigns/${campaignId}`);
+            await window.firebaseUpdate(campaignRef, {
+                current: amount,
+                updated: Date.now()
+            });
+            
+            showNotification('Campaign progress updated!', 'success');
+        }
+        
+        async function toggleCampaignActive(campaignId) {
+            const campaign = campaigns.find(c => c.id === campaignId);
+            if (!campaign) return;
+            
+            const campaignRef = window.firebaseRef(window.firebaseDatabase, `campaigns/${campaignId}`);
+            await window.firebaseUpdate(campaignRef, {
+                active: !campaign.active,
+                updated: Date.now()
+            });
+            
+            showNotification(`Campaign ${!campaign.active ? 'activated' : 'deactivated'}!`, 'success');
+        }
+        
+        async function deleteCampaign(campaignId) {
+            if (!confirm('Are you sure you want to delete this campaign?')) return;
+            
+            try {
+                const campaignRef = window.firebaseRef(window.firebaseDatabase, `campaigns/${campaignId}`);
+                await window.firebaseRemove(campaignRef);
+                showNotification('Campaign deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting campaign:', error);
+                showNotification('Failed to delete campaign', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

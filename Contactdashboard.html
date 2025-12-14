@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - HopeLink Mahama Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs (Same as contact page) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration (MUST match your contact page exactly)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCb6Rg6XHq2lQ7K1wQ9Z8X4V2pLmN1oPqR3",
+            authDomain: "hopelink-mahama.firebaseapp.com",
+            projectId: "hopelink-mahama",
+            storageBucket: "hopelink-mahama.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890abcdef",
+            measurementId: "G-ABCDEF1234"
+        };
+        
+        // Initialize Firebase
+        let firebaseInitialized = false;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            firebaseInitialized = true;
+            console.log("Firebase initialized successfully for dashboard");
+        } catch (error) {
+            console.log("Firebase initialization error:", error.message);
+        }
+        
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            blue: '#3B82F6',
+                            green: '#10B981',
+                            yellow: '#FBBF24',
+                            light: '#FEF3C7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+        
+        .dashboard-sidebar {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            width: 260px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin: 0.25rem 0.75rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-item.active {
+            background: #3B82F6;
+        }
+        
+        .dashboard-main {
+            margin-left: 260px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .message-card {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .message-card:hover {
+            border-color: #3B82F6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+        
+        .message-card.unread {
+            border-left: 4px solid #3B82F6;
+        }
+        
+        .content-editor {
+            border: 2px dashed #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .content-editor:hover {
+            border-color: #3B82F6;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #10B981;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #EF4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+            
+            .dashboard-sidebar.active {
+                width: 260px;
+                z-index: 1000;
+            }
+            
+            .dashboard-main {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sans">
+    <!-- Dashboard Sidebar -->
+    <div class="dashboard-sidebar" id="dashboardSidebar">
+        <!-- Logo -->
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center">
+                <div class="bg-gradient-to-r from-primary-blue to-primary-green p-2 rounded-lg mr-3">
+                    <i class="fas fa-hands-helping text-white"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-lg">HopeLink Dashboard</div>
+                    <div class="text-xs text-primary-green font-semibold">Admin Panel</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Profile -->
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center space-x-3">
+                <img id="admin-avatar" src="https://ui-avatars.com/api/?name=Admin&background=3B82F6&color=fff" 
+                     class="w-12 h-12 rounded-full border-2 border-primary-blue">
+                <div class="flex-1">
+                    <div id="admin-name" class="font-semibold">Admin User</div>
+                    <div id="admin-email" class="text-sm text-gray-400">admin@hopelink.org</div>
+                    <div class="text-xs bg-primary-green text-white px-2 py-0.5 rounded-full inline-block mt-1">Administrator</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="p-4 space-y-1">
+            <div class="sidebar-item active" data-section="overview">
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                Dashboard Overview
+            </div>
+            <div class="sidebar-item" data-section="messages">
+                <i class="fas fa-envelope mr-3"></i>
+                Contact Messages
+                <span id="unread-count" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full ml-2 hidden">0</span>
+            </div>
+            <div class="sidebar-item" data-section="faq">
+                <i class="fas fa-question-circle mr-3"></i>
+                FAQ Management
+            </div>
+            <div class="sidebar-item" data-section="content">
+                <i class="fas fa-edit mr-3"></i>
+                Content Editor
+            </div>
+            <div class="sidebar-item" data-section="contact-info">
+                <i class="fas fa-address-book mr-3"></i>
+                Contact Information
+            </div>
+            <div class="sidebar-item" data-section="users">
+                <i class="fas fa-users mr-3"></i>
+                User Management
+            </div>
+            <div class="sidebar-item" data-section="analytics">
+                <i class="fas fa-chart-bar mr-3"></i>
+                Analytics
+            </div>
+            
+            <div class="mt-8 pt-4 border-t border-gray-700">
+                <div class="sidebar-item" onclick="window.location.href='contact.html'">
+                    <i class="fas fa-external-link-alt mr-3"></i>
+                    View Website
+                </div>
+                <div class="sidebar-item text-red-400" onclick="logout()">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Logout
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuBtn" class="mobile-menu-btn hidden fixed top-4 left-4 z-50 bg-primary-blue text-white p-2 rounded-lg">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="dashboard-main min-h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800" id="section-title">Dashboard Overview</h1>
+                    <p class="text-gray-600" id="section-description">Welcome to HopeLink Mahama Admin Panel</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="notificationsBtn" class="p-2 text-gray-600 hover:text-primary-blue">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span id="notification-badge" class="notification-badge hidden">0</span>
+                        </button>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        Last updated: <span id="last-updated">Just now</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="p-6">
+            <!-- Overview Section -->
+            <div id="overview-section" class="space-y-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-2xl font-bold text-gray-800" id="total-messages">0</div>
+                                <div class="text-gray-600">Total Messages</div>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-envelope text-primary-blue text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span id="message-trend">0%</span> from last week
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-2xl font-bold text-gray-800" id="unread-messages">0</div>
+                                <div class="text-gray-600">Unread Messages</div>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-full">
+                                <i class="fas fa-envelope-open-text text-red-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button onclick="markAllAsRead()" class="text-sm text-primary-blue hover:text-blue-700">
+                                <i class="fas fa-check mr-1"></i>Mark all as read
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-2xl font-bold text-gray-800" id="total-users">0</div>
+                                <div class="text-gray-600">Registered Users</div>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-users text-primary-green text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-green-600">
+                            <i class="fas fa-user-plus mr-1"></i>
+                            <span id="new-users">0</span> new this week
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-2xl font-bold text-gray-800" id="response-rate">98%</div>
+                                <div class="text-gray-600">Response Rate</div>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <i class="fas fa-chart-line text-primary-yellow text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600">
+                            Avg response: <span id="avg-response">2.4h</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Messages -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-gray-800">Recent Messages</h2>
+                            <button onclick="switchSection('messages')" class="text-primary-blue hover:text-blue-700 text-sm font-medium">
+                                View All <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="recent-messages" class="space-y-4">
+                            <!-- Messages will be loaded here -->
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-envelope-open-text text-3xl mb-3"></i>
+                                <p>No messages yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Section -->
+            <div id="messages-section" class="hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-gray-800">Contact Messages</h2>
+                            <div class="flex space-x-2">
+                                <button onclick="exportMessages()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">
+                                    <i class="fas fa-download mr-2"></i>Export
+                                </button>
+                                <button onclick="refreshMessages()" class="px-4 py-2 bg-primary-blue text-white rounded-lg text-sm font-medium hover:bg-blue-600">
+                                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="p-4 border-b border-gray-200 bg-gray-50">
+                        <div class="flex flex-wrap gap-4">
+                            <select id="message-filter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">
+                                <option value="all">All Messages</option>
+                                <option value="unread">Unread Only</option>
+                                <option value="read">Read Only</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                            </select>
+                            <select id="subject-filter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">
+                                <option value="all">All Subjects</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="support">Need Support</option>
+                                <option value="volunteer">Volunteering</option>
+                                <option value="donation">Donation</option>
+                                <option value="partnership">Partnership</option>
+                            </select>
+                            <input type="text" id="search-messages" placeholder="Search messages..." 
+                                   class="px-4 py-2 border border-gray-300 rounded-lg text-sm flex-1 max-w-md">
+                        </div>
+                    </div>
+                    
+                    <!-- Messages List -->
+                    <div class="p-6">
+                        <div id="messages-list" class="space-y-4">
+                            <!-- Messages will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Management Section -->
+            <div id="faq-section" class="hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-gray-800">FAQ Management</h2>
+                            <button onclick="addNewFAQ()" class="px-4 py-2 bg-primary-green text-white rounded-lg text-sm font-medium hover:bg-green-600">
+                                <i class="fas fa-plus mr-2"></i>Add New FAQ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div id="faq-list" class="space-y-4">
+                            <!-- FAQ items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Editor Section -->
+            <div id="content-section" class="hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">Content Editor</h2>
+                        <p class="text-gray-600 mt-1">Edit website content that appears on the contact page</p>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Contact Information Editor -->
+                            <div class="content-editor">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Contact Information</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Numbers</label>
+                                        <textarea id="edit-phone" rows="3" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                                        <p class="text-xs text-gray-500 mt-1">Separate numbers with line breaks</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Addresses</label>
+                                        <textarea id="edit-email" rows="3" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Office Hours</label>
+                                        <textarea id="edit-hours" rows="3" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                                    </div>
+                                    <button onclick="saveContactInfo()" class="w-full px-4 py-2 bg-primary-blue text-white rounded-lg font-medium hover:bg-blue-600">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Emergency Contacts Editor -->
+                            <div class="content-editor">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Emergency Contacts</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Immediate Danger</label>
+                                        <input type="text" id="edit-emergency-danger" class="w-full p-3 border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Mental Health Crisis</label>
+                                        <input type="text" id="edit-emergency-mental" class="w-full p-3 border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Women's Safety</label>
+                                        <input type="text" id="edit-emergency-women" class="w-full p-3 border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Children's Safety</label>
+                                        <input type="text" id="edit-emergency-children" class="w-full p-3 border border-gray-300 rounded-lg">
+                                    </div>
+                                    <button onclick="saveEmergencyContacts()" class="w-full px-4 py-2 bg-primary-green text-white rounded-lg font-medium hover:bg-green-600">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info Section -->
+            <div id="contact-info-section" class="hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">Contact Information Settings</h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Location Settings -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-800">Location Settings</h3>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 1</label>
+                                    <input type="text" id="edit-address1" class="w-full p-3 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
+                                    <input type="text" id="edit-address2" class="w-full p-3 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">City/District</label>
+                                    <input type="text" id="edit-city" class="w-full p-3 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                                    <input type="text" id="edit-country" class="w-full p-3 border border-gray-300 rounded-lg">
+                                </div>
+                            </div>
+                            
+                            <!-- Social Media Links -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-800">Social Media Links</h3>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Facebook URL</label>
+                                    <input type="url" id="edit-facebook" class="w-full p-3 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
+                                    <input type="url" id="edit-instagram" class="w-full p-3 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
+                                    <input type="url" id="edit-linkedin" class="w-full p-3 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Twitter URL</label>
+                                    <input type="url" id="edit-twitter" class="w-full p-3 border border-gray-300 rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <button onclick="saveAllSettings()" class="px-6 py-3 bg-primary-blue text-white rounded-lg font-medium hover:bg-blue-600">
+                                <i class="fas fa-save mr-2"></i>Save All Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Section -->
+            <div id="users-section" class="hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">User Management</h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div id="users-list" class="space-y-4">
+                            <!-- Users will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analytics-section" class="hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">Analytics Dashboard</h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Message Analytics -->
+                            <div class="stat-card">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Messages by Subject</h3>
+                                <div id="subject-chart" class="h-64">
+                                    <!-- Chart will be rendered here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Response Time Analytics -->
+                            <div class="stat-card">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Response Time Trends</h3>
+                                <div id="response-chart" class="h-64">
+                                    <!-- Chart will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Time-based Analytics -->
+                        <div class="stat-card mt-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Messages Over Time</h3>
+                            <div id="time-chart" class="h-80">
+                                <!-- Chart will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div id="message-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Message Details</h3>
+                    <button onclick="closeMessageModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div id="message-detail-content" class="space-y-6">
+                    <!-- Message details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Editor Modal -->
+    <div id="faq-editor-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800" id="faq-modal-title">Edit FAQ</h3>
+                    <button onclick="closeFAQModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Question</label>
+                        <input type="text" id="edit-faq-question" class="w-full p-3 border border-gray-300 rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Answer</label>
+                        <textarea id="edit-faq-answer" rows="6" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="edit-faq-active" class="rounded border-gray-300 text-blue-600">
+                            <span class="ml-2 text-gray-700">Active (visible on website)</span>
+                        </label>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button onclick="closeFAQModal()" class="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                            Cancel
+                        </button>
+                        <button onclick="saveFAQ()" class="px-6 py-2 bg-primary-blue text-white rounded-lg font-medium hover:bg-blue-600">
+                            Save FAQ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification-toast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="toast-message">Action completed successfully!</span>
+        </div>
+    </div>
+
+    <script>
+        // ==============================
+        // DASHBOARD CORE FUNCTIONALITY - INTEGRATED WITH CONTACT PAGE
+        // ==============================
+
+        // Global variables
+        let currentMessages = [];
+        let currentFAQs = [];
+        let currentSettings = {};
+        let editingFAQId = null;
+
+        // Firebase helper functions - Same as contact page
+        function isFirebaseAvailable() {
+            return firebaseInitialized && typeof firebase !== 'undefined' && firebase.firestore;
+        }
+
+        // Check admin authentication
+        async function checkAdminAuth() {
+            // First check localStorage for admin status
+            const userJson = localStorage.getItem('hopelink_current_user');
+            if (userJson) {
+                try {
+                    const user = JSON.parse(userJson);
+                    if (user.role === 'admin') {
+                        // Update admin UI
+                        document.getElementById('admin-name').textContent = user.displayName || user.name || user.email;
+                        document.getElementById('admin-email').textContent = user.email;
+                        document.getElementById('admin-avatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email)}&background=3B82F6&color=fff`;
+                        return;
+                    }
+                } catch (e) {
+                    console.log("Could not parse user data:", e);
+                }
+            }
+            
+            // Also check sessionStorage
+            const sessionUser = sessionStorage.getItem('currentUser');
+            if (sessionUser) {
+                try {
+                    const user = JSON.parse(sessionUser);
+                    if (user.role === 'admin') {
+                        // Update admin UI
+                        document.getElementById('admin-name').textContent = user.displayName || user.name || user.email;
+                        document.getElementById('admin-email').textContent = user.email;
+                        document.getElementById('admin-avatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email)}&background=3B82F6&color=fff`;
+                        return;
+                    }
+                } catch (e) {
+                    console.log("Could not parse session user:", e);
+                }
+            }
+            
+            // For demo purposes, show a demo admin
+            console.log("No admin user found. Showing demo mode.");
+            document.getElementById('admin-name').textContent = "Demo Admin";
+            document.getElementById('admin-email').textContent = "demo@hopelink.org";
+            
+            // Initialize localStorage if not exists (for demo)
+            if (!localStorage.getItem('hopelink_messages')) {
+                localStorage.setItem('hopelink_messages', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('hopelink_faqs')) {
+                localStorage.setItem('hopelink_faqs', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('hopelink_settings')) {
+                localStorage.setItem('hopelink_settings', JSON.stringify({}));
+            }
+        }
+
+        // ==============================
+        // MESSAGE LOADING - INTEGRATED WITH CONTACT PAGE STORAGE
+        // ==============================
+
+        async function loadMessages() {
+            try {
+                let messages = [];
+                
+                // Try Firebase first (same as contact page)
+                if (isFirebaseAvailable()) {
+                    console.log("Loading messages from Firebase...");
+                    try {
+                        const messagesRef = firebase.firestore().collection("contactMessages");
+                        const snapshot = await messagesRef.orderBy('createdAt', 'desc').limit(100).get();
+                        
+                        if (!snapshot.empty) {
+                            messages = snapshot.docs.map(doc => ({
+                                id: doc.id,
+                                ...doc.data(),
+                                // Convert Firebase timestamp to Date
+                                createdAt: doc.data().createdAt ? 
+                                    (doc.data().createdAt.toDate ? doc.data().createdAt.toDate() : new Date(doc.data().createdAt)) : 
+                                    new Date()
+                            }));
+                            console.log(`Loaded ${messages.length} messages from Firebase`);
+                        } else {
+                            console.log("No messages found in Firebase");
+                        }
+                    } catch (firebaseError) {
+                        console.error("Firebase load error:", firebaseError);
+                        throw firebaseError; // Fall through to localStorage
+                    }
+                }
+                
+                // Fallback to localStorage (contact page saves here too)
+                if (messages.length === 0) {
+                    console.log("Loading messages from localStorage...");
+                    const localMessages = JSON.parse(localStorage.getItem('hopelink_messages') || '[]');
+                    if (localMessages.length > 0) {
+                        messages = localMessages.map(msg => ({
+                            ...msg,
+                            createdAt: msg.createdAt ? new Date(msg.createdAt) : new Date(msg.timestamp || Date.now())
+                        })).sort((a, b) => b.createdAt - a.createdAt);
+                        console.log(`Loaded ${messages.length} messages from localStorage`);
+                    }
+                }
+                
+                currentMessages = messages;
+                updateMessageStats();
+                displayMessages();
+                updateUnreadCount();
+                
+                // Also check dashboard stats from localStorage
+                const stats = JSON.parse(localStorage.getItem('hopelink_dashboard_stats') || '{}');
+                if (stats.lastUpdated) {
+                    document.getElementById('last-updated').textContent = 
+                        `Today at ${new Date(stats.lastUpdated).toLocaleTimeString()}`;
+                }
+                
+                console.log("Message loading complete:", currentMessages.length, "messages");
+            } catch (error) {
+                console.error("Error loading messages:", error);
+                showToast('Error loading messages. Using demo data.', 'error');
+                
+                // Load demo messages as fallback
+                loadDemoMessages();
+            }
+        }
+
+        // Load demo messages for testing
+        function loadDemoMessages() {
+            const demoMessages = [
+                {
+                    id: 'demo1',
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    email: 'john@example.com',
+                    phone: '+250 788 111 111',
+                    subject: 'general',
+                    message: 'This is a test message to demonstrate the dashboard functionality.',
+                    status: 'unread',
+                    read: false,
+                    createdAt: new Date(),
+                    source: 'demo'
+                },
+                {
+                    id: 'demo2',
+                    firstName: 'Jane',
+                    lastName: 'Smith',
+                    email: 'jane@example.com',
+                    phone: '+250 788 222 222',
+                    subject: 'support',
+                    message: 'I need assistance with the youth program registration.',
+                    status: 'unread',
+                    read: false,
+                    createdAt: new Date(Date.now() - 3600000), // 1 hour ago
+                    source: 'demo'
+                },
+                {
+                    id: 'demo3',
+                    firstName: 'Robert',
+                    lastName: 'Johnson',
+                    email: 'robert@example.com',
+                    phone: '+250 788 333 333',
+                    subject: 'volunteer',
+                    message: 'I would like to volunteer for the mental wellness program.',
+                    status: 'read',
+                    read: true,
+                    createdAt: new Date(Date.now() - 86400000), // 1 day ago
+                    source: 'demo'
+                }
+            ];
+            
+            currentMessages = demoMessages;
+            updateMessageStats();
+            displayMessages();
+            updateUnreadCount();
+        }
+
+        // ==============================
+        // FAQ LOADING - INTEGRATED WITH CONTACT PAGE
+        // ==============================
+
+        async function loadFAQs() {
+            try {
+                let faqs = [];
+                
+                // Try Firebase first
+                if (isFirebaseAvailable()) {
+                    try {
+                        const faqsRef = firebase.firestore().collection("faqs");
+                        const snapshot = await faqsRef.orderBy('order').get();
+                        
+                        if (!snapshot.empty) {
+                            faqs = snapshot.docs.map(doc => ({
+                                id: doc.id,
+                                ...doc.data()
+                            }));
+                            console.log(`Loaded ${faqs.length} FAQs from Firebase`);
+                        }
+                    } catch (firebaseError) {
+                        console.error("Firebase FAQ load error:", firebaseError);
+                    }
+                }
+                
+                // Fallback to localStorage
+                if (faqs.length === 0) {
+                    const localFAQs = JSON.parse(localStorage.getItem('hopelink_faqs') || '[]');
+                    if (localFAQs.length > 0) {
+                        faqs = localFAQs;
+                        console.log(`Loaded ${faqs.length} FAQs from localStorage`);
+                    }
+                }
+                
+                // If still no FAQs, create default ones
+                if (faqs.length === 0) {
+                    faqs = getDefaultFAQs();
+                    // Save to localStorage for future use
+                    localStorage.setItem('hopelink_faqs', JSON.stringify(faqs));
+                }
+                
+                currentFAQs = faqs;
+                displayFAQs();
+            } catch (error) {
+                console.error("Error loading FAQs:", error);
+                currentFAQs = getDefaultFAQs();
+                displayFAQs();
+            }
+        }
+
+        function getDefaultFAQs() {
+            return [
+                {
+                    id: 'faq1',
+                    question: 'How can I get immediate help for food assistance?',
+                    answer: 'You can visit our Hunger Help center at the main camp during operating hours (8 AM - 5 PM) or call our emergency food hotline at +250 788 555 456 for urgent needs outside of these hours.',
+                    active: true,
+                    order: 1,
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 'faq2',
+                    question: 'What youth programs are currently available?',
+                    answer: 'We currently offer digital skills training, leadership development workshops, career counseling, and entrepreneurship programs. Visit our Youth Empowerment center for more information and registration.',
+                    active: true,
+                    order: 2,
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 'faq3',
+                    question: 'How can I volunteer with HopeLink Mahama?',
+                    answer: 'We welcome volunteers in various capacities including teaching, administrative support, community outreach, and technical assistance. Please fill out our volunteer application form or visit our office to discuss opportunities.',
+                    active: true,
+                    order: 3,
+                    createdAt: new Date().toISOString()
+                }
+            ];
+        }
+
+        // ==============================
+        // SETTINGS LOADING - INTEGRATED WITH CONTACT PAGE
+        // ==============================
+
+        async function loadSettings() {
+            try {
+                let settings = {};
+                
+                // Try Firebase first
+                if (isFirebaseAvailable()) {
+                    try {
+                        const settingsRef = firebase.firestore().collection("settings").doc('contactPage');
+                        const doc = await settingsRef.get();
+                        
+                        if (doc.exists) {
+                            settings = doc.data();
+                            console.log("Loaded settings from Firebase");
+                        }
+                    } catch (firebaseError) {
+                        console.error("Firebase settings load error:", firebaseError);
+                    }
+                }
+                
+                // Fallback to localStorage
+                if (Object.keys(settings).length === 0) {
+                    const localSettings = JSON.parse(localStorage.getItem('hopelink_settings') || '{}');
+                    if (Object.keys(localSettings).length > 0) {
+                        settings = localSettings;
+                        console.log("Loaded settings from localStorage");
+                    }
+                }
+                
+                // If still no settings, create default ones
+                if (Object.keys(settings).length === 0) {
+                    settings = getDefaultSettings();
+                    // Save to localStorage for contact page to use
+                    localStorage.setItem('hopelink_settings', JSON.stringify(settings));
+                }
+                
+                currentSettings = settings;
+                populateSettingsForm();
+            } catch (error) {
+                console.error("Error loading settings:", error);
+                currentSettings = getDefaultSettings();
+                populateSettingsForm();
+            }
+        }
+
+        function getDefaultSettings() {
+            return {
+                phoneNumbers: "General Inquiries: +250 788 123 456\nEmergency: +250 788 555 456",
+                emailAddresses: "info@hopelinkmahama.org\nsupport@hopelinkmahama.org",
+                officeHours: "Monday - Friday: 8:00 AM - 5:00 PM\nSaturday: 9:00 AM - 1:00 PM\nEmergency services available 24/7",
+                emergencyContacts: {
+                    danger: "+250 788 555 456",
+                    mental: "+250 788 555 789",
+                    women: "+250 788 555 123",
+                    children: "+250 788 555 999"
+                },
+                location: {
+                    address1: "Mahama Refugee Camp",
+                    address2: "Kirehe District",
+                    city: "Kirehe District",
+                    country: "Rwanda"
+                },
+                socialMedia: {
+                    facebook: "#",
+                    instagram: "#",
+                    linkedin: "#",
+                    twitter: "#"
+                },
+                updatedAt: new Date().toISOString()
+            };
+        }
+
+        // ==============================
+        // MESSAGE DISPLAY FUNCTIONS
+        // ==============================
+
+        function updateMessageStats() {
+            const total = currentMessages.length;
+            const unread = currentMessages.filter(m => !m.read).length;
+            const today = new Date();
+            const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            
+            const todayMessages = currentMessages.filter(m => {
+                const msgDate = new Date(m.createdAt);
+                return msgDate >= todayStart;
+            }).length;
+            
+            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const weekMessages = currentMessages.filter(m => {
+                const msgDate = new Date(m.createdAt);
+                return msgDate >= weekAgo;
+            }).length;
+            
+            // Update stats cards
+            document.getElementById('total-messages').textContent = total;
+            document.getElementById('unread-messages').textContent = unread;
+            
+            // Calculate trend (messages this week vs last week)
+            const lastWeekStart = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000);
+            const lastWeekMessages = currentMessages.filter(m => {
+                const msgDate = new Date(m.createdAt);
+                return msgDate >= lastWeekStart && msgDate < weekAgo;
+            }).length;
+            
+            let trend = 0;
+            if (lastWeekMessages > 0) {
+                trend = Math.round(((weekMessages - lastWeekMessages) / lastWeekMessages) * 100);
+            } else if (weekMessages > 0) {
+                trend = 100;
+            }
+            
+            const trendElement = document.getElementById('message-trend');
+            trendElement.textContent = `${trend}%`;
+            trendElement.className = trend >= 0 ? 'text-green-600' : 'text-red-600';
+            
+            // Update user stats (demo data)
+            const userStats = JSON.parse(localStorage.getItem('hopelink_users_stats') || '{}');
+            document.getElementById('total-users').textContent = userStats.total || 45;
+            document.getElementById('new-users').textContent = userStats.week || 3;
+            
+            // Response rate (demo)
+            const responseRate = total > 0 ? Math.round((total - unread) / total * 100) : 100;
+            document.getElementById('response-rate').textContent = `${responseRate}%`;
+            document.getElementById('avg-response').textContent = "2.4h";
+        }
+
+        function displayMessages(filter = 'all', search = '', subject = 'all') {
+            const container = document.getElementById('messages-list');
+            const recentContainer = document.getElementById('recent-messages');
+            
+            if (!container) return;
+            
+            // Filter messages
+            let filteredMessages = [...currentMessages];
+            
+            // Apply filters
+            if (filter === 'unread') {
+                filteredMessages = filteredMessages.filter(m => !m.read);
+            } else if (filter === 'read') {
+                filteredMessages = filteredMessages.filter(m => m.read);
+            } else if (filter === 'today') {
+                const today = new Date();
+                const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                filteredMessages = filteredMessages.filter(m => {
+                    const msgDate = new Date(m.createdAt);
+                    return msgDate >= todayStart;
+                });
+            } else if (filter === 'week') {
+                const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                filteredMessages = filteredMessages.filter(m => {
+                    const msgDate = new Date(m.createdAt);
+                    return msgDate >= weekAgo;
+                });
+            }
+            
+            if (subject !== 'all') {
+                filteredMessages = filteredMessages.filter(m => 
+                    m.subject && m.subject.toLowerCase() === subject.toLowerCase()
+                );
+            }
+            
+            if (search) {
+                const searchLower = search.toLowerCase();
+                filteredMessages = filteredMessages.filter(m => 
+                    (m.message && m.message.toLowerCase().includes(searchLower)) ||
+                    (m.firstName && m.firstName.toLowerCase().includes(searchLower)) ||
+                    (m.lastName && m.lastName.toLowerCase().includes(searchLower)) ||
+                    (m.email && m.email.toLowerCase().includes(searchLower)) ||
+                    (m.phone && m.phone.toLowerCase().includes(searchLower))
+                );
+            }
+            
+            // Display in main list
+            if (filteredMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-inbox text-3xl mb-3"></i>
+                        <p>No messages found</p>
+                        <p class="text-sm mt-2">${search ? 'Try a different search term' : 'Try changing your filters or check back later'}</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = filteredMessages.map(message => {
+                    const firstName = message.firstName || 'Unknown';
+                    const lastName = message.lastName || '';
+                    const email = message.email || 'No email';
+                    const phone = message.phone || 'Not provided';
+                    const messageText = message.message || 'No message';
+                    const subjectText = message.subject || 'other';
+                    const createdAt = message.createdAt ? formatDate(message.createdAt) : 'Unknown date';
+                    
+                    // Truncate message for display
+                    const truncatedMessage = messageText.length > 100 ? 
+                        messageText.substring(0, 100) + '...' : messageText;
+                    
+                    return `
+                        <div class="message-card ${!message.read ? 'unread' : ''}" data-id="${message.id}">
+                            <div class="p-4">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <span class="font-semibold text-gray-800">${firstName} ${lastName}</span>
+                                            <span class="text-xs px-2 py-1 rounded-full ${getSubjectColor(subjectText)}">
+                                                ${subjectText.charAt(0).toUpperCase() + subjectText.slice(1)}
+                                            </span>
+                                            ${!message.read ? '<span class="text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full">NEW</span>' : ''}
+                                        </div>
+                                        <p class="text-gray-600 text-sm mb-2">${truncatedMessage}</p>
+                                        <div class="flex items-center text-xs text-gray-500 space-x-4">
+                                            <span><i class="fas fa-envelope mr-1"></i>${email}</span>
+                                            <span><i class="fas fa-phone mr-1"></i>${phone}</span>
+                                            <span><i class="fas fa-clock mr-1"></i>${createdAt}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2 ml-4">
+                                        <button onclick="viewMessage('${message.id}')" class="p-2 text-gray-500 hover:text-primary-blue" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button onclick="toggleReadStatus('${message.id}')" class="p-2 text-gray-500 hover:text-green-600" title="${message.read ? 'Mark as unread' : 'Mark as read'}">
+                                            <i class="fas ${message.read ? 'fa-envelope' : 'fa-envelope-open'}"></i>
+                                        </button>
+                                        <button onclick="deleteMessage('${message.id}')" class="p-2 text-gray-500 hover:text-red-600" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Display recent messages (first 5)
+            const recentMessages = currentMessages.slice(0, 5);
+            if (recentContainer) {
+                if (recentMessages.length === 0) {
+                    recentContainer.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-envelope-open-text text-3xl mb-3"></i>
+                            <p>No messages yet</p>
+                            <p class="text-sm mt-2">Messages from the contact form will appear here</p>
+                        </div>
+                    `;
+                } else {
+                    recentContainer.innerHTML = recentMessages.map(message => {
+                        const firstName = message.firstName || 'Unknown';
+                        const lastName = message.lastName || '';
+                        const messageText = message.message || '';
+                        const truncatedMessage = messageText.length > 60 ? 
+                            messageText.substring(0, 60) + '...' : messageText;
+                        
+                        return `
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors" onclick="viewMessage('${message.id}')">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="font-medium text-gray-800">${firstName} ${lastName}</span>
+                                        ${!message.read ? '<span class="w-2 h-2 bg-blue-500 rounded-full"></span>' : ''}
+                                    </div>
+                                    <div class="text-sm text-gray-600">${truncatedMessage}</div>
+                                </div>
+                                <div class="text-xs text-gray-500 ml-4 whitespace-nowrap">${formatTimeAgo(message.createdAt)}</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+
+        function displayFAQs() {
+            const container = document.getElementById('faq-list');
+            if (!container) return;
+            
+            if (currentFAQs.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-question-circle text-3xl mb-3"></i>
+                        <p>No FAQs yet</p>
+                        <button onclick="addNewFAQ()" class="mt-3 px-4 py-2 bg-primary-blue text-white rounded-lg text-sm hover:bg-blue-600 transition-colors">
+                            Add your first FAQ
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = currentFAQs.map(faq => `
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:border-primary-blue transition-colors">
+                        <div class="p-4 bg-gray-50 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-semibold text-gray-800">${faq.question}</h4>
+                                <div class="flex items-center space-x-2">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" ${faq.active !== false ? 'checked' : ''} onchange="toggleFAQActive('${faq.id}')">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <button onclick="editFAQ('${faq.id}')" class="p-2 text-gray-500 hover:text-primary-blue transition-colors" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteFAQ('${faq.id}')" class="p-2 text-gray-500 hover:text-red-600 transition-colors" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-gray-600">${faq.answer}</p>
+                            <div class="mt-3 flex items-center text-xs text-gray-500 space-x-3">
+                                <span>Order: ${faq.order || 0}</span>
+                                <span>•</span>
+                                <span>Last updated: ${faq.updatedAt ? formatDate(faq.updatedAt) : formatDate(faq.createdAt)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // ==============================
+        // MESSAGE MANAGEMENT
+        // ==============================
+
+        async function viewMessage(messageId) {
+            const message = currentMessages.find(m => m.id === messageId);
+            if (!message) {
+                showToast('Message not found', 'error');
+                return;
+            }
+            
+            // Mark as read if unread
+            if (!message.read) {
+                await markAsRead(messageId);
+            }
+            
+            // Show modal
+            const modal = document.getElementById('message-detail-modal');
+            const content = document.getElementById('message-detail-content');
+            
+            const firstName = message.firstName || 'Unknown';
+            const lastName = message.lastName || '';
+            const email = message.email || 'No email';
+            const phone = message.phone || 'Not provided';
+            const messageText = message.message || 'No message content';
+            const subjectText = message.subject || 'other';
+            const createdAt = message.createdAt ? formatDate(message.createdAt) : 'Unknown date';
+            const ipAddress = message.ipAddress || 'Unknown';
+            const source = message.source || 'contact_page';
+            
+            content.innerHTML = `
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Sender Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <div class="text-sm text-gray-600">Full Name</div>
+                            <div class="font-medium">${firstName} ${lastName}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600">Email</div>
+                            <div class="font-medium">${email}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600">Phone</div>
+                            <div class="font-medium">${phone}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600">Subject</div>
+                            <div class="font-medium ${getSubjectColorClass(subjectText)} px-3 py-1 rounded-full inline-block">
+                                ${subjectText.charAt(0).toUpperCase() + subjectText.slice(1)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Message</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="whitespace-pre-wrap text-gray-700">${messageText}</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-sm text-gray-600">Sent Date</div>
+                        <div class="font-medium">${createdAt}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">Source</div>
+                        <div class="font-medium">${source.replace('_', ' ').toUpperCase()}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">IP Address</div>
+                        <div class="font-medium">${ipAddress}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">Status</div>
+                        <div class="font-medium ${message.read ? 'text-green-600' : 'text-blue-600'}">
+                            ${message.read ? 'READ' : 'UNREAD'}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pt-4 border-t border-gray-200">
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="replyToMessage('${email}')" class="px-4 py-2 bg-primary-blue text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center">
+                            <i class="fas fa-reply mr-2"></i>Reply via Email
+                        </button>
+                        <button onclick="forwardMessage('${message.id}')" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
+                            <i class="fas fa-share mr-2"></i>Forward
+                        </button>
+                        <button onclick="deleteMessage('${message.id}')" class="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        async function markAsRead(messageId) {
+            try {
+                const messageIndex = currentMessages.findIndex(m => m.id === messageId);
+                if (messageIndex === -1) return;
+                
+                currentMessages[messageIndex].read = true;
+                currentMessages[messageIndex].readAt = new Date().toISOString();
+                
+                // Update localStorage
+                const messages = JSON.parse(localStorage.getItem('hopelink_messages') || '[]');
+                const localIndex = messages.findIndex(m => m.id === messageId);
+                if (localIndex !== -1) {
+                    messages[localIndex].read = true;
+                    messages[localIndex].readAt = new Date().toISOString();
+                    localStorage.setItem('hopelink_messages', JSON.stringify(messages));
+                }
+                
+                // Update Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        await firebase.firestore().collection("contactMessages").doc(messageId).update({
+                            read: true,
+                            readAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } catch (firebaseError) {
+                        console.log("Could not update Firebase:", firebaseError);
+                    }
+                }
+                
+                updateMessageStats();
+                updateUnreadCount();
+                displayMessages();
+                
+                showToast('Message marked as read');
+            } catch (error) {
+                console.error("Error marking as read:", error);
+                showToast('Error marking as read', 'error');
+            }
+        }
+
+        async function toggleReadStatus(messageId) {
+            try {
+                const messageIndex = currentMessages.findIndex(m => m.id === messageId);
+                if (messageIndex === -1) return;
+                
+                const newReadStatus = !currentMessages[messageIndex].read;
+                currentMessages[messageIndex].read = newReadStatus;
+                currentMessages[messageIndex].readAt = new Date().toISOString();
+                
+                // Update localStorage
+                const messages = JSON.parse(localStorage.getItem('hopelink_messages') || '[]');
+                const localIndex = messages.findIndex(m => m.id === messageId);
+                if (localIndex !== -1) {
+                    messages[localIndex].read = newReadStatus;
+                    messages[localIndex].readAt = new Date().toISOString();
+                    localStorage.setItem('hopelink_messages', JSON.stringify(messages));
+                }
+                
+                // Update Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        await firebase.firestore().collection("contactMessages").doc(messageId).update({
+                            read: newReadStatus,
+                            readAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } catch (firebaseError) {
+                        console.log("Could not update Firebase:", firebaseError);
+                    }
+                }
+                
+                updateMessageStats();
+                updateUnreadCount();
+                displayMessages();
+                
+                showToast(`Message marked as ${newReadStatus ? 'read' : 'unread'}`);
+            } catch (error) {
+                console.error("Error toggling read status:", error);
+                showToast('Error updating message status', 'error');
+            }
+        }
+
+        async function markAllAsRead() {
+            try {
+                const unreadMessages = currentMessages.filter(m => !m.read);
+                if (unreadMessages.length === 0) {
+                    showToast('No unread messages to mark', 'info');
+                    return;
+                }
+                
+                // Update local state
+                currentMessages.forEach(message => {
+                    if (!message.read) {
+                        message.read = true;
+                        message.readAt = new Date().toISOString();
+                    }
+                });
+                
+                // Update localStorage
+                const messages = JSON.parse(localStorage.getItem('hopelink_messages') || '[]');
+                messages.forEach(message => {
+                    if (!message.read) {
+                        message.read = true;
+                        message.readAt = new Date().toISOString();
+                    }
+                });
+                localStorage.setItem('hopelink_messages', JSON.stringify(messages));
+                
+                // Update Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        const batch = firebase.firestore().batch();
+                        unreadMessages.forEach(message => {
+                            const messageRef = firebase.firestore().collection("contactMessages").doc(message.id);
+                            batch.update(messageRef, {
+                                read: true,
+                                readAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        });
+                        await batch.commit();
+                    } catch (firebaseError) {
+                        console.log("Could not update Firebase:", firebaseError);
+                    }
+                }
+                
+                updateMessageStats();
+                updateUnreadCount();
+                displayMessages();
+                showToast(`Marked ${unreadMessages.length} messages as read`);
+            } catch (error) {
+                console.error("Error marking all as read:", error);
+                showToast('Error marking all as read', 'error');
+            }
+        }
+
+        async function deleteMessage(messageId) {
+            if (!confirm('Are you sure you want to delete this message? This action cannot be undone.')) return;
+            
+            try {
+                // Remove from local state
+                currentMessages = currentMessages.filter(m => m.id !== messageId);
+                
+                // Remove from localStorage
+                const messages = JSON.parse(localStorage.getItem('hopelink_messages') || '[]');
+                const filtered = messages.filter(m => m.id !== messageId);
+                localStorage.setItem('hopelink_messages', JSON.stringify(filtered));
+                
+                // Remove from Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        await firebase.firestore().collection("contactMessages").doc(messageId).delete();
+                    } catch (firebaseError) {
+                        console.log("Could not delete from Firebase:", firebaseError);
+                    }
+                }
+                
+                updateMessageStats();
+                updateUnreadCount();
+                displayMessages();
+                closeMessageModal();
+                showToast('Message deleted successfully');
+            } catch (error) {
+                console.error("Error deleting message:", error);
+                showToast('Error deleting message', 'error');
+            }
+        }
+
+        // ==============================
+        // SETTINGS MANAGEMENT
+        // ==============================
+
+        function populateSettingsForm() {
+            document.getElementById('edit-phone').value = currentSettings.phoneNumbers || '';
+            document.getElementById('edit-email').value = currentSettings.emailAddresses || '';
+            document.getElementById('edit-hours').value = currentSettings.officeHours || '';
+            
+            if (currentSettings.emergencyContacts) {
+                document.getElementById('edit-emergency-danger').value = currentSettings.emergencyContacts.danger || '';
+                document.getElementById('edit-emergency-mental').value = currentSettings.emergencyContacts.mental || '';
+                document.getElementById('edit-emergency-women').value = currentSettings.emergencyContacts.women || '';
+                document.getElementById('edit-emergency-children').value = currentSettings.emergencyContacts.children || '';
+            }
+            
+            if (currentSettings.location) {
+                document.getElementById('edit-address1').value = currentSettings.location.address1 || '';
+                document.getElementById('edit-address2').value = currentSettings.location.address2 || '';
+                document.getElementById('edit-city').value = currentSettings.location.city || '';
+                document.getElementById('edit-country').value = currentSettings.location.country || '';
+            }
+            
+            if (currentSettings.socialMedia) {
+                document.getElementById('edit-facebook').value = currentSettings.socialMedia.facebook || '';
+                document.getElementById('edit-instagram').value = currentSettings.socialMedia.instagram || '';
+                document.getElementById('edit-linkedin').value = currentSettings.socialMedia.linkedin || '';
+                document.getElementById('edit-twitter').value = currentSettings.socialMedia.twitter || '';
+            }
+        }
+
+        async function saveContactInfo() {
+            try {
+                const updates = {
+                    phoneNumbers: document.getElementById('edit-phone').value.trim(),
+                    emailAddresses: document.getElementById('edit-email').value.trim(),
+                    officeHours: document.getElementById('edit-hours').value.trim(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // Update current settings
+                currentSettings = { ...currentSettings, ...updates };
+                
+                // Save to localStorage (contact page reads from here)
+                localStorage.setItem('hopelink_settings', JSON.stringify(currentSettings));
+                
+                // Save to Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        await firebase.firestore().collection("settings").doc('contactPage').set(
+                            updates, 
+                            { merge: true }
+                        );
+                    } catch (firebaseError) {
+                        console.log("Could not save to Firebase:", firebaseError);
+                    }
+                }
+                
+                showToast('Contact information saved! The contact page will be updated.');
+            } catch (error) {
+                console.error("Error saving contact info:", error);
+                showToast('Error saving contact info', 'error');
+            }
+        }
+
+        async function saveEmergencyContacts() {
+            try {
+                const updates = {
+                    emergencyContacts: {
+                        danger: document.getElementById('edit-emergency-danger').value.trim(),
+                        mental: document.getElementById('edit-emergency-mental').value.trim(),
+                        women: document.getElementById('edit-emergency-women').value.trim(),
+                        children: document.getElementById('edit-emergency-children').value.trim()
+                    },
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // Update current settings
+                currentSettings = { ...currentSettings, ...updates };
+                
+                // Save to localStorage
+                localStorage.setItem('hopelink_settings', JSON.stringify(currentSettings));
+                
+                // Save to Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        await firebase.firestore().collection("settings").doc('contactPage').set(
+                            updates, 
+                            { merge: true }
+                        );
+                    } catch (firebaseError) {
+                        console.log("Could not save to Firebase:", firebaseError);
+                    }
+                }
+                
+                showToast('Emergency contacts saved! The contact page will be updated.');
+            } catch (error) {
+                console.error("Error saving emergency contacts:", error);
+                showToast('Error saving emergency contacts', 'error');
+            }
+        }
+
+        async function saveAllSettings() {
+            try {
+                const updates = {
+                    location: {
+                        address1: document.getElementById('edit-address1').value.trim(),
+                        address2: document.getElementById('edit-address2').value.trim(),
+                        city: document.getElementById('edit-city').value.trim(),
+                        country: document.getElementById('edit-country').value.trim()
+                    },
+                    socialMedia: {
+                        facebook: document.getElementById('edit-facebook').value.trim(),
+                        instagram: document.getElementById('edit-instagram').value.trim(),
+                        linkedin: document.getElementById('edit-linkedin').value.trim(),
+                        twitter: document.getElementById('edit-twitter').value.trim()
+                    },
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // Update current settings
+                currentSettings = { ...currentSettings, ...updates };
+                
+                // Save to localStorage
+                localStorage.setItem('hopelink_settings', JSON.stringify(currentSettings));
+                
+                // Save to Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        await firebase.firestore().collection("settings").doc('contactPage').set(
+                            updates, 
+                            { merge: true }
+                        );
+                    } catch (firebaseError) {
+                        console.log("Could not save to Firebase:", firebaseError);
+                    }
+                }
+                
+                showToast('All settings saved! The contact page will be updated.');
+            } catch (error) {
+                console.error("Error saving settings:", error);
+                showToast('Error saving settings', 'error');
+            }
+        }
+
+        // ==============================
+        // FAQ MANAGEMENT
+        // ==============================
+
+        function addNewFAQ() {
+            editingFAQId = null;
+            document.getElementById('faq-modal-title').textContent = 'Add New FAQ';
+            document.getElementById('edit-faq-question').value = '';
+            document.getElementById('edit-faq-answer').value = '';
+            document.getElementById('edit-faq-active').checked = true;
+            
+            const modal = document.getElementById('faq-editor-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function editFAQ(faqId) {
+            const faq = currentFAQs.find(f => f.id === faqId);
+            if (!faq) return;
+            
+            editingFAQId = faqId;
+            document.getElementById('faq-modal-title').textContent = 'Edit FAQ';
+            document.getElementById('edit-faq-question').value = faq.question;
+            document.getElementById('edit-faq-answer').value = faq.answer;
+            document.getElementById('edit-faq-active').checked = faq.active !== false;
+            
+            const modal = document.getElementById('faq-editor-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        async function saveFAQ() {
+            const question = document.getElementById('edit-faq-question').value.trim();
+            const answer = document.getElementById('edit-faq-answer').value.trim();
+            const active = document.getElementById('edit-faq-active').checked;
+            
+            if (!question || !answer) {
+                alert('Please fill in both question and answer fields.');
+                return;
+            }
+            
+            try {
+                const faqData = {
+                    question,
+                    answer,
+                    active,
+                    order: editingFAQId ? 
+                        (currentFAQs.find(f => f.id === editingFAQId)?.order || currentFAQs.length) : 
+                        currentFAQs.length,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (editingFAQId) {
+                    // Update existing FAQ
+                    const index = currentFAQs.findIndex(f => f.id === editingFAQId);
+                    if (index !== -1) {
+                        currentFAQs[index] = { ...currentFAQs[index], ...faqData };
+                    }
+                } else {
+                    // Add new FAQ
+                    faqData.id = 'faq_' + Date.now();
+                    faqData.createdAt = new Date().toISOString();
+                    currentFAQs.push(faqData);
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('hopelink_faqs', JSON.stringify(currentFAQs));
+                
+                // Save to Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        if (editingFAQId) {
+                            await firebase.firestore().collection("faqs").doc(editingFAQId).update(faqData);
+                        } else {
+                            await firebase.firestore().collection("faqs").add(faqData);
+                        }
+                    } catch (firebaseError) {
+                        console.log("Could not save FAQ to Firebase:", firebaseError);
+                    }
+                }
+                
+                await loadFAQs();
+                closeFAQModal();
+                showToast('FAQ saved successfully! The contact page will be updated.');
+            } catch (error) {
+                console.error("Error saving FAQ:", error);
+                showToast('Error saving FAQ', 'error');
+            }
+        }
+
+        async function toggleFAQActive(faqId) {
+            try {
+                const index = currentFAQs.findIndex(f => f.id === faqId);
+                if (index === -1) return;
+                
+                currentFAQs[index].active = !currentFAQs[index].active;
+                currentFAQs[index].updatedAt = new Date().toISOString();
+                
+                // Update localStorage
+                localStorage.setItem('hopelink_faqs', JSON.stringify(currentFAQs));
+                
+                // Update Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        await firebase.firestore().collection("faqs").doc(faqId).update({
+                            active: currentFAQs[index].active,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } catch (firebaseError) {
+                        console.log("Could not update Firebase:", firebaseError);
+                    }
+                }
+                
+                displayFAQs();
+                showToast(`FAQ ${currentFAQs[index].active ? 'activated' : 'deactivated'}`);
+            } catch (error) {
+                console.error("Error toggling FAQ:", error);
+                showToast('Error updating FAQ', 'error');
+            }
+        }
+
+        async function deleteFAQ(faqId) {
+            if (!confirm('Are you sure you want to delete this FAQ? This action cannot be undone.')) return;
+            
+            try {
+                // Remove from local state
+                currentFAQs = currentFAQs.filter(f => f.id !== faqId);
+                
+                // Update localStorage
+                localStorage.setItem('hopelink_faqs', JSON.stringify(currentFAQs));
+                
+                // Delete from Firebase if available
+                if (isFirebaseAvailable()) {
+                    try {
+                        await firebase.firestore().collection("faqs").doc(faqId).delete();
+                    } catch (firebaseError) {
+                        console.log("Could not delete from Firebase:", firebaseError);
+                    }
+                }
+                
+                displayFAQs();
+                showToast('FAQ deleted successfully');
+            } catch (error) {
+                console.error("Error deleting FAQ:", error);
+                showToast('Error deleting FAQ', 'error');
+            }
+        }
+
+        // ==============================
+        // UTILITY FUNCTIONS
+        // ==============================
+
+        function getSubjectColor(subject) {
+            const colors = {
+                'general': 'bg-blue-100 text-blue-800',
+                'support': 'bg-green-100 text-green-800',
+                'volunteer': 'bg-purple-100 text-purple-800',
+                'donation': 'bg-yellow-100 text-yellow-800',
+                'partnership': 'bg-indigo-100 text-indigo-800',
+                'emergency': 'bg-red-100 text-red-800',
+                'feedback': 'bg-gray-100 text-gray-800',
+                'other': 'bg-gray-100 text-gray-800'
+            };
+            return colors[subject] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getSubjectColorClass(subject) {
+            const colors = {
+                'general': 'bg-blue-100 text-blue-800',
+                'support': 'bg-green-100 text-green-800',
+                'volunteer': 'bg-purple-100 text-purple-800',
+                'donation': 'bg-yellow-100 text-yellow-800',
+                'partnership': 'bg-indigo-100 text-indigo-800',
+                'emergency': 'bg-red-100 text-red-800',
+                'feedback': 'bg-gray-100 text-gray-800',
+                'other': 'bg-gray-100 text-gray-800'
+            };
+            return colors[subject] || 'bg-gray-100 text-gray-800';
+        }
+
+        function formatDate(date) {
+            if (!date) return 'Unknown';
+            const d = new Date(date);
+            return d.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatTimeAgo(date) {
+            if (!date) return 'Just now';
+            const now = new Date();
+            const d = new Date(date);
+            const diffMs = now - d;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffDays > 7) {
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            } else if (diffDays > 0) {
+                return `${diffDays}d ago`;
+            } else if (diffHours > 0) {
+                return `${diffHours}h ago`;
+            } else if (diffMins > 0) {
+                return `${diffMins}m ago`;
+            } else {
+                return 'Just now';
+            }
+        }
+
+        function updateUnreadCount() {
+            const unreadCount = currentMessages.filter(m => !m.read).length;
+            const badge = document.getElementById('unread-count');
+            const notificationBadge = document.getElementById('notification-badge');
+            
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.classList.remove('hidden');
+                notificationBadge.textContent = unreadCount;
+                notificationBadge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+                notificationBadge.classList.add('hidden');
+            }
+        }
+
+        function closeMessageModal() {
+            document.getElementById('message-detail-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function closeFAQModal() {
+            document.getElementById('faq-editor-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('notification-toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            
+            if (type === 'error') {
+                toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50';
+            } else if (type === 'info') {
+                toast.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50';
+            } else {
+                toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50';
+            }
+            
+            toast.classList.remove('translate-x-full');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        function refreshMessages() {
+            loadMessages();
+            showToast('Messages refreshed');
+        }
+
+        function exportMessages() {
+            const dataStr = JSON.stringify(currentMessages, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `hopelink-messages-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showToast('Messages exported successfully');
+        }
+
+        function replyToMessage(email) {
+            window.open(`mailto:${email}`, '_blank');
+        }
+
+        function forwardMessage(messageId) {
+            const message = currentMessages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            const subject = `FWD: ${message.subject || 'Message'} from ${message.firstName} ${message.lastName}`;
+            const body = `
+From: ${message.firstName} ${message.lastName}
+Email: ${message.email}
+Phone: ${message.phone || 'Not provided'}
+Date: ${formatDate(message.createdAt)}
+
+Message:
+${message.message}
+
+---
+Forwarded from HopeLink Mahama Dashboard
+            `.trim();
+            
+            window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+        }
+
+        // ==============================
+        // NAVIGATION
+        // ==============================
+
+        function switchSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Remove active class from all sidebar items
+            document.querySelectorAll('.sidebar-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected section
+            const section = document.getElementById(`${sectionName}-section`);
+            if (section) {
+                section.classList.remove('hidden');
+            }
+            
+            // Set active sidebar item
+            const sidebarItem = document.querySelector(`[data-section="${sectionName}"]`);
+            if (sidebarItem) {
+                sidebarItem.classList.add('active');
+            }
+            
+            // Update section title
+            const titles = {
+                'overview': 'Dashboard Overview',
+                'messages': 'Contact Messages',
+                'faq': 'FAQ Management',
+                'content': 'Content Editor',
+                'contact-info': 'Contact Information',
+                'users': 'User Management',
+                'analytics': 'Analytics Dashboard'
+            };
+            
+            const descriptions = {
+                'overview': 'Welcome to HopeLink Mahama Admin Panel',
+                'messages': 'Manage all contact form submissions',
+                'faq': 'Edit Frequently Asked Questions',
+                'content': 'Update website content',
+                'contact-info': 'Manage contact details',
+                'users': 'Manage user accounts',
+                'analytics': 'View statistics and reports'
+            };
+            
+            document.getElementById('section-title').textContent = titles[sectionName] || 'Dashboard';
+            document.getElementById('section-description').textContent = descriptions[sectionName] || '';
+            
+            // Load section-specific data
+            if (sectionName === 'messages') {
+                const filter = document.getElementById('message-filter').value;
+                const search = document.getElementById('search-messages').value;
+                const subject = document.getElementById('subject-filter').value;
+                displayMessages(filter, search, subject);
+            }
+            
+            // Close mobile sidebar if open
+            if (window.innerWidth <= 768) {
+                document.getElementById('dashboardSidebar').classList.remove('active');
+            }
+        }
+
+        function logout() {
+            // Clear session
+            sessionStorage.removeItem('currentUser');
+            localStorage.removeItem('hopelink_current_user');
+            
+            // If Firebase is available, sign out
+            if (isFirebaseAvailable()) {
+                firebase.auth().signOut().catch(error => {
+                    console.log("Firebase sign out error:", error);
+                });
+            }
+            
+            // Redirect to contact page
+            window.location.href = 'contact.html';
+        }
+
+        // ==============================
+        // INITIALIZATION
+        // ==============================
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication
+            await checkAdminAuth();
+            
+            // Setup event listeners
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    if (section) {
+                        switchSection(section);
+                    }
+                });
+            });
+            
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    document.getElementById('dashboardSidebar').classList.toggle('active');
+                });
+            }
+            
+            // Message filters
+            const messageFilter = document.getElementById('message-filter');
+            const subjectFilter = document.getElementById('subject-filter');
+            const searchMessages = document.getElementById('search-messages');
+            
+            if (messageFilter) {
+                messageFilter.addEventListener('change', function() {
+                    const filter = this.value;
+                    const search = searchMessages ? searchMessages.value : '';
+                    const subject = subjectFilter ? subjectFilter.value : 'all';
+                    displayMessages(filter, search, subject);
+                });
+            }
+            
+            if (subjectFilter) {
+                subjectFilter.addEventListener('change', function() {
+                    const filter = messageFilter ? messageFilter.value : 'all';
+                    const search = searchMessages ? searchMessages.value : '';
+                    const subject = this.value;
+                    displayMessages(filter, search, subject);
+                });
+            }
+            
+            if (searchMessages) {
+                searchMessages.addEventListener('input', function() {
+                    const filter = messageFilter ? messageFilter.value : 'all';
+                    const search = this.value;
+                    const subject = subjectFilter ? subjectFilter.value : 'all';
+                    displayMessages(filter, search, subject);
+                });
+            }
+            
+            // Load initial data
+            await loadMessages();
+            await loadFAQs();
+            await loadSettings();
+            
+            // Update last updated time
+            document.getElementById('last-updated').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                loadMessages();
+                document.getElementById('last-updated').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }, 30000);
+            
+            console.log('Dashboard initialized successfully');
+            console.log('✓ Connected to contact page storage');
+            console.log('✓ Messages loaded:', currentMessages.length);
+            console.log('✓ FAQs loaded:', currentFAQs.length);
+            console.log('✓ Settings loaded:', Object.keys(currentSettings).length);
+            
+            // Show welcome message
+            setTimeout(() => {
+                showToast('Dashboard connected successfully to contact page!', 'success');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
