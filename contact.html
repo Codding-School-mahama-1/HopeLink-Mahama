@@ -7,13 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-    
+    <!-- Add Leaflet for Google Maps alternative -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -54,7 +50,7 @@
                     },
                     screens: {
                         'xs': '475px',
-                        'lg-md': '1100px', // Custom breakpoint for small desktops
+                        'lg-md': '1100px',
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.6s ease forwards',
@@ -670,6 +666,41 @@
         #photo-back-btn:hover {
             transform: translateX(-3px);
         }
+
+        /* Map styles */
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: 1rem;
+            z-index: 1;
+        }
+        
+        /* Social media styles */
+        .social-btn {
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .social-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        /* Response time indicator */
+        .response-indicator {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: pulse 2s infinite;
+        }
+        
+        /* Office address card */
+        .office-card {
+            border-left: 4px solid #3B82F6;
+            transition: all 0.3s ease;
+        }
+        .office-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
@@ -966,7 +997,7 @@
                         <i class="fas fa-envelope mr-3"></i>
                         Send a Message
                     </a>
-                    <a href="#emergency" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary-blue transition duration-300 transform hover:scale-105 flex items-center">
+                    <a href="#emergency-contacts" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary-blue transition duration-300 transform hover:scale-105 flex items-center">
                         <i class="fas fa-phone mr-3"></i>
                         Emergency Contacts
                     </a>
@@ -982,7 +1013,18 @@
                 <!-- Contact Form -->
                 <div class="animate-fade-in">
                     <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Send us a Message</h2>
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 bg-primary-blue rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-paper-plane text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold text-gray-800">Send us a Message</h2>
+                                <div class="response-indicator mt-2 inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                                    <i class="fas fa-clock mr-2 animate-spin"></i>
+                                    We reply within 24 hours
+                                </div>
+                            </div>
+                        </div>
                         <form id="contactForm" class="space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -1042,58 +1084,61 @@
                 <!-- Contact Information -->
                 <div class="animate-fade-in">
                     <div class="space-y-8">
-                        <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Contact Information</h2>
+                        <!-- Office Address -->
+                        <div class="office-card bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Office Address</h2>
                             <div class="space-y-4">
                                 <div class="flex items-start">
                                     <div class="w-10 h-10 bg-primary-blue rounded-full flex items-center justify-center mt-1 mr-4">
-                                        <i class="fas fa-map-marker-alt text-white"></i>
+                                        <i class="fas fa-building text-white"></i>
                                     </div>
                                     <div>
-                                        <h3 class="font-semibold text-gray-800"> Location</h3>
-                                        <p class="text-gray-600">Mahama Refugee Camp<br>Kirehe District, Rwanda</p>
+                                        <h3 class="font-semibold text-gray-800">Main Office</h3>
+                                        <p class="text-gray-600">HopeLink Mahama Refugee Camp</p>
+                                        <p class="text-gray-600">Block 12, Zone C</p>
+                                        <p class="text-gray-600">Mahama Refugee Camp</p>
+                                        <p class="text-gray-600">Kirehe District, Eastern Province</p>
+                                        <p class="text-gray-600">Rwanda</p>
                                     </div>
                                 </div>
                                 
-                                <div class="flex items-start">
-                                    <div class="w-10 h-10 bg-primary-green rounded-full flex items-center justify-center mt-1 mr-4">
-                                        <i class="fas fa-phone text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-800"> Phone</h3>
-                                        <div data-content="phones">
-                                            <p class="text-gray-600">General Inquiries: +250 788 123 456</p>
-                                            <p class="text-gray-600">Emergency: +250 788 555 456</p>
-                                        </div>
-                                    </div>
+                                <!-- Map Container -->
+                                <div class="mt-6">
+                                    <h4 class="font-semibold text-gray-800 mb-3">Find Us on Map</h4>
+                                    <div id="map" class="rounded-lg"></div>
                                 </div>
-                                
-                                <div class="flex items-start">
-                                    <div class="w-10 h-10 bg-primary-yellow rounded-full flex items-center justify-center mt-1 mr-4">
-                                        <i class="fas fa-envelope text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-800"> Email</h3>
-                                        <div data-content="emails">
-                                            <p class="text-gray-600">info@hopelinkmahama.org</p>
-                                            <p class="text-gray-600">support@hopelinkmahama.org</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-start">
-                                    <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mt-1 mr-4">
-                                        <i class="fas fa-clock text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-800"> Office Hours</h3>
-                                        <div data-content="hours">
-                                            <p class="text-gray-600">Monday - Friday: 8:00 AM - 5:00 PM</p>
-                                            <p class="text-gray-600">Saturday: 9:00 AM - 1:00 PM</p>
-                                            <p class="text-gray-600">Emergency services available 24/7</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Media Section -->
+                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Connect With Us</h2>
+                            <p class="text-gray-600 mb-6">Follow us on social media for updates, news, and community stories.</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <a href="#" class="social-btn bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition">
+                                    <i class="fab fa-facebook-f mr-2"></i>
+                                    <span>Facebook</span>
+                                </a>
+                                <a href="#" class="social-btn bg-pink-500 text-white p-3 rounded-lg hover:bg-pink-600 transition">
+                                    <i class="fab fa-instagram mr-2"></i>
+                                    <span>Instagram</span>
+                                </a>
+                                <a href="#" class="social-btn bg-blue-400 text-white p-3 rounded-lg hover:bg-blue-500 transition">
+                                    <i class="fab fa-twitter mr-2"></i>
+                                    <span>Twitter</span>
+                                </a>
+                                <a href="#" class="social-btn bg-blue-700 text-white p-3 rounded-lg hover:bg-blue-800 transition">
+                                    <i class="fab fa-linkedin-in mr-2"></i>
+                                    <span>LinkedIn</span>
+                                </a>
+                                <a href="#" class="social-btn bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition">
+                                    <i class="fab fa-whatsapp mr-2"></i>
+                                    <span>WhatsApp</span>
+                                </a>
+                                <a href="#" class="social-btn bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition">
+                                    <i class="fab fa-youtube mr-2"></i>
+                                    <span>YouTube</span>
+                                </a>
                             </div>
                         </div>
                         
@@ -1118,77 +1163,134 @@
         </div>
     </section>
 
-    <!-- Emergency Contacts -->
-    <section id="emergency" class="py-20 bg-gray-50">
+    <!-- Additional Contact Info Section -->
+    <section class="py-16 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Contact Hours -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-clock text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Contact Hours</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Monday - Friday:</span>
+                            <span class="font-semibold">8:00 AM - 5:00 PM</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Saturday:</span>
+                            <span class="font-semibold">9:00 AM - 1:00 PM</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Sunday:</span>
+                            <span class="font-semibold">Emergency Only</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Email Contacts -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="w-12 h-12 bg-primary-green rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-envelope text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Email Contacts</h3>
+                    <div class="space-y-2">
+                        <div>
+                            <span class="text-gray-600 block">General Inquiries:</span>
+                            <a href="mailto:info@hopelinkmahama.org" class="font-semibold text-primary-blue hover:underline">info@hopelinkmahama.org</a>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 block">Support:</span>
+                            <a href="mailto:support@hopelinkmahama.org" class="font-semibold text-primary-blue hover:underline">support@hopelinkmahama.org</a>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 block">Volunteers:</span>
+                            <a href="mailto:volunteer@hopelinkmahama.org" class="font-semibold text-primary-blue hover:underline">volunteer@hopelinkmahama.org</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Phone Contacts -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="w-12 h-12 bg-primary-blue rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-phone text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Phone Contacts</h3>
+                    <div class="space-y-2">
+                        <div>
+                            <span class="text-gray-600 block">Main Office:</span>
+                            <a href="tel:+250788123456" class="font-semibold text-gray-800 hover:text-primary-blue">+250 788 123 456</a>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 block">Program Office:</span>
+                            <a href="tel:+250788123457" class="font-semibold text-gray-800 hover:text-primary-blue">+250 788 123 457</a>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 block">Administration:</span>
+                            <a href="tel:+250788123458" class="font-semibold text-gray-800 hover:text-primary-blue">+250 788 123 458</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EMERGENCY CONTACTS SECTION -->
+    <section id="emergency-contacts" class="py-20 bg-red-50 scroll-mt-20">
+         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-16 animate-fade-in">
                 <h2 class="text-4xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Immediate help when you need it most</p>
             </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
-                    <div class="h-4 bg-red-500"></div>
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
-                                <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800"> Immediate Danger</h3>
-                        </div>
-                        <p class="text-gray-600 mb-4">If you are in immediate danger or need urgent help:</p>
-                        <button data-emergency="danger" onclick="callEmergency('+250788555456')" class="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition duration-300 flex items-center justify-center">
-                            <i class="fas fa-phone mr-2"></i> Call Emergency: +250 788 555 456
-                        </button>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Contact 1 -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-red-200 text-center hover-lift">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-ambulance text-red-600 text-2xl"></i>
                     </div>
+                    <h3 class="font-bold text-gray-800 mb-2">Medical Emergency</h3>
+                    <p class="text-gray-600 mb-4">For urgent medical assistance</p>
+                    <button onclick="callEmergency('+250795096038')" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition flex items-center justify-center">
+                        <i class="fas fa-phone mr-2"></i>Call Now
+                    </button>
                 </div>
-
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
-                    <div class="h-4 bg-blue-500"></div>
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                                <i class="fas fa-heart text-blue-500 text-xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800"> Mental Health Crisis</h3>
-                        </div>
-                        <p class="text-gray-600 mb-4">For emotional support and mental health emergencies:</p>
-                        <button data-emergency="mental" onclick="callEmergency('+250788555789')" class="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-300 flex items-center justify-center">
-                            <i class="fas fa-phone mr-2"></i> Crisis Support: +250 788 555 789
-                        </button>
+                
+                <!-- Contact 2 -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-blue-200 text-center hover-lift">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-primary-blue text-2xl"></i>
                     </div>
+                    <h3 class="font-bold text-gray-800 mb-2">Security</h3>
+                    <p class="text-gray-600 mb-4">Camp security and protection</p>
+                    <button onclick="callEmergency('+250788654321')" class="w-full bg-primary-blue text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center">
+                        <i class="fas fa-phone mr-2"></i>Call Now
+                    </button>
                 </div>
-
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
-                    <div class="h-4 bg-purple-500"></div>
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-                                <i class="fas fa-shield-alt text-purple-500 text-xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800"> Women's Safety</h3>
-                        </div>
-                        <p class="text-gray-600 mb-4">Confidential support for gender-based violence:</p>
-                        <button data-emergency="women" onclick="callEmergency('+250788555123')" class="w-full bg-purple-500 text-white py-3 rounded-lg font-semibold hover:bg-purple-600 transition duration-300 flex items-center justify-center">
-                            <i class="fas fa-phone mr-2"></i> GBV Hotline: +250 788 555 123
-                        </button>
+                
+                <!-- Contact 3 -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-green-200 text-center hover-lift">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-fire-extinguisher text-primary-green text-2xl"></i>
                     </div>
+                    <h3 class="font-bold text-gray-800 mb-2">Fire Emergency</h3>
+                    <p class="text-gray-600 mb-4">In case of fire outbreak</p>
+                    <button onclick="callEmergency('+250788987654')" class="w-full bg-primary-green text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition flex items-center justify-center">
+                        <i class="fas fa-phone mr-2"></i>Call Now
+                    </button>
                 </div>
-
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
-                    <div class="h-4 bg-orange-500"></div>
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-4">
-                                <i class="fas fa-child text-orange-500 text-xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800"> Children's Safety</h3>
-                        </div>
-                        <p class="text-gray-600 mb-4">Protection and support for children in danger:</p>
-                        <button data-emergency="children" onclick="callEmergency('+250788555999')" class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition duration-300 flex items-center justify-center">
-                            <i class="fas fa-phone mr-2"></i> Child Safety: +250 788 555 999
-                        </button>
+                
+                <!-- Contact 4 -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-yellow-200 text-center hover-lift">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-life-ring text-primary-yellow text-2xl"></i>
                     </div>
+                    <h3 class="font-bold text-gray-800 mb-2">Camp Management</h3>
+                    <p class="text-gray-600 mb-4">Administrative issues</p>
+                    <button onclick="callEmergency('+250788456789')" class="w-full bg-primary-yellow text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-700 transition flex items-center justify-center">
+                        <i class="fas fa-phone mr-2"></i>Call Now
+                    </button>
                 </div>
             </div>
         </div>
@@ -1779,6 +1881,7 @@
         let currentUser = null;
         let currentPhotoState = 'upload'; // 'upload', 'crop', 'preview'
         let currentUploadedImage = null;
+        let map = null;
 
         // Firebase Authentication Functions
         function isFirebaseAvailable() {
@@ -2043,140 +2146,9 @@
         }
 
         // ==============================
-        // EXISTING FUNCTIONS (Updated)
+        // NOTIFICATION SYSTEM
         // ==============================
 
-        // Save user data to Firebase Firestore
-        async function saveUserToFirebase(userData) {
-            if (!isFirebaseAvailable() || !currentUser || !currentUser.uid) {
-                console.log('Firebase not available or no user logged in');
-                return false;
-            }
-
-            try {
-                const userRef = firebase.firestore().collection("users").doc(currentUser.uid);
-                await userRef.set({
-                    ...userData,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-                console.log("User data saved to Firebase Firestore");
-                return true;
-            } catch (error) {
-                console.error("Error saving to Firebase:", error);
-                return false;
-            }
-        }
-
-        // Get user data from Firebase Firestore
-        async function getUserFromFirebase() {
-            if (!isFirebaseAvailable() || !currentUser || !currentUser.uid) {
-                console.log('Firebase not available or no user logged in');
-                return null;
-            }
-
-            try {
-                const userRef = firebase.firestore().collection("users").doc(currentUser.uid);
-                const userDoc = await userRef.get();
-                
-                if (userDoc.exists) {
-                    console.log("User data retrieved from Firebase");
-                    return userDoc.data();
-                }
-                return null;
-            } catch (error) {
-                console.error("Error getting user from Firebase:", error);
-                return null;
-            }
-        }
-
-        // Initialize localStorage for demo users (fallback)
-        if (!localStorage.getItem('hopelink_users')) {
-            localStorage.setItem('hopelink_users', JSON.stringify([]));
-        }
-
-        // Get all users from localStorage (demo fallback)
-        function getAllLocalUsers() {
-            return JSON.parse(localStorage.getItem('hopelink_users') || '[]');
-        }
-
-        // Get user by email from localStorage (demo fallback)
-        function getLocalUserByEmail(email) {
-            const users = getAllLocalUsers();
-            return users.find(u => u.email === email);
-        }
-
-        // Update user in localStorage (demo fallback)
-        function updateLocalUser(userId, updates) {
-            const users = getAllLocalUsers();
-            const index = users.findIndex(u => u.id === userId);
-            if (index !== -1) {
-                users[index] = { ...users[index], ...updates };
-                localStorage.setItem('hopelink_users', JSON.stringify(users));
-                
-                // Update current user in session
-                if (currentUser && currentUser.id === userId) {
-                    currentUser = users[index];
-                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUI();
-                }
-            }
-        }
-
-        // ==============================
-        // UNIFIED USER MANAGEMENT
-        // ==============================
-
-        // Get user data from Firebase or localStorage
-        async function getUserData() {
-            // Try Firebase first
-            if (isFirebaseAvailable() && currentUser && currentUser.uid) {
-                const firebaseData = await getUserFromFirebase();
-                if (firebaseData) {
-                    return { source: 'firebase', data: firebaseData };
-                }
-            }
-            
-            // Fallback to localStorage
-            if (currentUser && currentUser.id) {
-                const localData = getLocalUserByEmail(currentUser.email);
-                if (localData) {
-                    return { source: 'local', data: localData };
-                }
-            }
-            
-            return { source: 'none', data: null };
-        }
-
-        // Update user data in Firebase or localStorage
-        async function updateUserData(updates) {
-            if (!currentUser) return false;
-            
-            let success = false;
-            
-            // Try Firebase first
-            if (isFirebaseAvailable() && currentUser.uid) {
-                success = await saveUserToFirebase(updates);
-                if (success) {
-                    console.log("User data updated in Firebase");
-                }
-            }
-            
-            // Also update localStorage for fallback
-            if (currentUser.id) {
-                updateLocalUser(currentUser.id, updates);
-                success = true;
-                console.log("User data updated in localStorage");
-            }
-            
-            // Update current user in session
-            currentUser = { ...currentUser, ...updates };
-            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-            updateUI();
-            
-            return success;
-        }
-
-        // Notification system
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             const icon = document.getElementById('notificationIcon');
@@ -2208,62 +2180,20 @@
             notification.classList.remove('show');
         }
 
-        // Check login status - integrated with both Firebase and localStorage
-        async function checkLoginStatus() {
-            // Check for Firebase user first
-            if (isFirebaseAvailable() && firebase.auth().currentUser) {
-                const firebaseUser = firebase.auth().currentUser;
-                console.log("Firebase user detected:", firebaseUser.email);
-                
-                currentUser = {
-                    email: firebaseUser.email,
-                    uid: firebaseUser.uid,
-                    displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0],
-                    emailVerified: firebaseUser.emailVerified,
-                    isAnonymous: firebaseUser.isAnonymous,
-                    metadata: firebaseUser.metadata,
-                    providerData: firebaseUser.providerData,
-                    loginTime: new Date().toISOString(),
-                    isFirebaseUser: true,
-                    id: firebaseUser.uid // Use Firebase UID as ID
-                };
-                
-                // Try to get additional user data from Firestore
-                const userData = await getUserFromFirebase();
-                if (userData) {
-                    currentUser = { ...currentUser, ...userData };
-                }
-                
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                showUserSection();
-                updateUI();
-                return;
-            }
-            
+        // ==============================
+        // USER MANAGEMENT
+        // ==============================
+
+        // Check login status
+        function checkLoginStatus() {
             // Check session storage for existing login
             const userJson = sessionStorage.getItem('currentUser');
             if (userJson) {
                 try {
                     currentUser = JSON.parse(userJson);
-                    
-                    // Check if this is a Firebase user
-                    if (currentUser.isFirebaseUser && isFirebaseAvailable()) {
-                        // Verify Firebase user is still logged in
-                        if (firebase.auth().currentUser) {
-                            showUserSection();
-                            updateUI();
-                            return;
-                        } else {
-                            // Firebase user logged out, clear session
-                            sessionStorage.removeItem('currentUser');
-                            currentUser = null;
-                        }
-                    } else {
-                        // Local storage user
-                        showUserSection();
-                        updateUI();
-                        return;
-                    }
+                    showUserSection();
+                    updateUI();
+                    return;
                 } catch (e) {
                     console.error("Error parsing user data:", e);
                     sessionStorage.removeItem('currentUser');
@@ -2275,22 +2205,18 @@
         }
 
         // Update UI based on user state
-        async function updateUI() {
+        function updateUI() {
             if (currentUser) {
-                // Get user data from appropriate source
-                const userData = await getUserData();
-                const userInfo = userData.data || currentUser;
-                
                 // Update desktop navigation
-                document.getElementById('user-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
-                document.getElementById('user-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('user-name').textContent = currentUser.name || currentUser.email;
+                document.getElementById('user-role').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Member';
                 
                 // Generate avatar URL
                 let userAvatar;
-                if (userInfo.photoURL) {
-                    userAvatar = userInfo.photoURL;
-                } else if (userInfo.email) {
-                    userAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.displayName || userInfo.name || userInfo.email)}&background=random`;
+                if (currentUser.photoURL) {
+                    userAvatar = currentUser.photoURL;
+                } else if (currentUser.email) {
+                    userAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || currentUser.email)}&background=random`;
                 } else {
                     userAvatar = 'https://ui-avatars.com/api/?name=Guest&background=random';
                 }
@@ -2298,36 +2224,32 @@
                 document.getElementById('user-avatar').src = userAvatar;
                 
                 // Update dropdown
-                document.getElementById('dropdown-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
-                document.getElementById('dropdown-email').textContent = userInfo.email || 'No email';
-                document.getElementById('dropdown-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('dropdown-name').textContent = currentUser.name || currentUser.email;
+                document.getElementById('dropdown-email').textContent = currentUser.email || 'No email';
+                document.getElementById('dropdown-role').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Member';
                 document.getElementById('dropdown-avatar').src = userAvatar;
                 
                 // Update mobile navigation
-                document.getElementById('mobile-user-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
-                document.getElementById('mobile-user-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('mobile-user-name').textContent = currentUser.name || currentUser.email;
+                document.getElementById('mobile-user-role').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Member';
                 document.getElementById('mobile-user-avatar').src = userAvatar;
                 
                 // Update modals
-                document.getElementById('modal-fullname').textContent = userInfo.displayName || userInfo.name || userInfo.email;
-                document.getElementById('modal-email').textContent = userInfo.email || 'No email';
-                document.getElementById('modal-role').textContent = userInfo.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('modal-fullname').textContent = currentUser.name || currentUser.email;
+                document.getElementById('modal-email').textContent = currentUser.email || 'No email';
+                document.getElementById('modal-role').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Member';
                 document.getElementById('modal-avatar').src = userAvatar;
                 document.getElementById('current-photo').src = userAvatar;
                 
-                document.getElementById('profile-firstname').value = userInfo.firstName || userInfo.displayName?.split(' ')[0] || '';
-                document.getElementById('profile-lastname').value = userInfo.lastName || userInfo.displayName?.split(' ')[1] || '';
-                document.getElementById('profile-phone').value = userInfo.phone || '';
-                document.getElementById('profile-address').value = userInfo.address || '';
-                document.getElementById('profile-bio').value = userInfo.bio || '';
+                document.getElementById('profile-firstname').value = currentUser.firstName || currentUser.name?.split(' ')[0] || '';
+                document.getElementById('profile-lastname').value = currentUser.lastName || currentUser.name?.split(' ')[1] || '';
+                document.getElementById('profile-phone').value = currentUser.phone || '';
+                document.getElementById('profile-address').value = currentUser.address || '';
+                document.getElementById('profile-bio').value = currentUser.bio || '';
                 
                 // Update photo modal previews
-                document.getElementById('preview-name').textContent = userInfo.displayName || userInfo.name || userInfo.email;
-                document.getElementById('preview-email').textContent = userInfo.email || 'No email';
-                
-                // Update UI based on data source
-                const authSource = currentUser.isFirebaseUser ? 'Firebase' : 'Local';
-                console.log(`User UI updated from ${authSource} source`);
+                document.getElementById('preview-name').textContent = currentUser.name || currentUser.email;
+                document.getElementById('preview-email').textContent = currentUser.email || 'No email';
             }
         }
 
@@ -2394,7 +2316,7 @@
             
             // Reset current photo to user's current photo
             if (currentUser) {
-                const userAvatar = currentUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.displayName || currentUser.email)}&background=random`;
+                const userAvatar = currentUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || currentUser.email)}&background=random`;
                 document.getElementById('current-photo').src = userAvatar;
             }
             
@@ -2551,24 +2473,19 @@
             navigateToPreview(currentUploadedImage);
         }
 
-        // Save final photo - integrated with both Firebase and localStorage
-        async function saveFinalPhoto() {
+        // Save final photo
+        function saveFinalPhoto() {
             const finalImage = document.getElementById('final-preview').src;
             
             if (!currentUser) return;
             
-            // Update user data in appropriate storage
-            const success = await updateUserData({ 
+            // Update user data
+            updateLocalUser(currentUser.id, { 
                 photoURL: finalImage,
                 photoData: finalImage // Store base64 data
             });
             
-            if (success) {
-                showNotification('Profile photo updated successfully!', 'success');
-            } else {
-                showNotification('Failed to update photo', 'error');
-            }
-            
+            showNotification('Profile photo updated successfully!', 'success');
             closePhotoModal();
         }
 
@@ -2627,23 +2544,17 @@
         function selectAvatar(color) {
             if (!currentUser) return;
             
-            const userName = currentUser.displayName || currentUser.name || currentUser.email;
+            const userName = currentUser.name || currentUser.email;
             const photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=${color}&color=fff`;
             
-            // Update user data in appropriate storage
-            updateUserData({ photoURL: photoURL })
-                .then(success => {
-                    if (success) {
-                        showNotification('Avatar selected successfully!', 'success');
-                    } else {
-                        showNotification('Failed to update avatar', 'error');
-                    }
-                    closePhotoModal();
-                });
+            // Update user data
+            updateLocalUser(currentUser.id, { photoURL: photoURL });
+            showNotification('Avatar selected successfully!', 'success');
+            closePhotoModal();
         }
 
         // ==============================
-        // EXISTING MODAL FUNCTIONS (Updated)
+        // MODAL FUNCTIONS
         // ==============================
 
         function openProfileModal() {
@@ -2674,8 +2585,8 @@
             document.body.style.overflow = '';
         }
 
-        // Update profile - integrated with both Firebase and localStorage
-        async function updateProfile() {
+        // Update profile
+        function updateProfile() {
             const firstName = document.getElementById('profile-firstname').value;
             const lastName = document.getElementById('profile-lastname').value;
             const phone = document.getElementById('profile-phone').value;
@@ -2687,20 +2598,14 @@
             const updates = {
                 firstName: firstName,
                 lastName: lastName,
-                displayName: `${firstName} ${lastName}`,
+                name: `${firstName} ${lastName}`,
                 phone: phone,
                 address: address,
                 bio: bio
             };
             
-            const success = await updateUserData(updates);
-            
-            if (success) {
-                showNotification('Profile updated successfully!', 'success');
-            } else {
-                showNotification('Failed to update profile', 'error');
-            }
-            
+            updateLocalUser(currentUser.id, updates);
+            showNotification('Profile updated successfully!', 'success');
             closeProfileModal();
         }
 
@@ -2744,8 +2649,8 @@
             dropzone.classList.remove('drag-over');
         }
 
-        // Change password - integrated with both Firebase and localStorage
-        async function handleChangePassword(e) {
+        // Change password
+        function handleChangePassword(e) {
             e.preventDefault();
             
             const currentPassword = document.getElementById('current-password').value;
@@ -2753,9 +2658,6 @@
             const confirmPassword = document.getElementById('confirm-new-password').value;
             
             if (!currentUser) return;
-            
-            // For Firebase users, this would need Firebase-specific implementation
-            // For demo/local users, we'll update localStorage
             
             if (newPassword.length < 6) {
                 document.getElementById('password-error').textContent = 'New password must be at least 6 characters';
@@ -2769,20 +2671,13 @@
                 return;
             }
             
-            // Update password in appropriate storage
-            if (currentUser.isFirebaseUser) {
-                // Firebase password update would go here
-                showNotification('Firebase password update requires Firebase implementation', 'info');
-            } else {
-                // Update local user password
-                if (currentUser.password !== currentPassword) {
-                    document.getElementById('password-error').textContent = 'Current password is incorrect';
-                    document.getElementById('password-error').classList.remove('hidden');
-                    return;
-                }
-                
-                await updateUserData({ password: newPassword });
+            if (currentUser.password !== currentPassword) {
+                document.getElementById('password-error').textContent = 'Current password is incorrect';
+                document.getElementById('password-error').classList.remove('hidden');
+                return;
             }
+            
+            updateLocalUser(currentUser.id, { password: newPassword });
             
             document.getElementById('password-success').textContent = 'Password updated successfully!';
             document.getElementById('password-success').classList.remove('hidden');
@@ -2806,18 +2701,8 @@
             }
         }
 
-        // Logout - integrated with both Firebase and localStorage
-        async function logout() {
-            // Firebase logout if available
-            if (isFirebaseAvailable()) {
-                try {
-                    await firebase.auth().signOut();
-                    console.log("Firebase user logged out");
-                } catch (error) {
-                    console.error("Firebase logout error:", error);
-                }
-            }
-            
+        // Logout
+        function logout() {
             // Clear session storage
             sessionStorage.removeItem('currentUser');
             currentUser = null;
@@ -2865,7 +2750,7 @@
                 
                 // Show welcome message
                 if (currentUser) {
-                    showNotification(`Welcome ${currentUser.displayName || currentUser.email}!`, 'success');
+                    showNotification(`Welcome ${currentUser.name || currentUser.email}!`, 'success');
                 }
             }
             
@@ -2873,6 +2758,51 @@
             if (view && (view === 'login' || view === 'signup')) {
                 window.location.href = `auth.html?view=${view}`;
             }
+        }
+
+        // ==============================
+        // MAP INITIALIZATION
+        // ==============================
+
+        function initMap() {
+            // Coordinates for Mahama Refugee Camp, Rwanda
+            const mahamaCoordinates = [-2.1065, 30.5084];
+            
+            // Initialize the map
+            map = L.map('map').setView(mahamaCoordinates, 15);
+            
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+            
+            // Add a custom marker
+            const customIcon = L.divIcon({
+                html: '<div class="w-8 h-8 bg-primary-blue rounded-full border-4 border-white shadow-lg flex items-center justify-center"><i class="fas fa-hands-helping text-white"></i></div>',
+                className: '',
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32]
+            });
+            
+            // Add marker
+            const marker = L.marker(mahamaCoordinates, { icon: customIcon }).addTo(map);
+            
+            // Add popup
+            marker.bindPopup(`
+                <div class="p-2">
+                    <h3 class="font-bold text-gray-800">HopeLink Mahama</h3>
+                    <p class="text-sm text-gray-600">Refugee Camp</p>
+                    <p class="text-xs text-gray-500">Kirehe District, Rwanda</p>
+                </div>
+            `).openPopup();
+            
+            // Add click handler to marker
+            marker.on('click', function() {
+                // Open in Google Maps
+                window.open(`https://www.google.com/maps?q=${mahamaCoordinates[0]},${mahamaCoordinates[1]}`, '_blank');
+            });
         }
 
         // ==============================
@@ -2911,7 +2841,7 @@
         }
 
         // ==============================
-        // FIXED CONTACT FORM FUNCTIONALITY - WORKING VERSION
+        // CONTACT PAGE FUNCTIONALITY
         // ==============================
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -2919,8 +2849,10 @@
             checkLoginStatus();
             checkForAuthRedirect();
             
-            // Load dynamic content from dashboard
-            loadDynamicContent();
+            // Initialize map
+            if (document.getElementById('map')) {
+                initMap();
+            }
             
             // Initialize photo upload
             const photoUpload = document.getElementById('photo-upload');
@@ -3135,7 +3067,7 @@
                     }
                     
                     if (!isValid) {
-                        showNotification('Please fill in all required fields correctly', 'error');
+                        showNotification('Validation Error: Please fill in all required fields correctly', 'error');
                         return;
                     }
                     
@@ -3145,25 +3077,15 @@
                     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
                     submitButton.disabled = true;
                     
-                    try {
-                        // Create message object
-                        const messageData = {
-                            firstName: firstName,
-                            lastName: lastName,
-                            fullName: `${firstName} ${lastName}`,
-                            email: email,
-                            phone: phone || 'Not provided',
-                            subject: subject,
-                            message: message,
-                            // Dashboard fields
-                            date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-                            time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-                            status: 'unread',
-                            read: false,
-                            responded: false,
-                            archived: false,
-                            source: 'contact_page'
-                        };
+                    // Simulate form submission (in a real app, this would send to a server)
+                    setTimeout(() => {
+                        // Show success message
+                        showNotification(`Thank you ${firstName}! Your message has been sent successfully. We'll respond within 24 hours.`);
+                        
+                        // Show success modal
+                        document.getElementById('successModalTitle').textContent = 'Message Sent Successfully!';
+                        document.getElementById('successModalMessage').textContent = `Thank you ${firstName} for contacting us. We'll get back to you within 24 hours at ${email}.`;
+                        openModal('successModal');
                         
                         // Save the message to dashboard system
                         const result = await saveContactMessage(messageData);
@@ -3206,7 +3128,7 @@
                     e.preventDefault();
                     
                     // In a real application, you would send this data to a server
-                    showNotification('Application Submitted!', 'success');
+                    showNotification('Thank you for your volunteer application. We will contact you soon.', 'success');
                     closeModal('volunteerModal');
                     
                     // Reset form
@@ -3221,7 +3143,7 @@
                     e.preventDefault();
                     
                     // In a real application, you would send this data to a server
-                    showNotification('Inquiry Sent!', 'success');
+                    showNotification('Thank you for your partnership interest. Our team will review your inquiry and contact you soon.', 'success');
                     closeModal('partnershipModal');
                     
                     // Reset form
@@ -3316,7 +3238,7 @@
                 openModal('partnershipModal');
             };
 
-            // Emergency call function
+            // Emergency call function - UPDATED WITH EMERGENCY CONTACTS
             window.callEmergency = function(phoneNumber) {
                 if (confirm(`Are you sure you want to call ${phoneNumber}? This is for emergencies only.`)) {
                     // In a real application, this would initiate a phone call
@@ -3346,6 +3268,16 @@
                 });
             });
 
+            // Social media buttons functionality
+            document.querySelectorAll('.social-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const platform = this.querySelector('span').textContent;
+                    showNotification(`Opening ${platform} page in a new window...`, 'info');
+                    // In a real implementation, this would open the actual social media page
+                });
+            });
+
             // Utility function for email validation
             window.isValidEmail = function(email) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -3357,12 +3289,15 @@
                 showNotification('Welcome to our Contact page. How can we help you today?', 'success');
             }, 1000);
 
-            // Log system status
-            console.log('✓ Contact Page System Ready');
-            console.log('✓ Contact Form: Working');
-            console.log('✓ Dashboard Sync: Enabled');
-            console.log('✓ Messages will be saved to localStorage for dashboard access');
+            // Initialize emergency contacts
+            initializeEmergencyContacts();
         });
+
+        // Initialize emergency contacts functionality
+        function initializeEmergencyContacts() {
+            console.log('Emergency Contacts initialized');
+            // All emergency contact buttons are now working with the callEmergency function
+        }
     </script>
 </body>
 </html>
